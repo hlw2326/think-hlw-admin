@@ -28,11 +28,11 @@ return [
             // 服务器端口
             'hostport'        => '3306',
             // 数据库名
-            'database'        => 'qz2_ka57_net',
+            'database'        => 'hlw',
             // 用户名
-            'username'        => 'qz2_ka57_net',
+            'username'        => 'root',
             // 密码
-            'password'        =>  'qz2_ka57_net',
+            'password'        =>  'root',
             // 数据库连接参数
             'params'          => [],
             // 数据库表前缀
