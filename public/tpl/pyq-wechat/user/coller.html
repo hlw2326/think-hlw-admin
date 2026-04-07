@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>我的收藏 - Momentum Ultra</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.04)',
+            'glow': '0 0 30px rgba(99, 102, 241, 0.15)',
+            'premium': '0 20px 60px -15px rgba(0,0,0,0.1)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F9FAFF;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    .category-pill.active {
+      background-color: #0f172a;
+      color: white;
+      box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+    }
+
+    /* 收藏图片悬浮效果 */
+    .favorite-card:active { transform: scale(0.97); transition: 0.2s; }
+
+    .glass-tag {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+  </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col items-center overflow-x-hidden pb-32">
+
+<!-- 顶部导航 -->
+<header class="w-full max-w-md px-8 pt-12 pb-6 flex justify-between items-center sticky top-0 bg-[#F9FAFF]/80 backdrop-blur-xl z-50">
+  <div class="flex flex-col">
+    <h2 class="text-xl font-black tracking-tight">我的收藏</h2>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mt-0.5">128 Items Saved</p>
+  </div>
+  <div class="flex gap-3">
+    <button class="w-10 h-10 rounded-2xl bg-white shadow-soft flex items-center justify-center text-slate-400">
+      <i class="fa-solid fa-magnifying-glass text-xs"></i>
+    </button>
+    <button class="w-10 h-10 rounded-2xl bg-white shadow-soft flex items-center justify-center text-slate-400">
+      <i class="fa-solid fa-sliders text-xs"></i>
+    </button>
+  </div>
+</header>
+
+<main class="w-full max-w-md px-6">
+
+  <!-- 分类横滑 -->
+  <section class="flex gap-3 overflow-x-auto no-scrollbar pb-6 mb-2">
+    <button onclick="switchCategory(this)" class="category-pill active whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black tracking-wider transition-all">全部</button>
+    <button onclick="switchCategory(this)" class="category-pill bg-white text-slate-400 whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black tracking-wider transition-all">风景</button>
+    <button onclick="switchCategory(this)" class="category-pill bg-white text-slate-400 whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black tracking-wider transition-all">极简</button>
+    <button onclick="switchCategory(this)" class="category-pill bg-white text-slate-400 whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black tracking-wider transition-all">插画</button>
+    <button onclick="switchCategory(this)" class="category-pill bg-white text-slate-400 whitespace-nowrap px-6 py-2.5 rounded-2xl text-[11px] font-black tracking-wider transition-all">人像</button>
+  </section>
+
+  <!-- 收藏列表 -->
+  <div class="grid grid-cols-2 gap-4" id="favoritesGrid">
+    <!-- 卡片 1 -->
+    <div class="favorite-card animate-in group relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-soft border border-white" style="animation-delay: 0.1s">
+      <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <!-- 顶部操作 -->
+      <button onclick="toggleLike(this)" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-tag text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+      </button>
+      <!-- 底部信息 -->
+      <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+        <span class="text-[10px] font-black text-white truncate pr-2">雪山之巅</span>
+        <button onclick="showDownloadModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[9px] font-black">20pt</button>
+      </div>
+    </div>
+
+    <!-- 卡片 2 -->
+    <div class="favorite-card animate-in group relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-soft border border-white" style="animation-delay: 0.15s">
+      <img src="https://images.unsplash.com/photo-1501854140801-50d01674aa3e?q=80&w=400" class="w-full h-full object-cover">
+      <button onclick="toggleLike(this)" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-tag text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+      </button>
+      <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-all">
+        <span class="text-[10px] font-black text-white truncate pr-2">森林晨曦</span>
+        <button onclick="showDownloadModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[9px] font-black">免费</button>
+      </div>
+    </div>
+
+    <!-- 卡片 3 -->
+    <div class="favorite-card animate-in group relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-soft border border-white" style="animation-delay: 0.2s">
+      <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=400" class="w-full h-full object-cover">
+      <button onclick="toggleLike(this)" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-tag text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+      </button>
+    </div>
+
+    <!-- 卡片 4 -->
+    <div class="favorite-card animate-in group relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-soft border border-white" style="animation-delay: 0.25s">
+      <img src="https://images.unsplash.com/photo-1518091044124-0101b02e54f7?q=80&w=400" class="w-full h-full object-cover">
+      <button onclick="toggleLike(this)" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-tag text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 空状态提示 (默认隐藏) -->
+  <div id="emptyState" class="hidden flex flex-col items-center py-20 opacity-50">
+    <div class="w-20 h-20 rounded-[2rem] bg-slate-100 flex items-center justify-center text-slate-300 mb-6">
+      <i class="fa-solid fa-folder-open text-3xl"></i>
+    </div>
+    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">这里还没有内容</p>
+  </div>
+
+</main>
+
+<!-- 全局提示 Toast -->
+<div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 bg-slate-900/95 backdrop-blur rounded-2xl text-white text-[10px] font-black shadow-2xl transform -translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-3">
+  <div id="toastIcon" class="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-[10px]"></i></div>
+  <span id="toastMsg">操作成功</span>
+</div>
+
+<!-- 底部导航 -->
+<nav class="fixed bottom-0 w-full max-w-md px-6 pb-8 pt-4 z-[60]">
+  <div class="bg-white/80 backdrop-blur-2xl rounded-[2.5rem] p-4 flex justify-between items-center shadow-premium border border-white">
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-300 px-4 transition-all">
+      <i class="fa-solid fa-house-chimney text-xl"></i>
+      <span class="text-[8px] font-black uppercase">首页</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-300 px-4 transition-all">
+      <i class="fa-solid fa-compass text-xl"></i>
+      <span class="text-[8px] font-black uppercase">探索</span>
+    </a>
+    <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white -mt-10 border-4 border-[#F9FAFF] shadow-xl active:scale-90 transition-all cursor-pointer">
+      <i class="fa-solid fa-plus text-lg"></i>
+    </div>
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-900 px-4 transition-all">
+      <i class="fa-solid fa-heart text-xl"></i>
+      <span class="text-[8px] font-black uppercase">收藏</span>
+    </a>
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-300 px-4 transition-all">
+      <i class="fa-solid fa-user-gear text-xl"></i>
+      <span class="text-[8px] font-black uppercase">我的</span>
+    </a>
+  </div>
+</nav>
+
+<!-- 取消收藏确认模态框 -->
+<div id="unfavoriteModal" class="fixed inset-0 z-[400] bg-slate-900/40 backdrop-blur-sm hidden flex items-end justify-center">
+  <div class="w-full max-w-md bg-white rounded-t-[3rem] p-8 animate-in shadow-2xl">
+    <div class="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-8"></div>
+    <h4 class="text-xl font-black text-center mb-2">移出收藏夹？</h4>
+    <p class="text-slate-400 text-xs text-center mb-8 px-10 leading-relaxed">该素材将从您的收藏列表中移除，您可以随时在探索页面重新收藏。</p>
+    <div class="flex flex-col gap-3">
+      <button onclick="confirmUnfavorite()" class="w-full py-5 bg-rose-500 text-white rounded-3xl text-xs font-black shadow-lg shadow-rose-100 active:scale-95 transition-all">确认移除</button>
+      <button onclick="closeModal()" class="w-full py-5 bg-slate-50 text-slate-400 rounded-3xl text-xs font-black active:scale-95 transition-all">取消</button>
+    </div>
+    <div class="h-6"></div>
+  </div>
+</div>
+
+<script>
+  let currentUnfavoriteItem = null;
+
+  // 分类切换
+  function switchCategory(btn) {
+    document.querySelectorAll('.category-pill').forEach(p => {
+      p.classList.remove('active', 'text-white');
+      p.classList.add('bg-white', 'text-slate-400');
+    });
+    btn.classList.add('active', 'text-white');
+    btn.classList.remove('bg-white', 'text-slate-400');
+
+    showToast(`已筛选至 ${btn.innerText}`);
+  }
+
+  // 收藏/取消收藏逻辑
+  function toggleLike(btn) {
+    const heartIcon = btn.querySelector('i');
+    if (heartIcon.classList.contains('fa-heart')) {
+      // 记录当前要移除的卡片
+      currentUnfavoriteItem = btn.closest('.favorite-card');
+      showModal();
+    }
+  }
+
+  function showModal() {
+    document.getElementById('unfavoriteModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('unfavoriteModal').classList.add('hidden');
+    currentUnfavoriteItem = null;
+  }
+
+  function confirmUnfavorite() {
+    if (currentUnfavoriteItem) {
+      currentUnfavoriteItem.style.transform = "scale(0.8) opacity(0)";
+      currentUnfavoriteItem.style.transition = "0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+
+      setTimeout(() => {
+        currentUnfavoriteItem.remove();
+        checkEmpty();
+        showToast("已从收藏夹移除", "info");
+        closeModal();
+      }, 400);
+    }
+  }
+
+  function checkEmpty() {
+    const grid = document.getElementById('favoritesGrid');
+    if (grid.children.length === 0) {
+      document.getElementById('emptyState').classList.remove('hidden');
+    }
+  }
+
+  function showDownloadModal() {
+    showToast("积分不足，请先充值", "error");
+  }
+
+  // Toast 组件加强版
+  function showToast(msg, type = "success") {
+    const toast = document.getElementById('toast');
+    const iconContainer = document.getElementById('toastIcon');
+
+    // 根据类型更换颜色
+    if (type === "error") {
+      iconContainer.className = "w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center";
+      iconContainer.innerHTML = '<i class="fa-solid fa-xmark text-[10px]"></i>';
+    } else if (type === "info") {
+      iconContainer.className = "w-5 h-5 bg-slate-500 rounded-full flex items-center justify-center";
+      iconContainer.innerHTML = '<i class="fa-solid fa-info text-[10px]"></i>';
+    } else {
+      iconContainer.className = "w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center";
+      iconContainer.innerHTML = '<i class="fa-solid fa-check text-[10px]"></i>';
+    }
+
+    document.getElementById('toastMsg').innerText = msg;
+    toast.classList.add('opacity-100', 'translate-y-0');
+    toast.classList.remove('-translate-y-24');
+    setTimeout(() => {
+      toast.classList.remove('opacity-100', 'translate-y-0');
+      toast.classList.add('-translate-y-24');
+    }, 2500);
+  }
+</script>
+
+</body>
+</html>

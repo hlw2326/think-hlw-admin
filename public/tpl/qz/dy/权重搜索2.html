@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>账号权重查询</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+            mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+          colors: {
+            slate: {
+              850: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          },
+          animation: {
+            'slide-down': 'slideDown 0.3s ease-out forwards',
+            'fade-in': 'fadeIn 0.3s ease-out forwards',
+          },
+          keyframes: {
+            slideDown: {
+              '0%': { transform: 'translateY(-10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 基础设置 */
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .safe-pb {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
+</head>
+<body class="text-slate-800 bg-white">
+
+<!-- 主滚动容器 -->
+<main class="w-full h-full flex flex-col overflow-y-auto no-scrollbar relative">
+
+  <!-- ==================== 顶部标题 ==================== -->
+  <div class="flex-shrink-0 pt-10 pb-6 px-5 bg-white z-20">
+    <h2 id="mainTitle" class="text-2xl font-black text-slate-900 tracking-tight">
+      AI 账号深度诊断
+    </h2>
+    <p class="text-xs text-slate-400 mt-1 font-medium">全维数据模型 · 实时权重分析</p>
+  </div>
+
+  <!-- 内容区域容器 -->
+  <div class="flex-1 flex flex-col relative w-full pb-20">
+
+    <!-- ========== 输入表单区域 (State 1) ========== -->
+    <div id="inputSection" class="w-full animate-fade-in">
+
+      <!-- 输入框区域：通栏 -->
+      <div class="relative w-full bg-slate-50 border-t border-b border-slate-100 group/input">
+                    <textarea id="urlInput"
+                              placeholder="在此粘贴主页链接或抖音号..."
+                              class="w-full h-32 p-5 bg-transparent text-base focus:outline-none resize-none text-slate-800 placeholder:text-slate-400 leading-relaxed rounded-none"></textarea>
+
+        <!-- 粘贴按钮 -->
+        <div class="absolute bottom-3 right-3">
+          <button onclick="pasteText()" class="flex items-center gap-1 bg-white hover:bg-slate-100 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-full border border-slate-200 transition-all active:scale-95">
+            <i class="fa-regular fa-clipboard"></i>
+            粘贴
+          </button>
+        </div>
+      </div>
+
+      <!-- 提示文案 -->
+      <div class="px-5 mt-4">
+        <p class="text-[10px] text-slate-400 leading-normal">
+          <i class="fa-solid fa-circle-info mr-1"></i>
+          支持分析账号活跃度、垂直度、违规记录及流量层级。
+        </p>
+      </div>
+
+      <!-- 按钮区域 -->
+      <div class="px-5 mt-6">
+        <button id="analyzeBtn" onclick="startAnalyze()" class="relative w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl overflow-hidden transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+          <div class="relative py-3.5 flex items-center justify-center gap-2 font-bold text-lg">
+            <i id="btnIcon" class="fa-solid fa-radar"></i>
+            <span id="btnText">开始全维分析</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- 底部数据栏 (美化版) -->
+      <div class="px-5 mt-8 pb-4">
+        <div class="grid grid-cols-3 gap-3">
+          <!-- 数据卡片 1 -->
+          <div class="flex flex-col items-center justify-center py-3 px-2 bg-slate-50 rounded-xl">
+            <i class="fa-solid fa-database text-blue-500 text-xs mb-1.5 opacity-80"></i>
+            <span class="text-[10px] text-slate-400 font-medium">已分析</span>
+            <span class="text-sm font-bold text-slate-700 font-mono mt-0.5">102k+</span>
+          </div>
+          <!-- 数据卡片 2 -->
+          <div class="flex flex-col items-center justify-center py-3 px-2 bg-slate-50 rounded-xl">
+            <i class="fa-solid fa-crosshairs text-emerald-500 text-xs mb-1.5 opacity-80"></i>
+            <span class="text-[10px] text-slate-400 font-medium">准确率</span>
+            <span class="text-sm font-bold text-slate-700 font-mono mt-0.5">99.8%</span>
+          </div>
+          <!-- 数据卡片 3 -->
+          <div class="flex flex-col items-center justify-center py-3 px-2 bg-slate-50 rounded-xl">
+            <i class="fa-solid fa-stopwatch text-amber-500 text-xs mb-1.5 opacity-80"></i>
+            <span class="text-[10px] text-slate-400 font-medium">平均耗时</span>
+            <span class="text-sm font-bold text-slate-700 font-mono mt-0.5">2.5s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 加载区域 (State 2 - 替代输入框位置) ========== -->
+    <div id="loadingView" class="hidden w-full px-5 pt-10 pb-8 animate-slide-down">
+
+      <div class="flex flex-col items-center justify-center">
+        <!-- 核心扫描动画 -->
+        <div class="relative w-24 h-24 mb-8 flex items-center justify-center">
+          <!-- 扩散波纹 -->
+          <div class="absolute inset-0 bg-blue-50 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+          <div class="absolute inset-0 bg-blue-100 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] delay-300"></div>
+
+          <!-- 旋转外环 -->
+          <div class="absolute inset-1 border-[3px] border-white rounded-full"></div>
+          <div class="absolute inset-1 border-[3px] border-transparent border-t-blue-600 rounded-full animate-spin"></div>
+
+          <!-- 中心图标 -->
+          <div class="relative z-10 w-12 h-12 bg-white border border-slate-100 rounded-full shadow-sm flex items-center justify-center">
+            <i class="fa-solid fa-bolt text-xl text-blue-600 animate-pulse"></i>
+          </div>
+        </div>
+
+        <!-- 进度与日志 -->
+        <div class="w-full space-y-5 text-center max-w-xs mx-auto">
+          <div class="flex justify-between items-end px-1">
+            <span id="loadingText" class="text-xs text-slate-500 font-medium">正在建立连接...</span>
+            <span id="percentageText" class="text-xs font-bold text-blue-600 font-mono">0%</span>
+          </div>
+
+          <!-- 进度条 -->
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div id="loadingBar" class="h-full bg-blue-600 rounded-full w-[5%] transition-all duration-300 relative overflow-hidden">
+              <div class="absolute inset-0 bg-white/30 animate-[shimmer_1s_infinite]"></div>
+            </div>
+          </div>
+
+          <!-- 动态数据 -->
+          <div class="flex justify-center gap-6 pt-4 border-t border-slate-50 border-dashed">
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="text-[10px] text-slate-400">实时节点: <span id="nodeCount" class="font-mono text-slate-600 font-bold">0</span></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-server text-[10px] text-slate-300"></i>
+              <span class="text-[10px] text-slate-400">延迟: <span class="font-mono text-green-600 font-bold">24ms</span></span>
+            </div>
+          </div>
+
+          <!-- 取消按钮 -->
+          <button onclick="resetDemo()" class="mt-8 text-slate-400 hover:text-red-500 text-xs py-2 px-6 rounded-full border border-slate-200 hover:border-red-200 hover:bg-red-50 transition-all">
+            取消分析
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 结果区域预留 (State 3) ========== -->
+    <div id="resultView" class="hidden w-full px-5 py-6 animate-slide-down">
+      <!-- 这里预留给您后续显示结果 -->
+      <div class="p-6 rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center text-slate-400 text-sm">
+        <i class="fa-regular fa-file-lines text-2xl mb-2 opacity-50"></i>
+        <p>诊断报告生成位置</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  let nodeTimer;
+  const btn = document.getElementById('analyzeBtn');
+  const btnText = document.getElementById('btnText');
+  const btnIcon = document.getElementById('btnIcon');
+
+  async function pasteText() {
+    try {
+      const text = await navigator.clipboard.readText();
+      document.getElementById('urlInput').value = text;
+    } catch (err) {
+      const input = document.getElementById('urlInput');
+      input.focus();
+      input.placeholder = "请长按此处粘贴内容...";
+    }
+  }
+
+  function startAnalyze() {
+    const input = document.getElementById('urlInput').value;
+    if (!input) {
+      btn.classList.add('animate-bounce');
+      setTimeout(() => btn.classList.remove('animate-bounce'), 500);
+      document.getElementById('urlInput').focus();
+      return;
+    }
+
+    // 获取DOM元素
+    const inputSection = document.getElementById('inputSection');
+    const loadingView = document.getElementById('loadingView');
+    const resultView = document.getElementById('resultView');
+
+    // 1. 切换视图状态：隐藏输入区，显示加载区
+    inputSection.classList.add('hidden');
+    resultView.classList.add('hidden');
+    loadingView.classList.remove('hidden');
+
+    // 2. 启动动画逻辑
+    const loadingText = document.getElementById('loadingText');
+    const loadingBar = document.getElementById('loadingBar');
+    const percentageText = document.getElementById('percentageText');
+    const nodeCount = document.getElementById('nodeCount');
+
+    // 重置进度
+    loadingBar.style.width = '5%';
+    percentageText.innerText = '5%';
+
+    setTimeout(() => {
+      loadingBar.style.width = '30%';
+      percentageText.innerText = '30%';
+    }, 100);
+
+    let nodes = 0;
+    nodeTimer = setInterval(() => {
+      nodes += Math.floor(Math.random() * 15);
+      nodeCount.innerText = nodes;
+    }, 100);
+
+    const steps = [
+      { time: 800, text: "正在解析主页结构...", progress: '45%' },
+      { time: 1800, text: "正在抓取近期作品数据...", progress: '60%' },
+      { time: 2800, text: "AI 神经网络计算中...", progress: '85%' },
+      { time: 3800, text: "正在生成诊断报告...", progress: '98%' },
+      { time: 4200, text: "完成", progress: '100%' }
+    ];
+
+    steps.forEach(step => {
+      setTimeout(() => {
+        loadingText.innerText = step.text;
+        loadingBar.style.width = step.progress;
+        percentageText.innerText = step.progress;
+
+        // 模拟完成后的操作
+        if(step.progress === '100%') {
+          // 这里可以触发显示结果的逻辑
+        }
+      }, step.time);
+    });
+
+    // 停止动画
+    setTimeout(() => {
+      clearInterval(nodeTimer);
+    }, 4500);
+  }
+
+  function resetDemo() {
+    clearInterval(nodeTimer);
+
+    const inputSection = document.getElementById('inputSection');
+    const loadingView = document.getElementById('loadingView');
+
+    // 1. 切换视图状态：隐藏加载区，显示输入区
+    loadingView.classList.add('hidden');
+    inputSection.classList.remove('hidden');
+
+    // 滚回顶部
+    document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

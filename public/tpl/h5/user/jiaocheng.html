@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>如何获取链接 - 使用教程</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    animation: {
+                        'enter-up': 'enterUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in': 'fadeIn 0.3s ease-in-out forwards',
+                    },
+                    keyframes: {
+                        enterUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px) scale(0.98)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(5px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    colors: {
+                        douyin: '#000000', // 抖音黑
+                        kuaishou: '#FF4D00', // 快手橙
+                        xhs: '#FF2442', // 小红书红
+                        weixin: '#07C160', // 微信绿
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: 100px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
+
+        /* 隐藏滚动条但保留滚动功能 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 步骤数字样式 */
+        .step-num {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+        }
+
+        /* 平台切换 Tab 激活状态 */
+        .platform-tab.active {
+            background-color: white;
+            color: #1e293b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-weight: 600;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden selection:bg-blue-100">
+
+<!-- 背景装饰 -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full bg-blue-400/10 blur-3xl"></div>
+    <div class="absolute bottom-[-10%] right-[-20%] w-[100vw] h-[100vw] rounded-full bg-indigo-500/10 blur-3xl"></div>
+</div>
+
+<!-- 1. Header -->
+<header class="w-full max-w-md sticky top-0 z-50 glass-panel border-b border-slate-200/50">
+    <div class="px-5 h-14 flex items-center justify-between">
+        <a href="#" onclick="history.back()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-600">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="font-bold text-slate-800 tracking-tight text-lg">如何获取链接</h1>
+        <div class="w-8"></div>
+    </div>
+</header>
+
+<main class="w-full max-w-md flex-1 flex flex-col gap-4 p-4">
+
+    <!-- 2. Intro Text -->
+    <div class="animate-enter-up text-center mb-2">
+        <p class="text-sm text-slate-500">选择对应的平台，查看如何复制ID或链接</p>
+    </div>
+
+    <!-- 3. Platform Tabs -->
+    <div class="animate-enter-up" style="animation-delay: 0.1s;">
+        <div class="flex p-1 bg-slate-200/50 rounded-xl overflow-x-auto hide-scrollbar gap-1">
+            <!-- 抖音 -->
+            <button onclick="switchTab('douyin')" id="tab-douyin" class="platform-tab active flex-1 min-w-[70px] py-2 rounded-lg text-xs text-slate-500 transition-all flex flex-col items-center gap-1 group">
+                    <span class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm shadow-sm group-[.active]:scale-110 transition-transform">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </span>
+                <span>抖音</span>
+            </button>
+            <!-- 快手 -->
+            <button onclick="switchTab('kuaishou')" id="tab-kuaishou" class="platform-tab flex-1 min-w-[70px] py-2 rounded-lg text-xs text-slate-500 transition-all flex flex-col items-center gap-1 group">
+                    <span class="w-8 h-8 rounded-full bg-[#FF4D00] text-white flex items-center justify-center text-sm shadow-sm group-[.active]:scale-110 transition-transform">
+                        <i class="fa-solid fa-play"></i>
+                    </span>
+                <span>快手</span>
+            </button>
+            <!-- 小红书 -->
+            <button onclick="switchTab('xhs')" id="tab-xhs" class="platform-tab flex-1 min-w-[70px] py-2 rounded-lg text-xs text-slate-500 transition-all flex flex-col items-center gap-1 group">
+                    <span class="w-8 h-8 rounded-full bg-[#FF2442] text-white flex items-center justify-center text-sm shadow-sm group-[.active]:scale-110 transition-transform">
+                        <i class="fa-solid fa-book"></i>
+                    </span>
+                <span>小红书</span>
+            </button>
+            <!-- 视频号 -->
+            <button onclick="switchTab('weixin')" id="tab-weixin" class="platform-tab flex-1 min-w-[70px] py-2 rounded-lg text-xs text-slate-500 transition-all flex flex-col items-center gap-1 group">
+                    <span class="w-8 h-8 rounded-full bg-[#07C160] text-white flex items-center justify-center text-sm shadow-sm group-[.active]:scale-110 transition-transform">
+                        <i class="fa-brands fa-weixin"></i>
+                    </span>
+                <span>视频号</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 4. Content Area -->
+    <div class="relative min-h-[400px]">
+
+        <!-- 抖音 Content -->
+        <div id="content-douyin" class="tutorial-content animate-fade-in absolute w-full top-0 left-0">
+            <div class="glass-panel rounded-2xl p-5 mb-4">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i class="fa-brands fa-tiktok text-black"></i> 抖音获取方法
+                </h3>
+
+                <!-- Step 1 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">1</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">进入个人主页</h4>
+                        <p class="text-xs text-slate-500">打开抖音App，点击右下角“我”进入个人中心。</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">方法一：直接复制抖音号 (推荐)</h4>
+                        <p class="text-xs text-slate-500 mb-2">点击头像下方的抖音号，系统会自动复制。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：点击抖音号复制" class="w-full rounded-lg border border-slate-200 mb-2 object-cover" alt="点击抖音号复制">
+                        <div class="bg-slate-100 rounded p-2 text-xs text-slate-400 font-mono border border-slate-200 border-dashed">
+                            抖音号：12345678 <i class="fa-regular fa-copy ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-black text-white font-bold flex items-center justify-center shrink-0 z-10 step-num">3</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">方法二：复制主页链接</h4>
+                        <p class="text-xs text-slate-500 mb-2">
+                            点击右上角 <i class="fa-solid fa-bars bg-slate-200 p-0.5 rounded text-[10px]"></i> 或分享图标，在弹出的菜单中找到并点击“复制链接”。
+                        </p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：点击复制链接" class="w-full rounded-lg border border-slate-200 object-cover" alt="复制链接">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tip -->
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-start gap-3">
+                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-sm"></i>
+                <p class="text-xs text-blue-600 leading-relaxed">
+                    复制成功后，返回本站首页粘贴到输入框即可。系统会自动提取链接中的有效信息。
+                </p>
+            </div>
+        </div>
+
+        <!-- 快手 Content -->
+        <div id="content-kuaishou" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+            <div class="glass-panel rounded-2xl p-5 mb-4">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-play text-[#FF4D00]"></i> 快手获取方法
+                </h3>
+
+                <!-- Step 1 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">1</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">进入个人主页</h4>
+                        <p class="text-xs text-slate-500">打开快手App，点击左上角“三”菜单点击头像，或直接在视频界面点击头像进入。</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">点击分享按钮</h4>
+                        <p class="text-xs text-slate-500 mb-2">点击右上角的分享图标（箭头形状）。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：点击右上角分享" class="w-full rounded-lg border border-slate-200 object-cover" alt="点击分享">
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-[#FF4D00] text-white font-bold flex items-center justify-center shrink-0 z-10 step-num">3</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">复制链接</h4>
+                        <p class="text-xs text-slate-500 mb-2">在底部弹出的面板中，向左滑动找到“复制链接”按钮并点击。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：点击复制链接" class="w-full rounded-lg border border-slate-200 object-cover" alt="点击复制链接">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 小红书 Content -->
+        <div id="content-xhs" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+            <div class="glass-panel rounded-2xl p-5 mb-4">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-book text-[#FF2442]"></i> 小红书获取方法
+                </h3>
+
+                <!-- Step 1 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">1</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">进入“我”的页面</h4>
+                        <p class="text-xs text-slate-500">打开小红书App，点击右下角“我”。</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">复制小红书号 (简单)</h4>
+                        <p class="text-xs text-slate-500 mb-2">点击名字下方的小红书号旁边的复制图标。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：点击复制小红书号" class="w-full rounded-lg border border-slate-200 mb-2 object-cover" alt="点击复制小红书号">
+                        <div class="bg-slate-100 rounded p-2 text-xs text-slate-400 font-mono border border-slate-200 border-dashed">
+                            小红书号：RED123456 <i class="fa-regular fa-copy ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-[#FF2442] text-white font-bold flex items-center justify-center shrink-0 z-10 step-num">3</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">或 复制主页链接</h4>
+                        <p class="text-xs text-slate-500 mb-2">点击右上角分享图标，选择“复制链接”。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：分享菜单复制链接" class="w-full rounded-lg border border-slate-200 object-cover" alt="分享菜单复制链接">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视频号 Content -->
+        <div id="content-weixin" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+            <div class="glass-panel rounded-2xl p-5 mb-4">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    <i class="fa-brands fa-weixin text-[#07C160]"></i> 视频号获取方法
+                </h3>
+
+                <div class="bg-orange-50 border border-orange-100 rounded-xl p-3 mb-4 flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-orange-500 mt-0.5 text-sm"></i>
+                    <p class="text-xs text-orange-600 leading-relaxed">
+                        视频号不支持直接通过链接查询，建议您使用<b>账号管理中的ID</b>进行查询。
+                    </p>
+                </div>
+
+                <!-- Step 1 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">1</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">进入视频号主页</h4>
+                        <p class="text-xs text-slate-500">微信 -> 发现 -> 视频号 -> 点击右上角人像图标 -> 点击我的视频号头像。</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 mb-6 relative">
+                    <div class="absolute left-[15px] top-8 bottom-[-16px] w-0.5 bg-slate-200"></div>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shrink-0 z-10 border border-slate-200 step-num">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">进入账号管理</h4>
+                        <p class="text-xs text-slate-500 mb-2">点击右上角的“...”图标，选择底部的“账号管理”。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：菜单-账号管理" class="w-full rounded-lg border border-slate-200 object-cover" alt="菜单账号管理">
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="w-8 h-8 rounded-full bg-[#07C160] text-white font-bold flex items-center justify-center shrink-0 z-10 step-num">3</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">复制视频号ID</h4>
+                        <p class="text-xs text-slate-500 mb-2">长按“账号ID”一栏进行复制。</p>
+                        <!-- 占位图 -->
+                        <img src="https://placehold.co/600x300/f1f5f9/94a3b8?text=示意图：长按ID复制" class="w-full rounded-lg border border-slate-200 mb-2 object-cover" alt="长按ID复制">
+                        <div class="bg-slate-100 rounded p-2 text-xs text-slate-400 font-mono border border-slate-200 border-dashed">
+                            sphXyz123...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-200 p-4 pb-safe z-50 flex justify-center">
+    <div class="w-full max-w-md">
+        <button onclick="alert('这里跳转回首页，并自动聚焦输入框')" class="w-full py-3.5 rounded-xl font-bold text-sm bg-slate-900 text-white shadow-lg shadow-slate-300 hover:bg-black transition-all active:scale-98 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i> 我已复制，去查询
+        </button>
+    </div>
+</div>
+
+<script>
+    function switchTab(platform) {
+        // 1. Reset all tabs
+        document.querySelectorAll('.platform-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // 2. Activate clicked tab
+        document.getElementById(`tab-${platform}`).classList.add('active');
+
+        // 3. Hide all content
+        document.querySelectorAll('.tutorial-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        // 4. Show selected content
+        const selectedContent = document.getElementById(`content-${platform}`);
+        selectedContent.classList.remove('hidden');
+
+        // Re-trigger animation
+        selectedContent.style.animation = 'none';
+        selectedContent.offsetHeight; /* trigger reflow */
+        selectedContent.style.animation = null;
+    }
+</script>
+</body>
+</html>

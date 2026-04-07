@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>抖音黄金发布时间预测</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff4ff',
+                            100: '#dbe6fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            900: '#312e81',
+                        },
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    },
+                    animation: {
+                        'grow-up': 'growUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        growUp: {
+                            '0%': { height: '0%' },
+                            '100%': { height: 'var(--target-height)' }
+                        },
+                        popIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            /* 极淡的点阵背景 */
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden pb-10">
+
+<main class="w-full max-w-md flex-1 px-5 flex flex-col gap-6 pt-10 relative z-0">
+
+    <!-- ==================== 1. 输入区域 ==================== -->
+    <div id="inputSection" class="w-full fade-in">
+
+        <div class="mb-8 mt-4">
+        </div>
+
+        <!-- 输入容器 -->
+        <div class="bg-white rounded-2xl border border-slate-200 mb-4 overflow-hidden group transition-all">
+
+            <!-- 输入框顶部标题栏 -->
+            <div class="flex items-center justify-between px-4 py-3 bg-slate-50/50 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[10px] shadow-sm">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-500 tracking-wide">黄金时间预测</span>
+                </div>
+                <!-- 教学按钮 (去除粗体，修复对齐) -->
+                <button onclick="alert('请进入抖音主页 → 点击右上角分享 → 选择“复制链接”')" class="text-[10px] font-medium text-indigo-500 flex items-center gap-1.5 hover:text-indigo-600 bg-indigo-50 px-2 py-1.5 rounded transition-colors active:scale-95 leading-none">
+                    <i class="fa-regular fa-circle-question relative top-[0.5px]"></i> <span>如何获取?</span>
+                </button>
+            </div>
+
+            <!-- 文本域 -->
+            <textarea id="urlInput" placeholder="在此粘贴抖音主页链接..." class="w-full h-24 p-4 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed font-mono"></textarea>
+
+            <!-- 底部工具栏 -->
+            <div class="px-3 pb-3 flex justify-between items-center">
+                <span class="text-[10px] text-slate-300 font-mono pl-1">支持短链接和用户ID</span>
+                <button onclick="pasteText()" class="text-xs font-medium text-slate-600 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                    <i class="fa-regular fa-paste mr-1"></i>粘贴
+                </button>
+            </div>
+
+            <!-- 新增：底部数据统计栏 -->
+            <div class="grid grid-cols-3 border-t border-slate-50 bg-slate-50/50 divide-x divide-slate-50">
+                <div class="py-2.5 flex flex-col items-center gap-0.5">
+                    <span class="text-[10px] text-slate-400 font-medium">已分析</span>
+                    <span class="text-xs font-semibold text-slate-600 font-mono">102,458</span>
+                </div>
+                <div class="py-2.5 flex flex-col items-center gap-0.5">
+                    <span class="text-[10px] text-slate-400 font-medium">准确率</span>
+                    <span class="text-xs font-semibold text-indigo-500 font-mono">99.8%</span>
+                </div>
+                <div class="py-2.5 flex flex-col items-center gap-0.5">
+                    <span class="text-[10px] text-slate-400 font-medium">耗时</span>
+                    <span class="text-xs font-semibold text-green-600 font-mono">~2.5s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 (淡色版 - 已调整高度字号字重) -->
+        <button onclick="startAnalyze()" class="w-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700 font-semibold text-base py-3 rounded-xl active:scale-[0.98] transition-all duration-200 border border-indigo-100">
+            开始分析
+        </button>
+    </div>
+
+    <!-- ==================== 2. 加载状态 ==================== -->
+    <div id="loadingSection" class="hidden w-full fade-in relative">
+
+        <!-- 加载卡片容器 -->
+        <div class="bg-white w-full rounded-2xl border border-slate-200 p-10 flex flex-col items-center relative overflow-hidden">
+
+            <!-- 背景呼吸光晕 (移入卡片内) -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-indigo-500/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+
+            <!-- 核心动画 -->
+            <div class="relative w-20 h-20 mb-8">
+                <div class="absolute inset-0 border-[3px] border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-[3px] border-indigo-600 rounded-full border-t-transparent border-l-transparent animate-spin"></div>
+                <div class="absolute inset-2 border-[3px] border-indigo-200 rounded-full border-b-transparent border-r-transparent animate-[spin_2s_linear_infinite_reverse]"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fa-solid fa-bolt text-indigo-500 text-xl animate-pulse"></i>
+                </div>
+            </div>
+
+            <!-- 标题字重减弱: font-black -> font-bold -->
+            <h3 class="text-lg font-bold text-slate-900 tracking-tight mb-3">AI 正在深度运算</h3>
+
+            <div class="h-5 overflow-hidden relative mb-6 w-full text-center">
+                <p id="loadingStep" class="text-xs font-mono text-slate-500 transition-all duration-300">
+                    正在建立安全连接...
+                </p>
+            </div>
+
+            <div class="w-40 h-1 bg-slate-100 rounded-full overflow-hidden mb-8">
+                <div id="loadingBar" class="h-full bg-indigo-600 w-0 transition-all duration-[800ms] ease-out"></div>
+            </div>
+
+            <!-- 底部参数栏样式优化: Grid 布局 + 仪表盘小卡片 -->
+            <div class="w-full grid grid-cols-3 gap-3 px-2">
+                <!-- Nodes -->
+                <div class="bg-slate-50 rounded-lg py-2.5 flex flex-col items-center justify-center border border-slate-100">
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 scale-95">Nodes</span>
+                    <span class="text-xs font-mono font-medium text-slate-600">2,408</span>
+                </div>
+
+                <!-- Model (高亮) -->
+                <div class="bg-indigo-50/60 rounded-lg py-2.5 flex flex-col items-center justify-center border border-indigo-100/60">
+                    <span class="text-[9px] text-indigo-400 uppercase tracking-wider mb-0.5 scale-95">Model</span>
+                    <span class="text-xs font-mono font-semibold text-indigo-600">GPT-4o</span>
+                </div>
+
+                <!-- Latency (带状态灯) -->
+                <div class="bg-slate-50 rounded-lg py-2.5 flex flex-col items-center justify-center border border-slate-100">
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 scale-95">Latency</span>
+                    <div class="flex items-center gap-1.5">
+                             <span class="relative flex h-1.5 w-1.5">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                             </span>
+                        <span class="text-xs font-mono font-medium text-slate-600">24ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 3. 结果区域 ==================== -->
+    <div id="resultSection" class="hidden w-full flex flex-col gap-5 fade-in pb-10">
+
+        <!-- 账号信息简报 (移除 shadow-sm) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-16 h-16 rounded-full bg-white border-[3px] border-white shadow-md overflow-hidden shrink-0 relative z-10">
+                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="avatar" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 min-w-0 pt-2">
+                        <div class="flex items-center gap-1.5">
+                            <h3 class="text-lg font-black text-slate-800 truncate">快乐小狗🐶</h3>
+                            <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i>
+                        </div>
+                        <div class="text-xs text-slate-400 font-mono mt-0.5">抖音号: 8848123</div>
+                    </div>
+                    <div class="self-start mt-2">
+                            <span class="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-md border border-green-100">
+                                <i class="fa-solid fa-circle-check text-[8px] mr-0.5"></i> 正常
+                            </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
+                    <div class="flex flex-col items-center">
+                        <span class="text-lg font-semibold text-slate-800">12.8w</span>
+                        <span class="text-[10px] text-slate-400 font-medium mt-0.5">粉丝总数</span>
+                    </div>
+                    <div class="flex flex-col items-center border-l border-slate-100">
+                        <span class="text-lg font-semibold text-slate-800">108w</span>
+                        <span class="text-[10px] text-slate-400 font-medium mt-0.5">获赞总量</span>
+                    </div>
+                    <div class="flex flex-col items-center border-l border-slate-100">
+                        <span class="text-lg font-semibold text-slate-800">342</span>
+                        <span class="text-[10px] text-slate-400 font-medium mt-0.5">公开作品</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心结果卡片 (改为浅色清爽风格) -->
+        <div class="bg-indigo-50 rounded-2xl p-6 text-center border border-indigo-100">
+            <div class="text-indigo-500 text-xs font-medium uppercase tracking-widest mb-2 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-stopwatch opacity-80"></i> 专属最佳发布时段
+            </div>
+            <div class="flex items-center justify-center gap-1 mb-2 text-indigo-900">
+                <span class="text-4xl font-semibold tracking-tight" id="bestTimeStart">18:00</span>
+                <span class="text-xl font-medium text-indigo-300">-</span>
+                <span class="text-4xl font-semibold tracking-tight" id="bestTimeEnd">19:30</span>
+            </div>
+            <div class="inline-block bg-white px-3 py-1 rounded-full text-xs font-medium text-indigo-600 shadow-sm border border-indigo-100">
+                <i class="fa-solid fa-arrow-trend-up mr-1 text-indigo-500"></i>预计流量提升 <span class="font-bold text-indigo-700">+45%</span>
+            </div>
+        </div>
+
+        <!-- 24小时流量趋势图 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-semibold text-sm text-slate-700 flex items-center">
+                    <i class="fa-solid fa-chart-column text-indigo-500 mr-2"></i>粉丝活跃热力图
+                </h3>
+                <div class="flex gap-2 text-[10px]">
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 bg-slate-200 rounded-sm"></span>闲时</div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 bg-indigo-600 rounded-sm"></span>活跃</div>
+                </div>
+            </div>
+
+            <div class="w-full h-32 flex items-end justify-between gap-[2px]" id="trafficChart">
+                <!-- JS 生成 -->
+            </div>
+            <div class="w-full flex justify-between text-[10px] text-slate-400 mt-2 font-mono">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>23:59</span>
+            </div>
+        </div>
+
+        <!-- 一周发布预测 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-sm text-slate-700 flex items-center">
+                    <i class="fa-regular fa-calendar-days text-indigo-500 mr-2"></i>未来7天发布日历
+                </h3>
+                <span class="bg-indigo-50 text-indigo-600 text-[10px] px-2 py-1 rounded font-semibold flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> AI 预测
+                    </span>
+            </div>
+
+            <div id="weeklyForecast" class="space-y-2">
+                <!-- JS 生成列表 -->
+            </div>
+        </div>
+
+        <!-- 次要建议 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-semibold text-sm text-slate-700 mb-4 flex items-center">
+                <i class="fa-regular fa-lightbulb text-indigo-500 mr-2"></i>运营建议
+            </h3>
+
+            <div class="flex flex-col gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 mt-0.5 rounded bg-amber-100 text-amber-600 flex items-center justify-center text-xs font-semibold shrink-0">
+                        2
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-700">次佳发布窗口</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">中午 12:00 - 13:30 (午休高峰)</p>
+                    </div>
+                </div>
+
+                <div class="w-full h-px bg-slate-100"></div>
+
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 mt-0.5 rounded bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-semibold shrink-0">
+                        !
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-700">避雷时段</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">凌晨 02:00 - 06:00 (流量冰点)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 重新查询按钮 (字体变细: font-semibold -> font-medium) -->
+        <button onclick="location.reload()" class="w-full bg-white text-slate-600 font-medium py-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors">
+            查询其他账号
+        </button>
+    </div>
+</main>
+
+<script>
+    // 粘贴功能
+    async function pasteText() {
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById('urlInput').value = text;
+        } catch (err) {
+            alert('请手动粘贴');
+        }
+    }
+
+    // 开始分析
+    function startAnalyze() {
+        const input = document.getElementById('urlInput').value.trim();
+        if (!input) {
+            // 简单的震动反馈动画
+            const box = document.querySelector('#inputSection .bg-white');
+            box.classList.add('animate-[pulse_0.2s_ease-in-out_2]');
+            setTimeout(() => box.classList.remove('animate-[pulse_0.2s_ease-in-out_2]'), 500);
+            return;
+        }
+
+        // 切换到加载页
+        document.getElementById('inputSection').classList.add('hidden');
+        document.getElementById('loadingSection').classList.remove('hidden');
+        // 移除原本的 flex 类，因为现在有了内部容器处理布局，外部只需 display:block (hidden移除即默认block)
+        // document.getElementById('loadingSection').classList.add('flex');
+
+        const stepText = document.getElementById('loadingStep');
+        const loadingBar = document.getElementById('loadingBar');
+
+        // 初始化
+        stepText.innerText = "正在建立安全连接...";
+        loadingBar.style.width = '5%';
+
+        // 模拟进度步骤
+        setTimeout(() => {
+            stepText.innerText = "抓取近 30 天作品数据...";
+            loadingBar.style.width = '35%';
+        }, 800);
+
+        setTimeout(() => {
+            stepText.innerText = "构建时空活跃模型...";
+            loadingBar.style.width = '70%';
+        }, 1800);
+
+        setTimeout(() => {
+            stepText.innerText = "生成最终预测报告...";
+            loadingBar.style.width = '100%';
+        }, 2800);
+
+        // 模拟完成延迟
+        setTimeout(() => {
+            document.getElementById('loadingSection').classList.add('hidden');
+            // document.getElementById('loadingSection').classList.remove('flex'); // 不需要移除 flex 了
+            document.getElementById('resultSection').classList.remove('hidden');
+
+            // 渲染结果
+            renderResult();
+        }, 3500);
+    }
+
+    // 渲染结果
+    function renderResult() {
+        // 1. 随机生成两个时间
+        const startHour = Math.floor(Math.random() * (21 - 17) + 17); // 17-21点之间
+        const endHour = startHour + 1;
+        document.getElementById('bestTimeStart').innerText = `${startHour}:00`;
+        document.getElementById('bestTimeEnd').innerText = `${endHour}:30`;
+
+        // 2. 生成图表柱状图 (24小时)
+        const chartContainer = document.getElementById('trafficChart');
+        chartContainer.innerHTML = '';
+
+        for (let i = 0; i < 24; i++) {
+            let heightPercentage = 10;
+            if (i >= 11 && i <= 13) heightPercentage = Math.random() * (60 - 40) + 40;
+            else if (i >= 18 && i <= 22) heightPercentage = Math.random() * (100 - 70) + 70;
+            else if (i >= 1 && i <= 6) heightPercentage = Math.random() * (15 - 5) + 5;
+            else heightPercentage = Math.random() * (40 - 20) + 20;
+
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'w-full h-full flex items-end relative'; // 移除 group
+
+            const bar = document.createElement('div');
+            let colorClass = 'bg-slate-100';
+            if (heightPercentage > 65) colorClass = 'bg-brand-500 shadow-[0_0_15px_-3px_rgba(99,102,241,0.4)]';
+            else if (heightPercentage > 30) colorClass = 'bg-slate-300';
+
+            bar.className = `w-full rounded-t-[3px] ${colorClass} opacity-0 animate-grow-up`;
+            bar.style.setProperty('--target-height', `${heightPercentage}%`);
+            bar.style.animationDelay = `${i * 30}ms`;
+
+            barWrapper.appendChild(bar);
+            chartContainer.appendChild(barWrapper);
+        }
+
+        // 3. 生成一周预测 (含模糊解锁逻辑)
+        const weeklyContainer = document.getElementById('weeklyForecast');
+        weeklyContainer.innerHTML = '';
+        const weekDays = ['明天', '后天', '周三', '周四', '周五', '周六', '周日'];
+
+        // 创建锁定区域容器
+        const lockedContainer = document.createElement('div');
+        lockedContainer.className = 'relative mt-2 rounded-xl overflow-hidden';
+
+        // 创建模糊层容器
+        const blurredContent = document.createElement('div');
+        blurredContent.className = 'space-y-2 opacity-50 blur-[5px] select-none pointer-events-none grayscale-[0.5]';
+
+        // 创建解锁遮罩层
+        const unlockOverlay = document.createElement('div');
+        unlockOverlay.className = 'absolute inset-0 z-10 flex flex-col items-center justify-center bg-gradient-to-b from-transparent to-white/60';
+
+        // 修改点：border-2 -> border (变细), 按钮 py-3 -> py-2 (变矮)
+        unlockOverlay.innerHTML = `
+                <div class="bg-white/90 backdrop-blur-md border border-dashed border-indigo-200 shadow-xl shadow-indigo-100/50 rounded-2xl p-5 flex flex-col items-center gap-3 w-[85%] max-w-[220px] animate-pop-in">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-sm mb-1">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="text-sm font-bold text-slate-800">解锁完整预测</h4>
+                        <p class="text-[10px] text-slate-500 mt-1 leading-relaxed">获取未来7天流量趋势</p>
+                    </div>
+
+                    <!-- 看视频解锁按钮：高度减小 (py-2)，圆角统一 (rounded-lg) -->
+                    <button class="w-full bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-bold py-2 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2 group border border-slate-200">
+                        <i class="fa-solid fa-play text-[10px] group-hover:scale-110 transition-transform text-slate-400"></i>
+                        <span>看视频解锁</span>
+                    </button>
+
+                    <!-- VIP 按钮 (保持不变，现在高度一致了) -->
+                    <div class="w-full mt-0.5">
+                        <div class="w-full py-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-lg flex items-center justify-center gap-1.5 cursor-pointer hover:from-amber-100 hover:to-orange-100 transition-all shadow-sm group">
+                            <i class="fa-solid fa-crown text-amber-500 text-[10px] group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[10px] font-bold text-amber-700">VIP会员免费解锁</span>
+                            <i class="fa-solid fa-angle-right text-[8px] text-amber-400 ml-0.5"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        weekDays.forEach((day, index) => {
+            let bestTime = "18:00";
+            let heat = 80;
+            let width = "w-[80%]";
+            let color = "bg-indigo-500";
+
+            if (index === 4 || index === 5) {
+                bestTime = "21:00";
+                heat = 95;
+                width = "w-[95%]";
+                color = "bg-indigo-600";
+            } else if (index === 6) {
+                bestTime = "20:00";
+                heat = 85;
+                width = "w-[85%]";
+                color = "bg-indigo-500";
+            } else {
+                const hour = 17 + Math.floor(Math.random() * 3);
+                bestTime = `${hour}:00`;
+                heat = 70 + Math.floor(Math.random() * 20);
+                width = `w-[${heat}%]`;
+                if(heat < 75) color = "bg-indigo-400";
+            }
+
+            const row = document.createElement('div');
+            // 默认样式
+            row.className = "flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100";
+            row.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs font-medium text-slate-400 w-8">${day}</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-semibold text-slate-800">${bestTime}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                             <div class="h-full ${color} ${width}" style="width: ${heat}%"></div>
+                        </div>
+                    </div>
+                `;
+
+            if (index === 0) {
+                // 第一天（显示）
+                row.classList.remove('bg-slate-50', 'border-slate-100');
+                row.classList.add('bg-indigo-50', 'border-indigo-100', 'shadow-sm'); // 高亮
+                // 图标改为解锁状态
+                row.innerHTML = row.innerHTML.replace('text-slate-400', 'text-indigo-500 font-bold');
+                weeklyContainer.appendChild(row);
+            } else {
+                // 其他天（放入模糊容器）
+                blurredContent.appendChild(row);
+            }
+        });
+
+        // 组装锁定区域
+        lockedContainer.appendChild(blurredContent);
+        lockedContainer.appendChild(unlockOverlay);
+
+        // 添加到主容器
+        weeklyContainer.appendChild(lockedContainer);
+    }
+</script>
+</body>
+</html>

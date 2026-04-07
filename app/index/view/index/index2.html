@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="专业抖音快手权重查询工具，实时检测账号权重状态，提供优化建议，助力账号快速成长">
+    <meta name="keywords" content="抖音权重,快手权重,账号权重查询,抖音检测,快手检测,权重提升">
+    <title>权重宝 - 专业抖音快手权重查询平台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a0a0a;
+            --primary-light: #1a1a1a;
+            --accent: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --text: #0a0a0a;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg: #ffffff;
+            --bg-alt: #f9fafb;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        section[id] {
+            scroll-margin-top: 96px;
+        }
+
+        /* Hero Background */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            overflow: hidden;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            filter: blur(80px);
+        }
+
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 60%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+            filter: blur(80px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 20px 0;
+        }
+
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--primary);
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 140px 0 100px;
+            position: relative;
+        }
+
+        .hero-wrapper {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-content {
+            text-align: left;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            margin-bottom: 32px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .hero-badge span {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            color: var(--primary);
+        }
+
+        .hero h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        .search-tab {
+            padding: 10px 24px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 14px;
+            background: white;
+            color: var(--text-secondary);
+        }
+
+        .search-tab:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .search-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            background: var(--bg-alt);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Hero Features Tags */
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: flex-start;
+        }
+
+        .hero-feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .hero-feature-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: white;
+        }
+
+        /* Hero Right Card */
+        .hero-right {
+            position: relative;
+        }
+
+        .hero-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-card-title .dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .hero-metric {
+            padding: 20px;
+            background: var(--bg-alt);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .hero-metric:hover {
+            border-color: var(--accent);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .hero-metric-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .hero-metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .hero-metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Floating Decorations */
+        .hero-float {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hero-float-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+
+        .hero-float-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            left: -50px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            filter: blur(30px);
+        }
+
+        .hero-float-icon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--shadow-lg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-float-icon-1 {
+            top: 20px;
+            right: -30px;
+            animation-delay: 0s;
+        }
+
+        .hero-float-icon-2 {
+            bottom: 40px;
+            left: -20px;
+            animation-delay: 2s;
+        }
+
+        .hero-float-icon-3 {
+            top: 50%;
+            right: -50px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        /* Stats */
+        .stats {
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+            background: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 120px 0;
+            background: var(--bg-alt);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Process Section */
+        .process {
+            padding: 120px 0;
+            background: white;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+        }
+
+        .process-card {
+            text-align: center;
+        }
+
+        .process-number {
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 24px;
+        }
+
+        .process-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .process-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 120px 0;
+            background: var(--bg-alt);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .pricing-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 32px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+        }
+
+        .pricing-card.featured::before {
+            content: '推荐';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 12px;
+            background: var(--accent-gradient);
+            color: white;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .pricing-price span {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            width: 20px;
+            height: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .pricing-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .pricing-card.featured .pricing-btn {
+            background: var(--accent-gradient);
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 120px 0;
+            background: white;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .faq-card {
+            background: var(--bg-alt);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .faq-card:hover {
+            border-color: var(--border);
+            background: white;
+        }
+
+        .faq-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .faq-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 80px 0 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-brand .logo-text {
+            color: white;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            max-width: 280px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .footer-social a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .footer-section h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .footer-section a:hover {
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 32px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 44px;
+            }
+            .hero-wrapper {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .hero-content {
+                text-align: center;
+            }
+            .hero-features {
+                justify-content: center;
+            }
+            .hero-right {
+                order: -1;
+            }
+            .features-grid,
+            .pricing-grid,
+            .process-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-float-icon {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .search-box {
+                padding: 24px;
+            }
+            .hero-metrics {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .hero-metric {
+                padding: 16px 12px;
+            }
+            .hero-metric-value {
+                font-size: 20px;
+            }
+            .hero-card {
+                padding: 24px;
+            }
+            .hero-float {
+                display: none;
+            }
+            .features-grid,
+            .pricing-grid,
+            .process-grid,
+            .faq-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav {
+                display: none;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .section-title {
+                font-size: 32px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="hero-bg"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                </div>
+                <span class="logo-text">权重宝</span>
+            </a>
+            <nav class="nav">
+                <a href="#features">功能特点</a>
+                <a href="#process">查询流程</a>
+                <a href="#pricing">价格套餐</a>
+                <a href="#faq">常见问题</a>
+                <button class="nav-btn">立即体验</button>
+            </nav>
+        </div>
+    </header>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-float hero-float-1"></div>
+        <div class="hero-float hero-float-2"></div>
+        <div class="container">
+            <div class="hero-wrapper">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span></span>
+                        系统实时在线 · 秒级响应
+                    </div>
+                    <h1>专业抖音快手<br><span>权重查询平台</span></h1>
+                    <p>实时检测账号权重状态，精准诊断问题根源，提供个性化优化建议，助力账号快速成长</p>
+
+                    <div class="search-box">
+                        <div class="search-tabs">
+                            <div class="search-tab active" onclick="switchTab(this)">抖音</div>
+                            <div class="search-tab" onclick="switchTab(this)">快手</div>
+                        </div>
+                        <input type="text" class="search-input" placeholder="请输入抖音账号链接或ID">
+                        <button class="search-btn">立即查询</button>
+                    </div>
+
+                    <div class="hero-features">
+                        <div class="hero-feature-tag">📊 实时数据分析</div>
+                        <div class="hero-feature-tag">🔍 深度账号诊断</div>
+                        <div class="hero-feature-tag">💡 智能优化建议</div>
+                        <div class="hero-feature-tag">📈 历史趋势追踪</div>
+                        <div class="hero-feature-tag">🔔 异常监控预警</div>
+                    </div>
+                </div>
+
+                <div class="hero-right">
+                    <div class="hero-float-icon hero-float-icon-1">⚡</div>
+                    <div class="hero-float-icon hero-float-icon-2">📊</div>
+                    <div class="hero-float-icon hero-float-icon-3">🎯</div>
+
+                    <div class="hero-card">
+                        <div class="hero-card-title">
+                            <span class="dot"></span>
+                            实时数据监控
+                        </div>
+                        <div class="hero-metrics">
+                            <div class="hero-metric">
+                                <div class="hero-metric-icon">⚡</div>
+                                <div class="hero-metric-value">1.8s</div>
+                                <div class="hero-metric-label">平均响应时间</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="hero-metric-icon">📊</div>
+                                <div class="hero-metric-value">99.9%</div>
+                                <div class="hero-metric-label">检测准确率</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="hero-metric-icon">👥</div>
+                                <div class="hero-metric-value">50万+</div>
+                                <div class="hero-metric-label">服务用户数</div>
+                            </div>
+                            <div class="hero-metric">
+                                <div class="hero-metric-icon">🔥</div>
+                                <div class="hero-metric-value">100万+</div>
+                                <div class="hero-metric-label">累计查询次数</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">100万+</div>
+                    <div class="stat-label">累计查询次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50万+</div>
+                    <div class="stat-label">服务用户数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">查询准确率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">全天候服务</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Core Features</span>
+                <h2 class="section-title">核心功能特点</h2>
+                <p class="section-desc">全方位分析账号状态，基于大数据与AI技术，提供专业优化建议</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>权重实时检测</h3>
+                    <p>秒级响应，实时获取账号最新权重数据，精准判断账号当前健康状态</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>深度账号诊断</h3>
+                    <p>全面分析账号各项指标，包括内容质量、互动率、完播率等</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>智能优化建议</h3>
+                    <p>基于AI算法分析百万级账号数据，提供个性化、可执行的权重提升方案</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>历史趋势分析</h3>
+                    <p>自动记录账号权重变化轨迹，生成可视化图表，直观展示账号成长历程</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>多账号批量管理</h3>
+                    <p>支持一次查询多个账号，轻松管理矩阵账号，大幅提升运营效率</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>异常智能监控</h3>
+                    <p>24小时实时监控账号状态，发现异常立即预警，帮助及时规避风险</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="process">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">查询流程</h2>
+                <p class="section-desc">简单三步，轻松获取专业账号权重分析报告</p>
+            </div>
+            <div class="process-grid">
+                <div class="process-card">
+                    <div class="process-number">01</div>
+                    <h3>输入账号信息</h3>
+                    <p>输入抖音或快手账号链接、ID或分享链接，系统自动识别并解析账号信息</p>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">02</div>
+                    <h3>系统智能分析</h3>
+                    <p>系统自动采集账号各项数据指标，通过AI算法进行综合分析与评估</p>
+                </div>
+                <div class="process-card">
+                    <div class="process-number">03</div>
+                    <h3>获取详细报告</h3>
+                    <p>查看完整的权重分析报告、问题诊断和个性化的优化建议方案</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Pricing Plans</span>
+                <h2 class="section-title">价格套餐</h2>
+                <p class="section-desc">选择最适合您的套餐，开启账号快速增长之旅</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>基础版</h3>
+                    <div class="pricing-price">¥9.9<span>/次</span></div>
+                    <ul class="pricing-features">
+                        <li>单次账号权重查询</li>
+                        <li>基础权重数据报告</li>
+                        <li>问题诊断分析</li>
+                        <li>数据保留7天</li>
+                        <li>邮件客服支持</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">立即购买</a>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>专业版</h3>
+                    <div class="pricing-price">¥99<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li>无限次权重查询</li>
+                        <li>详细数据报告</li>
+                        <li>智能优化建议</li>
+                        <li>历史趋势分析</li>
+                        <li>异常监控预警</li>
+                        <li>数据保留30天</li>
+                        <li>优先客服支持</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">立即购买</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>企业版</h3>
+                    <div class="pricing-price">¥999<span>/年</span></div>
+                    <ul class="pricing-features">
+                        <li>多账号批量查询</li>
+                        <li>专属数据报告定制</li>
+                        <li>1对1专家咨询服务</li>
+                        <li>定制化解决方案</li>
+                        <li>API接口支持</li>
+                        <li>永久数据保留</li>
+                        <li>专属客户经理</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">联系咨询</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">FAQ</span>
+                <h2 class="section-title">常见问题</h2>
+                <p class="section-desc">解答您关于权重查询的常见疑问</p>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <h3>什么是账号权重？</h3>
+                    <p>账号权重是短视频平台对账号综合表现的评估分数，直接影响内容推荐量和曝光度。权重高的账号更容易获得流量池推荐。</p>
+                </div>
+                <div class="faq-card">
+                    <h3>查询结果准确吗？</h3>
+                    <p>我们的系统基于官方数据接口和大数据分析技术，准确率高达99.9%，已被众多专业MCN机构和运营团队信赖并使用。</p>
+                </div>
+                <div class="faq-card">
+                    <h3>如何提升账号权重？</h3>
+                    <p>保持内容原创、提高视频完播率、增加用户互动率、保持稳定更新频率等都是有效方法。我们会根据您的账号情况提供具体建议。</p>
+                </div>
+                <div class="faq-card">
+                    <h3>查询需要多长时间？</h3>
+                    <p>大部分查询可以在2-5秒内完成，复杂的深度分析最多不超过1分钟。我们会尽力为您提供最快、最准确的查询服务。</p>
+                </div>
+                <div class="faq-card">
+                    <h3>支持哪些平台？</h3>
+                    <p>目前支持抖音和快手两大主流短视频平台，后续会陆续增加视频号、小红书等更多平台支持，敬请期待。</p>
+                </div>
+                <div class="faq-card">
+                    <h3>有售后保障吗？</h3>
+                    <p>我们提供7×24小时在线客服支持，购买后如有任何问题可随时联系我们。不满意支持7天无理由退款。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">权重宝</span>
+                    </a>
+                    <p>专业短视频账号权重查询平台，基于大数据与AI技术，为创作者和运营者提供专业的账号诊断与优化建议。</p>
+                    <div class="footer-social">
+                        <a href="#" title="微信">💬</a>
+                        <a href="#" title="微博">📱</a>
+                        <a href="#" title="QQ">🐧</a>
+                        <a href="#" title="邮箱">📧</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司介绍</a></li>
+                        <li><a href="#">团队成员</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">联系方式</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>产品服务</h4>
+                    <ul>
+                        <li><a href="#">抖音权重查询</a></li>
+                        <li><a href="#">快手权重查询</a></li>
+                        <li><a href="#">批量查询</a></li>
+                        <li><a href="#">API接口</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>帮助中心</h4>
+                    <ul>
+                        <li><a href="#">使用教程</a></li>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">售后政策</a></li>
+                        <li><a href="#">隐私协议</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 权重宝 All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Switching
+        function switchTab(element) {
+            document.querySelectorAll('.search-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            const input = document.querySelector('.search-input');
+            const platform = element.textContent.trim();
+            input.placeholder = `请输入${platform}账号链接或ID`;
+        }
+
+        // Header Scroll Effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-item, .pricing-card, .faq-card, .process-card').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

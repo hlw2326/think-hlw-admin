@@ -1,0 +1,382 @@
+---
+description: ThinkAdmin v6 视图模板规范：继承路径、ThinkTemplate 陷阱、layTable、data-* 属性、index/index_search/form 标准结构
+alwaysApply: true
+---
+
+# ThinkAdmin v6 视图模板规范
+
+## 一、继承路径（最容易出错）
+
+### 模块（app/mini/ 等）
+
+| 页面类型 | 正确写法 |
+|----------|----------|
+| 列表页 | `{extend name="../../admin/view/table"}` |
+| 弹窗表单（data-modal） | `{extend name="../../admin/view/form"}` |
+| 整页表单（data-open） | `{extend name="../../admin/view/main"}` |
+
+**禁止** `{extend name='table'}` / `{extend name='form'}`（模块找不到模板）。
+
+### 插件（package/think-plugin-*/src/view/）
+
+| 页面类型 | 正确写法 |
+|----------|----------|
+| 列表页 | `{extend name="table"}` |
+| 整页表单（data-open） | `{extend name="main"}` |
+| 弹窗表单（data-modal） | 不继承，写完整独立 HTML |
+| 详情页 | 不继承，写完整独立 HTML |
+
+**include 路径**同样相对于 `src/view/` 根目录，如 `{include file='tag/index_search'}`。
+
+---
+
+## 二、ThinkTemplate 语法陷阱
+
+### 陷阱1：`{if}` 条件中禁用 `|default=`
+
+```html
+<!-- ❌ 编译为非法 PHP，500 错误 -->
+<option {if $get.status|default='' eq '1'}selected{/if}>
+
+<!-- ✅ 正确 -->
+<option {if isset($get.status) && $get.status == '1'}selected{/if}>
+```
+
+### 陷阱2：JS templet 中嵌套 `{:lang()}` 引号冲突
+
+```js
+// ❌ 错误：双引号嵌套导致 PHP 解析报错
+{field: 'max', templet: '<div>{{d.max > 0 ? d.max : "{:lang("无限制")}"}}</div>'}
+
+// ✅ 正确：提取为 JS 变量
+```
+
+### 陷阱3：表单 action 混淆
+
+```html
+<!-- 搜索表单（GET，保留 URL 参数） -->
+<form action="{:sysuri()}" method="get" onsubmit="return false">
+
+<!-- 提交表单（POST） -->
+<form action="{:sysuri()}" method="post">
+```
+
+### 陷阱4：模板中不能用 `|default=` 调用带命名空间的类
+
+```html
+<!-- ❌ 错误：模板引擎会吃掉反斜杠 -->
+<input value='{$vo.batch_no|default=\think\admin\extend\CodeExtend::uniqidDate(16,"V")}'>
+```
+
+**正确做法**：在控制器 `_form_filter` 的 GET 分支中赋默认值，模板只用 `|default=""`。
+
+### 陷阱5：新建时 id 隐藏字段
+
+```html
+<!-- ❌ 新建时也提交空 id -->
+<input type="hidden" name="id" value="{$vo.id|default=''}">
+
+<!-- ✅ 只在编辑时输出 -->
+{notempty name='vo.id'}<input type="hidden" value="{$vo.id}" name="id" />{/notempty}
+```
+
+---
+
+## 三、layTable templet 规范
+
+**禁止在 cols 里写内联 templet 字符串**，必须抽取为 `<script type="text/html">` 模板块：
+
+```html
+<!-- ✅ 正确：抽取为 script 模板块 -->
+{field: 'expire_time', templet: '#ExpireTimeTpl'}
+
+<!-- ❌ 禁止：内联写法，引号混乱 -->
+{field: 'expire_time', templet: '<div>{{d.expire_time > 0 ? ... : langNeverExpire}}</div>'}
+```
+
+**laytpl 语法：**
+- `{{d.xxx}}` — HTML 转义输出
+- `{{- d.xxx}}` — **原始 HTML 输出**（带 `<span>` 等标签时必须用 `{{- }}`）
+- `{{# if(){ }} ... {{# } }}` — JS 执行语法（条件/循环）
+- JS 变量必须在外层 `<script>` 中 `var` 声明，模板块内才能访问
+
+```html
+<!-- ❌ 标签被转义，显示为纯文本 -->
+<b class="color-green">{{langNeverExpire}}</b>
+
+<!-- ✅ 用 {{- }} 拼接 HTML 字符串 -->
+{{- '<b class="color-green">' + langNeverExpire + '</b>'}}
+```
+
+---
+
+## 四、data-* 属性速查
+
+### 弹窗 / 跳转
+
+| 属性 | 说明 | 示例 |
+|------|------|------|
+| `data-modal="url"` | 弹出 iframe 模态框 | `data-modal='{:url("edit")}?id={{d.id}}'` |
+| `data-open="url"` | 在当前页面内打开全屏子页面 | `data-open='{:url("add")}'` |
+| `data-close` | 关闭当前弹窗 | `<button data-close>取消</button>` |
+
+### 数据操作
+
+| 属性 | 说明 | 示例 |
+|------|------|------|
+| `data-action="url"` | 发送 POST 请求 | `data-action='{:url("remove")}'` |
+| `data-value="k#v;k#v"` | 提交给 data-action 的参数 | `data-value="id#{{d.id}}"` |
+| `data-rule="k#{v}"` | 批量操作从表格勾选行取值 | `data-rule="id#{id}"` |
+| `data-confirm="提示"` | 操作前弹确认框 | `data-confirm="确定删除吗？"` |
+| `data-table-id="tableId"` | 操作成功后刷新指定表格 | `data-table-id="XxxTable"` |
+
+### 表单
+
+| 属性 | 说明 | 示例 |
+|------|------|------|
+| `data-auto="true"` | form 表单自动 AJAX 提交 | `<form data-auto="true">` |
+
+### 输入框增强
+
+| 属性 | 说明 | 示例 |
+|------|------|------|
+| `data-date-range` | 日期范围选择器（`range: true`） | `<input data-date-range name="create_at">` |
+| `data-date-input` | 单个日期选择（`range: false`） | `<input data-date-input name="expire_time">` |
+| `data-copy="内容"` | 点击复制到剪贴板 | `<i data-copy="{{d.card_code}}"></i>` |
+| `data-action-blur="url"` | input 失焦时自动提交 | `data-action-blur="{:sysuri()}" data-value="id#{{d.id}};sort#{value}"` |
+
+### 表格
+
+| 属性 | 说明 | 示例 |
+|------|------|------|
+| `data-url="url"` | layTable 数据接口地址 | `data-url="{:sysuri('index')}"` |
+| `data-target-search="选择器"` | 关联搜索表单自动刷新表格 | `data-target-search="form.form-search"` |
+
+> ⚠️ `data-date-pick` 不是全局支持的属性，不会触发日期选择器。
+
+---
+
+## 五、index.html 标准结构
+
+**模块写法（extends admin 路径）：**
+
+```html
+{extend name="../../admin/view/table"}
+
+{block name="button"}
+<!--{if auth("add")}-->
+<button data-modal='{:url("add")}' data-title="{:lang('添加')}" class='layui-btn layui-btn-sm layui-btn-primary'>{:lang('添加')}</button>
+<!--{/if}-->
+<!--{if auth("remove")}-->
+<a data-confirm="{:lang('确定要删除吗？')}" data-table-id="XxxTable" data-action='{:url("remove")}' data-rule="id#{id}" class='layui-btn layui-btn-sm layui-btn-danger'>{:lang('批量删除')}</a>
+<!--{/if}-->
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    {include file='xxx/index_search'}
+    <table id="XxxTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
+</div>
+
+<!-- 枚举数据用 textarea 注入 JS（禁止在 script 块内嵌 PHP） -->
+<!--{if isset($platforms)}-->
+<label class="layui-hide"><textarea id="PlatformsData">{:json_encode($platforms, JSON_UNESCAPED_UNICODE)}</textarea></label>
+<!--{/if}-->
+
+<script type="text/html" id="StatusSwitchTpl">
+    <!--{if auth("state")}-->
+    <input type="checkbox" value="{{d.id}}" lay-skin="switch" lay-text="{:lang('已启用')}|{:lang('已禁用')}" lay-filter="StatusSwitch" {{-d.status>0?'checked':''}}>
+    <!--{else}-->
+    {{-d.status ? '<b class="color-green">{:lang("已启用")}</b>' : '<b class="color-red">{:lang("已禁用")}</b>'}}
+    <!--{/if}-->
+</script>
+
+<script type="text/html" id="toolbar">
+    <!--{if auth("edit")}-->
+    <a class="layui-btn layui-btn-sm" data-modal='{:url("edit")}?id={{d.id}}'>{:lang('编 辑')}</a>
+    <!--{/if}-->
+    <!--{if auth("remove")}-->
+    <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="{:lang('确定删除？')}" data-action="{:url('remove')}" data-value="id#{{d.id}}">{:lang('删 除')}</a>
+    <!--{/if}-->
+</script>
+
+<script>
+    $(function () {
+        $('#XxxTable').layTable({
+            even: true, height: 'full',
+            sort: {field: 'id', type: 'desc'},
+            cols: [[
+                {checkbox: true, fixed: true},
+                {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
+                {field: 'name', title: '{:lang("名称")}', minWidth: 120},
+                {field: 'status', title: '{:lang("状态")}', width: 120, align: 'center', templet: '#StatusSwitchTpl'},
+                {field: 'create_at', title: '{:lang("创建时间")}', width: 160, align: 'center', sort: true},
+                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 300, align: 'left', fixed: 'right'}
+            ]]
+        });
+        layui.form.on('switch(StatusSwitch)', function (obj) {
+            var data = {id: obj.value, status: obj.elem.checked > 0 ? 1 : 0};
+            $.form.load("{:url('state')}", data, 'post', function (ret) {
+                if (ret.code < 1) $.msg.error(ret.info, 3, function () {
+                    $('#XxxTable').trigger('reload');
+                }); else $('#XxxTable').trigger('reload');
+                return false;
+            }, false);
+        });
+    });
+</script>
+{/block}
+```
+
+**插件写法（extends "table"，相对于插件 view 根目录）：**
+
+```html
+{extend name="table"}
+
+{block name="button"}
+<!--{if auth("add")}-->
+<button data-modal='{:url("add")}' data-title="{:lang('添加Cookie')}" class='layui-btn layui-btn-sm layui-btn-primary'>{:lang('添加Cookie')}</button>
+<!--{/if}-->
+<!--{if auth("remove")}-->
+<a data-confirm="{:lang('确定要删除吗？')}" data-table-id="CookieTable" data-action='{:url("remove")}' data-rule="id#{id}" class='layui-btn layui-btn-sm layui-btn-danger'>{:lang('批量删除')}</a>
+<!--{/if}-->
+{/block}
+
+{block name="content"}
+<div class="think-box-shadow">
+    {include file='cookie/index_search'}
+    <table id="CookieTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
+</div>
+
+<!-- 枚举数据用 textarea 注入 JS -->
+<label class="layui-hide">
+    <textarea id="PlatformsData">{:json_encode($platforms, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
+
+<script type="text/html" id="StatusSwitchTpl">
+    <!--{if auth("state")}-->
+    <input type="checkbox" value="{{d.id}}" lay-skin="switch" lay-text="{:lang('已启用')}|{:lang('已禁用')}" lay-filter="StatusSwitch" {{-d.status>0?'checked':''}}>
+    <!--{else}-->
+    {{-d.status ? '<b class="color-green">{:lang("已启用")}</b>' : '<b class="color-red">{:lang("已禁用")}</b>'}}
+    <!--{/if}-->
+</script>
+
+<script type="text/html" id="toolbar">
+    <!--{if auth("edit")}-->
+    <a class="layui-btn layui-btn-sm" data-modal='{:url("edit")}?id={{d.id}}'>{:lang('编 辑')}</a>
+    <!--{/if}-->
+    <!--{if auth("remove")}-->
+    <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="{:lang('确定删除？')}" data-action="{:url('remove')}" data-value="id#{{d.id}}">{:lang('删 除')}</a>
+    <!--{/if}-->
+</script>
+
+<script>
+    $.platformBadge = (function () {
+        var list = JSON.parse($('#PlatformsData').text());
+        return function (p) {
+            var item = list[p];
+            if (!item) return p || '-';
+            return '<span class="layui-badge ' + item.class + '">' + item.label + '</span>';
+        };
+    })();
+
+    $(function () {
+        $('#CookieTable').layTable({
+            even: true, height: 'full',
+            sort: {field: 'id', type: 'desc'},
+            cols: [[
+                {checkbox: true, fixed: true},
+                {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
+                {field: 'platform', title: '{:lang("平台")}', width: 100, align: 'center', templet: '#PlatformBadgeTpl'},
+                {field: 'status', title: '{:lang("状态")}', width: 100, align: 'center', templet: '#StatusSwitchTpl'},
+                {field: 'create_at', title: '{:lang("创建时间")}', width: 160, align: 'center', sort: true},
+                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 200, align: 'left', fixed: 'right'}
+            ]]
+        });
+        layui.form.on('switch(StatusSwitch)', function (obj) {
+            var data = {id: obj.value, status: obj.elem.checked > 0 ? 1 : 0};
+            $.form.load("{:url('state')}", data, 'post', function (ret) {
+                if (ret.code < 1) $.msg.error(ret.info, 3, function () {
+                    $('#CookieTable').trigger('reload');
+                }); else $('#CookieTable').trigger('reload');
+                return false;
+            }, false);
+        });
+    });
+</script>
+{/block}
+```
+
+---
+
+## 六、index_search.html 标准结构
+
+**必须用 `<fieldset>` + `<legend>` 包裹搜索内容：**
+
+```html
+<form class="layui-form layui-form-pane form-search" action="{:sysuri()}" onsubmit="return false" method="get" autocomplete="off">
+    <fieldset>
+        <legend>{:lang('条件搜索')}</legend>
+
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">{:lang('关键词')}</label>
+            <div class="layui-input-inline">
+                <input name="name" value="{$get.name|default=''}" placeholder="{:lang('请输入关键词')}" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
+            <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> {:lang('搜 索')}</button>
+        </div>
+    </fieldset>
+</form>
+```
+
+---
+
+## 七、页面跳转与弹窗规范
+
+### data-open vs data-modal
+
+| 属性 | 行为 | 适用场景 |
+|------|------|---------|
+| `data-open="url"` | 在当前页面内打开全屏子页面（iframe） | 列表页、详情页、整页表单 |
+| `data-modal="url"` | 弹出 layer 模态框 | 小型表单、确认操作、退积分等 |
+
+**两者都不用 `href`**，框架会拦截处理，`href` 会导致整页刷新。
+
+### 跨模块跳转并带参筛选
+
+```html
+<script type="text/html" id="UserIdTpl">
+    <a data-open="{:url('@mini/user/index')}?id={{d.user_id}}"
+       title="{:lang('查看用户')}"
+       style="cursor:pointer;">{{d.user_id}}</a>
+</script>
+```
+
+- `@mini/user/index` 表示跨模块路由
+- `?id={{d.user_id}}` 传给目标页，目标控制器 QueryHelper 必须有 `$query->equal('id')`
+- **不加 `href`**，只用 `data-open`
+
+### URL 参数传给 layTable
+
+**不能用 hidden input 的 PHP 渲染值**，用 JS + `where` 选项：
+
+```js
+function getUrlParam(name) {
+    var reg = new RegExp('(^|[?&])' + name + '=([^&]*)(&|$)');
+    var r = location.search.match(reg);
+    return r ? decodeURIComponent(r[2]) : '';
+}
+$(function () {
+    var initId = getUrlParam('id');
+    if (initId) {
+        $('form.form-search input[name="id"]').val(initId);
+    }
+    $('#XxxTable').layTable({
+        where: initId ? {id: initId} : {},
+        // ...
+    });
+});
+```

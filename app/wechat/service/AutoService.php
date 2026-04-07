@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * +----------------------------------------------------------------------
+ * | HlwAdmin
+ * +----------------------------------------------------------------------
+ * | 邮箱: 1608626143@qq.com
+ * | 官方网站: https://www.hlw2326.com
+ * +----------------------------------------------------------------------
+ */
+
+namespace app\wechat\service;
+
+use app\wechat\model\WechatAuto;
+use think\admin\Exception;
+use think\admin\Service;
+use think\admin\service\QueueService;
+
+/**
+ * 关注自动回复服务
+ * @class AutoService
+ */
+class AutoService extends Service
+{
+    /**
+     * 注册微信用户推送任务
+     * @throws Exception
+     */
+    public static function register(string $openid)
+    {
+        foreach (WechatAuto::mk()->where(['status' => 1])->order('time asc')->cursor() as $vo) {
+            [$name, $time] = ["推送客服消息 {$vo['code']}#{$openid}", static::parseTimeString($vo['time'])];
+            QueueService::register($name, "xadmin:fansmsg {$openid} {$vo['code']}", $time);
+        }
+    }
+
+    /**
+     * 解析配置时间格式.
+     */
+    private static function parseTimeString(string $time): int
+    {
+        if (preg_match('|^.*?(\d{2}).*?(\d{2}).*?(\d{2}).*?$|', $time, $vars)) {
+            return intval($vars[1]) * 3600 * intval($vars[2]) * 60 + intval($vars[3]);
+        }
+        return 0;
+    }
+}

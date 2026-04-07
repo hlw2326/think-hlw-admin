@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>作品深度诊断</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    animation: {
+                        'enter-up': 'enterUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        enterUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px) scale(0.98)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+                            '50%': { opacity: '1', transform: 'scale(1.1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%) skewX(-15deg)' },
+                            '100%': { transform: 'translateX(200%) skewX(-15deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-input {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(203, 213, 225, 0.6);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-ring-bg { stroke: #e2e8f0; }
+        .score-ring-fill {
+            transition: stroke-dashoffset 1.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden selection:bg-indigo-100">
+
+<!-- 背景装饰 -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] right-[-10%] w-[80vw] h-[80vw] rounded-full bg-purple-200/20 blur-3xl animate-pulse-glow"></div>
+    <div class="absolute bottom-[10%] left-[-20%] w-[90vw] h-[90vw] rounded-full bg-indigo-100/30 blur-3xl"></div>
+</div>
+
+<!-- 1. Header -->
+<header class="w-full max-w-md sticky top-0 z-50 glass-panel border-b border-slate-200/50">
+    <div class="px-5 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <button onclick="if(!document.getElementById('searchSection').classList.contains('hidden')) { history.back() } else { resetSearch() }" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-500">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <h1 class="font-bold text-slate-800 tracking-tight text-lg">作品深度诊断</h1>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center border border-slate-200">
+            <i class="fa-solid fa-sliders"></i>
+        </div>
+    </div>
+</header>
+
+<main class="w-full max-w-md flex-1 p-5 pb-24 flex flex-col gap-5 relative min-h-[80vh]">
+
+    <!-- A. Search Section (Initial State) -->
+    <div id="searchSection" class="flex flex-col gap-6 animate-enter-up mt-10">
+        <div class="text-center mb-2">
+            <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-indigo-200 mb-6 rotate-3">
+                <i class="fa-solid fa-magnifying-glass-chart text-4xl text-white"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 mb-2">全方位账号诊断</h2>
+            <p class="text-slate-500 text-sm">输入抖音号或主页链接，一键生成诊断报告</p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
+            <div class="relative mb-4">
+                <div class="absolute top-3.5 left-3.5 text-gray-400">
+                    <i class="fa-brands fa-tiktok text-lg"></i>
+                </div>
+                <input id="searchInput" type="text"
+                       class="glass-input w-full h-12 rounded-xl pl-10 pr-20 text-sm text-slate-600 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400 transition-all shadow-sm"
+                       placeholder="如：dy123456 或 粘贴分享链接">
+                <button onclick="pasteLink()" class="absolute top-2 right-2 bg-white text-xs font-bold text-indigo-600 px-3 py-1.5 rounded-lg border border-indigo-100 hover:bg-indigo-50 transition-colors">
+                    粘贴
+                </button>
+            </div>
+
+            <button onclick="performSearch()" class="w-full h-12 bg-slate-900 text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-300 active:scale-[0.98] transition-all relative overflow-hidden group">
+                <span class="relative z-10 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 开始深度诊断
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+            </button>
+        </div>
+
+        <!-- History/Tags -->
+        <div class="flex flex-wrap gap-2 justify-center opacity-60">
+            <span class="text-[10px] bg-white px-2 py-1 rounded-full border border-slate-200 text-slate-500">🔥 完播率分析</span>
+            <span class="text-[10px] bg-white px-2 py-1 rounded-full border border-slate-200 text-slate-500">📉 流量流失点</span>
+            <span class="text-[10px] bg-white px-2 py-1 rounded-full border border-slate-200 text-slate-500">🏷️ 标签检测</span>
+        </div>
+    </div>
+
+    <!-- B. Loading State -->
+    <div id="loadingSection" class="hidden flex-col items-center justify-center pt-20 animate-enter-up">
+        <div class="relative w-20 h-20 mb-6">
+            <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+            <div class="absolute inset-0 border-t-4 border-indigo-500 rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center font-black text-indigo-600 text-lg" id="loadingPercent">0%</div>
+        </div>
+        <h3 class="font-bold text-slate-800 text-lg mb-1">正在分析账号数据...</h3>
+        <p class="text-xs text-gray-400" id="loadingText">连接数据接口中</p>
+    </div>
+
+    <!-- C. Results Section (Stats + List) -->
+    <div id="resultsSection" class="hidden flex flex-col gap-5 animate-enter-up">
+
+        <!-- 2. User Stats & Health Score -->
+        <div class="glass-panel rounded-3xl p-5 relative overflow-hidden group">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br from-indigo-50/0 via-indigo-50 to-purple-50 rounded-full blur-2xl group-hover:bg-indigo-100/50 transition-colors duration-700"></div>
+
+            <div class="relative z-10 flex items-start justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <img id="userAvatar" src="" class="w-14 h-14 rounded-full border-2 border-white shadow-md bg-slate-200">
+                        <div class="absolute -bottom-1 -right-1 bg-black text-white text-[9px] px-1.5 py-0.5 rounded-full border border-white">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 id="userName" class="font-black text-slate-800 text-lg">加载中...</h2>
+                        <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                            <span id="userId">ID: ---</span>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <span class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2 py-0.5 rounded-md border border-indigo-100">美妆护肤</span>
+                            <span class="bg-amber-50 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-100"><i class="fa-solid fa-bolt mr-1"></i>上升期</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Score Ring -->
+                <div class="flex flex-col items-center">
+                    <div class="relative w-14 h-14">
+                        <svg class="w-full h-full" viewBox="0 0 36 36">
+                            <path class="score-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3" />
+                            <path id="scoreRing" class="score-ring-fill stroke-indigo-500" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3" stroke-linecap="round" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-indigo-600">
+                            <span class="text-[8px] font-bold text-slate-400">健康分</span>
+                            <span id="healthScore" class="text-sm font-black leading-none">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 bg-slate-50/50 rounded-xl p-3 border border-slate-100">
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 mb-1">总获赞</div>
+                    <div class="font-black text-slate-800">12.5w</div>
+                </div>
+                <div class="text-center border-l border-slate-200">
+                    <div class="text-[10px] text-slate-400 mb-1">平均播放</div>
+                    <div class="font-black text-slate-800">4.2w</div>
+                </div>
+                <div class="text-center border-l border-slate-200">
+                    <div class="text-[10px] text-slate-400 mb-1">完播率</div>
+                    <div class="font-black text-emerald-500">32%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Works List Container -->
+        <div id="worksList" class="flex flex-col gap-4 pb-10">
+            <!-- JS will populate this -->
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // ---------------------------------------------------------
+    // 1. Data Generation (Mock 10+ items)
+    // ---------------------------------------------------------
+    const baseWorks = [
+        { t: "沉浸式护肤 | 早八人的极速出门妆，5分钟搞定气色！", thumb: "https://images.unsplash.com/photo-1596462502278-27bfdd403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "开箱测评 | 那些年我交过的智商税，千万别买！", thumb: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "Vlog 03 | 周末去哪儿？这是我私藏的咖啡店", thumb: "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "秋冬穿搭分享 | 梨形身材怎么穿？显瘦10斤！", thumb: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "深夜放毒：这也太好吃了吧，做法超级简单", thumb: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "GRWM | 和我一起准备约会吧！", thumb: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "这是什么神仙好物？我不允许还有人不知道", thumb: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "挑战100元吃遍夜市，最后一样绝了", thumb: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "纯干货 | 3个动作改善体态，亲测有效", thumb: "https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" },
+        { t: "我的书桌改造计划，氛围感拉满", thumb: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" }
+    ];
+
+    function generateData() {
+        return baseWorks.map((item, i) => {
+            const score = Math.floor(Math.random() * 50) + 45; // 45 - 95
+            const isLowScore = score < 75;
+
+            return {
+                id: i,
+                title: item.t,
+                date: `11月${25 - i}日 18:${Math.floor(Math.random()*59).toString().padStart(2,'0')}`,
+                thumb: item.thumb,
+                stats: {
+                    play: (Math.random() * 10).toFixed(1) + 'w',
+                    like: Math.floor(Math.random() * 5000),
+                    comment: Math.floor(Math.random() * 500)
+                },
+                score: score,
+                isLowScore: isLowScore,
+                tags: isLowScore ? ["待优化", "标题模糊"] : ["表现优异", "完播率高"],
+                aiAnalysis: isLowScore
+                    ? "该作品标题吸引力较弱，且发布时间避开了粉丝活跃高峰。建议优化封面文案，突出痛点关键词。"
+                    : "作品各项数据表现优异，处于流量上升期。视频节奏把控良好，建议保持当前的更新频率与风格。",
+                trend: score > 80 ? 'up' : (score < 60 ? 'down' : 'flat')
+            };
+        });
+    }
+
+    let worksData = [];
+
+    // ---------------------------------------------------------
+    // 2. Search & List Rendering
+    // ---------------------------------------------------------
+
+    function resetSearch() {
+        document.getElementById('resultsSection').classList.add('hidden');
+        document.getElementById('searchSection').classList.remove('hidden');
+        document.getElementById('searchInput').value = '';
+    }
+
+    async function pasteLink() {
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById('searchInput').value = text;
+        } catch (err) {
+            alert('请手动粘贴');
+        }
+    }
+
+    function performSearch() {
+        const input = document.getElementById('searchInput').value;
+        if (!input) {
+            alert("请输入抖音号或链接");
+            return;
+        }
+
+        // 1. Hide Search, Show Loading
+        document.getElementById('searchSection').classList.add('hidden');
+        document.getElementById('loadingSection').classList.remove('hidden');
+        document.getElementById('loadingSection').style.display = 'flex';
+
+        // 2. Simulate Loading Process
+        let progress = 0;
+        const loadingPercent = document.getElementById('loadingPercent');
+        const loadingText = document.getElementById('loadingText');
+        const steps = ["连接数据接口...", "拉取作品列表...", "分析互动数据...", "生成诊断报告..."];
+
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 15);
+            if (progress > 100) progress = 100;
+            loadingPercent.innerText = progress + '%';
+
+            const stepIndex = Math.floor((progress / 100) * steps.length);
+            if(steps[stepIndex]) loadingText.innerText = steps[stepIndex];
+
+            if (progress === 100) {
+                clearInterval(interval);
+                finishSearch(input);
+            }
+        }, 300);
+    }
+
+    function finishSearch(input) {
+        // Generate Mock Data based on input (using random mostly)
+        worksData = generateData();
+
+        // Mock User Info
+        const mockName = "用户_" + input.substring(0, 6);
+        document.getElementById('userName').innerText = "Creative Soul";
+        document.getElementById('userId').innerText = "ID: " + (input.replace(/\D/g,'') || '9827391');
+        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=Creative+Soul&background=random&color=fff`;
+
+        // Calculate Average Health Score
+        const avgScore = Math.floor(worksData.reduce((acc, curr) => acc + curr.score, 0) / worksData.length);
+        document.getElementById('healthScore').innerText = avgScore;
+
+        // Render List
+        renderWorks();
+
+        // Show Results
+        document.getElementById('loadingSection').classList.add('hidden');
+        document.getElementById('loadingSection').style.display = '';
+        document.getElementById('resultsSection').classList.remove('hidden');
+
+        // Animate Ring
+        setTimeout(() => {
+            const ring = document.getElementById('scoreRing');
+            const offset = 100 - avgScore;
+            ring.style.strokeDasharray = `${avgScore}, 100`;
+        }, 500);
+    }
+
+    function renderWorks() {
+        const container = document.getElementById('worksList');
+        let html = '';
+
+        worksData.forEach((work, index) => {
+            // Color logic
+            let scoreColor = 'text-emerald-500';
+            let bgAnalysis = 'bg-emerald-50/50 border-emerald-100';
+            let labelAnalysis = 'bg-emerald-500';
+
+            if(work.score < 60) {
+                scoreColor = 'text-red-500';
+                bgAnalysis = 'bg-red-50/50 border-red-100';
+                labelAnalysis = 'bg-red-500';
+            }
+            else if(work.score < 80) {
+                scoreColor = 'text-amber-500';
+                bgAnalysis = 'bg-amber-50/50 border-amber-100';
+                labelAnalysis = 'bg-amber-500';
+            }
+
+            // Trend Icon
+            let trendIcon = '<i class="fa-solid fa-minus text-gray-300"></i>';
+            if(work.trend === 'up') trendIcon = '<i class="fa-solid fa-arrow-trend-up text-red-500"></i>';
+            if(work.trend === 'down') trendIcon = '<i class="fa-solid fa-arrow-trend-down text-green-500"></i>';
+
+            html += `
+            <div class="glass-panel rounded-2xl p-3 animate-enter-up flex flex-col gap-3 transition-transform" style="animation-delay: ${index * 0.05}s">
+                <div class="flex gap-3">
+                    <!-- Thumbnail -->
+                    <div class="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-200 shadow-sm">
+                        <img src="${work.thumb}" class="w-full h-full object-cover">
+                        <div class="absolute bottom-1 right-1 bg-black/60 backdrop-blur-sm text-white text-[9px] px-1.5 py-0.5 rounded">
+                            03:45
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm leading-tight line-clamp-2 mb-1.5">${work.title}</h3>
+                            <div class="flex items-center gap-2 text-[10px] text-gray-400 mb-2">
+                                <i class="fa-regular fa-clock"></i> ${work.date}
+                            </div>
+
+                            <!-- Mini Stats -->
+                            <div class="flex gap-3 text-[10px] text-slate-500 font-medium">
+                                <span class="flex items-center gap-1"><i class="fa-solid fa-play text-gray-300"></i> ${work.stats.play}</span>
+                                <span class="flex items-center gap-1"><i class="fa-solid fa-heart text-gray-300"></i> ${work.stats.like}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Score -->
+                    <div class="flex flex-col justify-start items-end shrink-0 pl-2 border-l border-dashed border-slate-200/50 w-16">
+                        <div class="text-center w-full">
+                            <div class="text-[9px] text-slate-400 font-bold mb-0.5">指数</div>
+                            <div class="text-xl font-black ${scoreColor} leading-none flex items-center justify-center gap-1">
+                                ${work.score}
+                                <span class="text-[10px]">${trendIcon}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Analysis Box -->
+                <div class="${bgAnalysis} rounded-xl p-2.5 border flex items-start gap-2">
+                    <div class="mt-0.5 px-1.5 py-0.5 rounded ${labelAnalysis} text-white text-[9px] font-bold shrink-0 shadow-sm">AI 诊断</div>
+                    <p class="text-[10px] text-slate-600 leading-relaxed text-justify">${work.aiAnalysis}</p>
+                </div>
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+</script>
+</body>
+</html>

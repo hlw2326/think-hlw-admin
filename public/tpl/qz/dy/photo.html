@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>作品限流诊断报告</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image:
+                    linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+            background-size: 24px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden pb-20">
+
+<main class="w-full max-w-md flex-1 px-3 flex flex-col gap-4 pt-4 relative z-0">
+
+    <!-- 0. 用户信息卡片 (已移除右上角标签) -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 relative overflow-hidden animate-fade-in-up">
+
+        <!-- 头部信息 -->
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="w-14 h-14 rounded-full bg-slate-100 overflow-hidden shrink-0 border-2 border-slate-50 shadow-sm group cursor-pointer">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-800 text-lg truncate">快乐小狗🐶</h3>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono border border-slate-200/50">ID: 8848123</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div class="grid grid-cols-3 gap-4 border-t border-slate-100 mt-4 pt-4 relative z-10">
+            <div class="flex flex-col items-center group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+                <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">12.8w</span>
+                <span class="text-[10px] text-slate-400 font-medium mt-0.5">粉丝数</span>
+            </div>
+            <div class="flex flex-col items-center border-l border-slate-100 group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+                <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">108w</span>
+                <span class="text-[10px] text-slate-400 font-medium mt-0.5">点赞数</span>
+            </div>
+            <div class="flex flex-col items-center border-l border-slate-100 group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+                <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">342</span>
+                <span class="text-[10px] text-slate-400 font-medium mt-0.5">作品数</span>
+            </div>
+        </div>
+
+        <!-- 装饰背景 -->
+        <div class="absolute right-0 top-0 h-24 w-24 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none opacity-50"></div>
+    </div>
+
+    <!-- 2. 作品列表区域 -->
+    <div id="workList" class="flex flex-col gap-3">
+        <!-- JS 动态渲染列表 -->
+    </div>
+
+    <!-- 3. 加载更多按钮 (默认隐藏，JS控制显示) -->
+    <div id="paginationSection" class="pb-10 pt-2 hidden">
+        <button id="loadMoreBtn" onclick="loadMore()" class="w-full py-3 flex items-center justify-center gap-2 text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all group">
+            <span>查看更多历史记录</span>
+            <i class="fa-solid fa-angle-down group-hover:translate-y-0.5 transition-transform"></i>
+        </button>
+        <div id="noMoreText" class="hidden text-center text-[10px] text-slate-300 py-4 flex items-center justify-center gap-2">
+            <span class="w-8 h-[1px] bg-slate-200"></span>
+            已显示全部作品
+            <span class="w-8 h-[1px] bg-slate-200"></span>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // 模拟作品数据 (新增 likes, comments, favorites, tags, badge)
+    const allWorksData = [
+        {
+            id: 101,
+            title: "家人们谁懂啊，今天遇到一个...",
+            cover: "bg-red-100",
+            date: "10-24 18:30",
+            play: 258,
+            status: "limited",
+            level: "high",
+            reason: "检测到疑似搬运/非原创内容",
+            desc: "系统识别到画面与站内高度相似，流量被降权",
+            suggestion: "建议进行原创申诉或删除重发",
+            likes: "12",
+            comments: "3",
+            favorites: "1",
+            tags: ["生活吐槽", "日常"]
+        },
+        {
+            id: 999, // 优质作品
+            title: "超级可爱的修勾！萌化了❤️",
+            cover: "bg-amber-100",
+            date: "10-23 20:00",
+            play: "208w",
+            status: "normal",
+            level: "excellent",
+            reason: "🔥 热门推荐爆款",
+            desc: "内容质量极高，完播率超过 60%",
+            suggestion: "太棒了！请继续保持这种风格！",
+            likes: "15.8w",
+            comments: "8.2k",
+            favorites: "4.5w",
+            tags: ["萌宠", "治愈", "金毛"],
+            badge: { text: "🚀 爆款", color: "from-red-500 to-orange-500" } // 爆款标签
+        },
+        {
+            id: 102,
+            title: "好物推荐第58期，这个真的绝了！",
+            cover: "bg-orange-100",
+            date: "10-22 12:15",
+            play: 512,
+            status: "limited",
+            level: "moderate",
+            reason: "疑似营销广告性质过重",
+            desc: "文案或画面包含明显的诱导营销信息",
+            suggestion: "建议修改文案去除营销词",
+            likes: "45",
+            comments: "8",
+            favorites: "12",
+            tags: ["种草", "好物"]
+        },
+        {
+            id: 998, // 优质作品
+            title: "沉浸式收纳，强迫症福音",
+            cover: "bg-teal-100",
+            date: "10-21 18:00",
+            play: "56w",
+            status: "normal",
+            level: "good",
+            reason: "👍 粉丝互动极佳",
+            desc: "评论区讨论热烈，账号活跃度高",
+            suggestion: "建议多回复评论，趁热打铁！",
+            likes: "3.2w",
+            comments: "1.2k",
+            favorites: "8k",
+            tags: ["收纳", "解压", "居家"],
+            badge: { text: "🔥 大热门", color: "from-orange-400 to-amber-400" } // 大热门标签
+        },
+        {
+            id: 103,
+            title: "深夜emo时刻，网抑云时间",
+            cover: "bg-slate-200",
+            date: "10-20 23:45",
+            play: 124,
+            status: "limited",
+            level: "severe",
+            reason: "画面包含低俗或不适内容",
+            desc: "触发由于画面昏暗或内容导向判定",
+            suggestion: "建议立即隐藏该作品",
+            likes: "5",
+            comments: "0",
+            favorites: "0",
+            tags: ["情感", "深夜"]
+        },
+        {
+            id: 104,
+            title: "日常Vlog：快乐的一天",
+            cover: "bg-green-100",
+            date: "10-18 09:00",
+            play: "1.2w",
+            status: "normal",
+            level: "normal",
+            reason: "✅ 账号状态良好",
+            desc: "各项指标正常，流量稳定",
+            suggestion: "继续保持，稳定更新",
+            likes: "890",
+            comments: "120",
+            favorites: "45",
+            tags: ["Vlog", "记录生活"],
+            badge: { text: "✨ 小热门", color: "from-indigo-400 to-purple-400" } // 小热门标签
+        },
+        {
+            id: 105,
+            title: "挑战100元吃遍夜市！",
+            cover: "bg-blue-100",
+            date: "10-15 19:20",
+            play: 88,
+            status: "limited",
+            level: "high",
+            reason: "视频画面质量过低",
+            desc: "画面模糊或过度抖动，不符合推荐标准",
+            suggestion: "建议使用高清设备拍摄并稳定画面",
+            likes: "3",
+            comments: "1",
+            favorites: "0",
+            tags: ["美食", "探店"]
+        },
+        {
+            id: 106,
+            title: "教你如何快速涨粉黑科技",
+            cover: "bg-purple-100",
+            date: "10-12 10:00",
+            play: 1024,
+            status: "limited",
+            level: "moderate",
+            reason: "标题或文案涉及违规诱导",
+            desc: "使用了夸大或欺诈性的引导关注话术",
+            suggestion: "修改文案，避免使用绝对化用语",
+            likes: "150",
+            comments: "45",
+            favorites: "80",
+            tags: ["运营干货", "涨粉"]
+        },
+        {
+            id: 107,
+            title: "纯音乐分享 - 治愈系",
+            cover: "bg-indigo-100",
+            date: "10-10 22:10",
+            play: 45,
+            status: "limited",
+            level: "high",
+            reason: "音频版权争议",
+            desc: "背景音乐未获得授权，音频被静音",
+            suggestion: "更换为平台正版音乐库素材",
+            likes: "2",
+            comments: "0",
+            favorites: "1",
+            tags: ["音乐", "纯音乐"]
+        },
+        {
+            id: 108,
+            title: "震惊！居然发生了这种事",
+            cover: "bg-yellow-100",
+            date: "10-09 14:30",
+            play: 330,
+            status: "limited",
+            level: "moderate",
+            reason: "标题党/夸大事实",
+            desc: "标题与内容严重不符，影响用户体验",
+            suggestion: "修改标题，客观描述内容",
+            likes: "28",
+            comments: "15",
+            favorites: "2",
+            tags: ["社会", "热点"]
+        },
+        {
+            id: 109,
+            title: "点击领取免费皮肤",
+            cover: "bg-pink-100",
+            date: "10-08 11:00",
+            play: 12,
+            status: "limited",
+            level: "severe",
+            reason: "涉嫌诈骗/高风险引流",
+            desc: "内容包含不明链接或高风险引导行为",
+            suggestion: "立即删除，否则可能封号",
+            likes: "0",
+            comments: "2",
+            favorites: "0",
+            tags: ["游戏", "福利"]
+        },
+        {
+            id: 110,
+            title: "微商创业心得分享",
+            cover: "bg-teal-100",
+            date: "10-07 09:15",
+            play: 560,
+            status: "limited",
+            level: "moderate",
+            reason: "过度营销",
+            desc: "频繁发布产品广告，被判定为营销号",
+            suggestion: "增加生活化内容比例",
+            likes: "66",
+            comments: "8",
+            favorites: "5",
+            tags: ["创业", "微商"]
+        }
+    ];
+
+    // 分页状态管理
+    let currentPage = 0;
+    const PAGE_SIZE = 5;
+    const displayWorks = allWorksData;
+
+    window.onload = function() {
+        loadMore();
+        document.getElementById('paginationSection').classList.remove('hidden');
+    };
+
+    function loadMore() {
+        const btn = document.getElementById('loadMoreBtn');
+        const container = document.getElementById('workList');
+        const noMoreText = document.getElementById('noMoreText');
+
+        // 如果不是第一次加载，显示loading状态
+        if (currentPage > 0) {
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 加载中...`;
+
+            // 模拟网络延迟
+            setTimeout(() => {
+                renderBatch();
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                checkPaginationStatus();
+            }, 600);
+        } else {
+            renderBatch();
+            checkPaginationStatus();
+        }
+
+        function renderBatch() {
+            const start = currentPage * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const batch = displayWorks.slice(start, end);
+
+            if (batch.length === 0) return;
+
+            let html = '';
+            batch.forEach((work, index) => {
+                // 判断是否是正常/优质作品
+                const isNormal = work.status === 'normal';
+
+                // 定义颜色和图标
+                let statusColor, icon;
+                if (isNormal) {
+                    // 正常/优质作品样式
+                    statusColor = 'text-green-600 bg-green-50 border-green-100';
+                    icon = 'fa-thumbs-up';
+                    if (work.level === 'excellent') {
+                        statusColor = 'text-indigo-600 bg-indigo-50 border-indigo-100';
+                        icon = 'fa-fire';
+                    }
+                } else {
+                    // 异常作品样式
+                    statusColor = work.level === 'high' || work.level === 'severe' ? 'text-red-500 bg-red-50 border-red-100' : 'text-orange-500 bg-orange-50 border-orange-100';
+                    icon = work.level === 'high' || work.level === 'severe' ? 'fa-ban' : 'fa-triangle-exclamation';
+                }
+
+                // 标签 HTML 生成
+                const tagsHtml = work.tags ? work.tags.map(tag =>
+                    `<span class="text-[9px] text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">${tag}</span>`
+                ).join('') : '';
+
+                // 右上角热度标签 HTML 生成
+                let badgeHtml = '';
+                if (work.badge) {
+                    badgeHtml = `
+                        <div class="absolute top-2 right-2 z-10">
+                             <div class="bg-gradient-to-r ${work.badge.color} text-white text-[9px] font-bold px-2 py-1 rounded shadow-sm leading-none opacity-90 hover:opacity-100 transition-opacity cursor-default">
+                                ${work.badge.text}
+                             </div>
+                        </div>
+                    `;
+                }
+
+                // 计算动画延迟
+                const delay = index * 50;
+
+                html += `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-3 animate-fade-in-up flex gap-3 relative overflow-hidden group hover:border-slate-300 transition-colors" style="animation-delay: ${delay}ms" id="card-${work.id}">
+
+                        <!-- 右上角热度标签 (修改后位置：有间隙) -->
+                        ${badgeHtml}
+
+                        <!-- 左侧封面 -->
+                        <div class="w-20 rounded-lg shrink-0 flex flex-col gap-1">
+                             <div class="aspect-[3/4] ${work.cover} rounded-lg relative overflow-hidden bg-slate-100 shadow-inner">
+                                 <div class="absolute inset-0 flex items-center justify-center text-slate-300">
+                                    <i class="fa-solid fa-image text-xl"></i>
+                                 </div>
+                                 <div class="absolute bottom-0 left-0 w-full bg-black/40 backdrop-blur-[2px] text-white text-[9px] text-center py-0.5 font-mono shadow-sm">
+                                    ${work.play} 播放
+                                 </div>
+                             </div>
+                        </div>
+
+                        <!-- 中间内容 -->
+                        <div class="flex-1 min-w-0 flex flex-col gap-1.5 py-0.5">
+                            <!-- 标题和基本信息 -->
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm truncate leading-tight pr-10">${work.title}</h3>
+                                <div class="flex items-center gap-2 mt-1.5 overflow-hidden">
+                                    <span class="text-[10px] text-slate-400 font-mono shrink-0">${work.date}</span>
+                                    <div class="flex gap-1 overflow-x-auto hide-scrollbar">
+                                        ${tagsHtml}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 诊断框 -->
+                            <div class="inline-flex items-start gap-1.5 ${statusColor} border px-2 py-1.5 rounded-lg w-full">
+                                <i class="fa-solid ${icon} text-[10px] mt-0.5 shrink-0"></i>
+                                <div>
+                                    <div class="text-[10px] font-bold leading-tight mb-0.5">${work.reason}</div>
+                                    <div class="text-[9px] opacity-80 leading-tight">${work.suggestion}</div>
+                                </div>
+                            </div>
+
+                            <!-- 底部数据栏 -->
+                            <div class="flex items-center gap-4 text-[10px] text-slate-400 pt-1 mt-auto border-t border-slate-50 border-dashed">
+                                <span class="flex items-center gap-1 hover:text-red-400 transition-colors">
+                                    <i class="fa-regular fa-heart"></i> ${work.likes}
+                                </span>
+                                <span class="flex items-center gap-1 hover:text-blue-400 transition-colors">
+                                    <i class="fa-regular fa-comment-dots"></i> ${work.comments}
+                                </span>
+                                <span class="flex items-center gap-1 hover:text-amber-400 transition-colors">
+                                    <i class="fa-regular fa-star"></i> ${work.favorites}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.insertAdjacentHTML('beforeend', html);
+            currentPage++;
+        }
+
+        function checkPaginationStatus() {
+            // 如果所有数据都已加载
+            if (currentPage * PAGE_SIZE >= displayWorks.length) {
+                btn.classList.add('hidden');
+                noMoreText.classList.remove('hidden');
+                noMoreText.classList.add('flex');
+            } else {
+                // 更新按钮文案，显示剩余数量
+                const remaining = displayWorks.length - (currentPage * PAGE_SIZE);
+                btn.querySelector('span').innerText = `加载更多 (${remaining})`;
+            }
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>亲脉 Momentum Kin - 个人中心</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.04)',
+            'glow': '0 0 30px rgba(99, 102, 241, 0.2)',
+            'premium': '0 20px 60px -15px rgba(0,0,0,0.1)',
+            'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F9FAFF;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .btn-active:active { transform: scale(0.96); transition: 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .premium-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f1f3ff 100%);
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col items-center overflow-x-hidden">
+
+<!-- 顶部状态栏占位/标题 -->
+<header class="w-full max-w-md px-8 pt-12 pb-6 flex justify-between items-center sticky top-0 bg-[#F9FAFF]/80 backdrop-blur-xl z-50">
+  <div>
+    <h2 class="text-2xl font-black tracking-tight text-slate-900">我的 <span class="text-indigo-600">Kin</span></h2>
+    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Profile & Identity</p>
+  </div>
+  <div class="flex gap-3">
+    <button class="w-10 h-10 rounded-2xl bg-white shadow-soft flex items-center justify-center text-slate-400 btn-active border border-slate-50">
+      <i class="fa-solid fa-bell text-sm"></i>
+    </button>
+    <button class="w-10 h-10 rounded-2xl bg-indigo-600 shadow-glow flex items-center justify-center text-white btn-active">
+      <i class="fa-solid fa-pen-to-square text-sm"></i>
+    </button>
+  </div>
+</header>
+
+<main class="w-full max-w-md px-6 flex flex-col gap-6 pb-32">
+
+  <!-- 用户核心资料卡片 -->
+  <section class="w-full rounded-[2.5rem] p-8 shadow-premium border border-white flex flex-col premium-card animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="flex items-center gap-6">
+      <div class="relative">
+        <div class="w-24 h-24 rounded-[2rem] bg-indigo-100 flex items-center justify-center text-indigo-600 text-4xl shadow-inner-soft border-4 border-white">
+          <i class="fa-solid fa-user-ninja"></i>
+        </div>
+        <div class="absolute -bottom-1 -right-1 px-3 py-1 bg-emerald-500 rounded-full border-2 border-white text-[8px] font-black text-white uppercase tracking-wider shadow-sm">
+          在线
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-xl font-black text-slate-900">李知脉</h3>
+          <i class="fa-solid fa-circle-check text-indigo-500 text-xs"></i>
+        </div>
+        <p class="text-[11px] font-bold text-slate-400 mb-3">中华文化爱好者 / 家族联络员</p>
+        <div class="flex gap-2">
+          <span class="px-3 py-1 bg-white text-slate-500 text-[9px] font-black rounded-xl shadow-soft border border-slate-50">UID: 202401</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 家族邀请码区域 (小程序特色) -->
+    <div class="flex justify-between items-center mt-8 pt-6 border-t border-indigo-100/50">
+      <div class="flex flex-col">
+        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">家族邀请码</span>
+        <span class="text-sm font-black text-slate-700 tracking-widest">K I N - 8 8 9 2</span>
+      </div>
+      <button class="text-[10px] font-black text-white uppercase tracking-widest bg-slate-900 px-5 py-2.5 rounded-xl btn-active shadow-lg">复制并邀请</button>
+    </div>
+  </section>
+
+  <!-- 数据仪表盘 -->
+  <section class="grid grid-cols-2 gap-4 animate-fade-in" style="animation-delay: 0.2s;">
+    <div class="bg-white p-6 rounded-[2rem] shadow-soft border border-slate-50 flex flex-col gap-1">
+      <div class="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 mb-2">
+        <i class="fa-solid fa-chart-line text-xs"></i>
+      </div>
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">查询历史</span>
+      <span class="text-2xl font-black text-slate-900">1,284 <span class="text-[10px] text-emerald-500 ml-1 font-bold">+12%</span></span>
+    </div>
+    <div class="bg-white p-6 rounded-[2rem] shadow-soft border border-slate-50 flex flex-col gap-1">
+      <div class="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 mb-2">
+        <i class="fa-solid fa-dna text-xs"></i>
+      </div>
+      <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">解锁称呼</span>
+      <span class="text-2xl font-black text-slate-900">56 <span class="text-[10px] text-slate-300 ml-1 font-bold">/ 120</span></span>
+    </div>
+  </section>
+
+  <!-- 菜单组：家族互动 -->
+  <div class="flex flex-col gap-4 animate-fade-in" style="animation-delay: 0.3s;">
+    <h4 class="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">家族管理 · Management</h4>
+    <section class="bg-white rounded-[2.5rem] p-4 shadow-soft border border-slate-50">
+      <div class="flex flex-col">
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+              <i class="fa-solid fa-sitemap"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black text-slate-700">我的家族树</span>
+              <span class="text-[9px] text-slate-400 font-bold">已录入 28 位成员</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+        </div>
+        <div class="h-[1px] bg-slate-50 mx-4"></div>
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+              <i class="fa-solid fa-images"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black text-slate-700">共享家族相册</span>
+              <span class="text-[9px] text-slate-400 font-bold">查看 156 张照片</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+        </div>
+        <div class="h-[1px] bg-slate-50 mx-4"></div>
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500">
+              <i class="fa-solid fa-calendar-star"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black text-slate-700">重要日子</span>
+              <span class="text-[9px] text-slate-400 font-bold">本月有 2 个生日提醒</span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 菜单组：常用工具 -->
+  <div class="flex flex-col gap-4 animate-fade-in" style="animation-delay: 0.4s;">
+    <h4 class="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">设置与帮助 · Tools</h4>
+    <section class="bg-white rounded-[2.5rem] p-4 shadow-soft border border-slate-50">
+      <div class="flex flex-col">
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
+              <i class="fa-solid fa-broom"></i>
+            </div>
+            <span class="text-xs font-black text-slate-700">清除缓存</span>
+          </div>
+          <span class="text-[10px] font-bold text-slate-300">12.5 MB</span>
+        </div>
+        <div class="h-[1px] bg-slate-50 mx-4"></div>
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
+              <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <span class="text-xs font-black text-slate-700">意见反馈</span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+        </div>
+        <div class="h-[1px] bg-slate-50 mx-4"></div>
+        <div class="flex items-center justify-between p-4 btn-active cursor-pointer">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
+              <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <span class="text-xs font-black text-slate-700">关于亲脉</span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 重新登录 -->
+  <button class="w-full py-5 rounded-[2rem] bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-[0.4em] btn-active mt-4 animate-fade-in shadow-sm" style="animation-delay: 0.5s;">
+    Re-Login Account
+  </button>
+
+  <!-- 版本号 -->
+  <p class="text-center text-[9px] font-bold text-slate-300 uppercase tracking-widest mt-4">Kin Momentum v2.1.0 Premium</p>
+
+</main>
+
+<!-- 底部导航 -->
+<nav class="fixed bottom-0 w-full max-w-md px-6 pb-8 pt-4 z-[60]">
+  <div class="glass-nav rounded-[2.5rem] p-4 flex justify-around items-center shadow-premium border border-white/50">
+    <!-- 计算 -->
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-300 px-8 py-1 btn-active transition-all">
+      <i class="fa-solid fa-calculator text-xl"></i>
+      <span class="text-[8px] font-black uppercase">计算</span>
+    </a>
+
+    <!-- 我的 (当前页) -->
+    <a href="#" class="flex flex-col items-center gap-1 text-indigo-600 px-8 py-1 btn-active transition-all">
+      <i class="fa-solid fa-user text-xl"></i>
+      <span class="text-[8px] font-black uppercase">我的</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+  // 简单的触觉反馈模拟
+  document.querySelectorAll('.btn-active').forEach(button => {
+    button.addEventListener('click', function() {
+      if (window.navigator.vibrate) {
+        window.navigator.vibrate(10);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
