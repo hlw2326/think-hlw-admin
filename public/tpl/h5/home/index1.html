@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>全平台账号数据助手 Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'scan': 'scan 2s linear infinite',
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'enter': 'enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%': { top: '0%', opacity: '0' },
+                            '10%': { opacity: '1' },
+                            '90%': { opacity: '1' },
+                            '100%': { top: '100%', opacity: '0' },
+                        },
+                        enter: {
+                            '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 仪表盘指针动画 */
+        .gauge-fill {
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 玻璃拟态效果 */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 扫描特效 */
+        .scanner-overlay {
+            background: linear-gradient(to bottom, transparent, rgba(var(--scan-color), 0.2), transparent);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen">
+
+<!-- App Container -->
+<div class="max-w-md mx-auto min-h-screen relative overflow-hidden bg-[#fafafa] shadow-2xl border-x border-slate-100">
+
+    <!-- Header -->
+    <header class="glass sticky top-0 z-40 border-b border-slate-200/60 pt-safe-top">
+        <div class="px-5 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2.5">
+                <div id="app-icon" class="bg-black text-white w-8 h-8 rounded-xl shadow-lg shadow-gray-200 flex items-center justify-center transition-all duration-300 transform hover:scale-105">
+                    <i class="fa-solid fa-chart-simple text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base tracking-tight text-slate-800 leading-tight">全网数据助手</h1>
+                    <p class="text-[10px] text-gray-400 font-medium">Professional Edition</p>
+                </div>
+            </div>
+            <div class="bg-gray-100/80 px-2.5 py-1 rounded-full border border-gray-200/50">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+            </div>
+        </div>
+
+        <!-- Platform Switcher -->
+        <div class="px-4 pb-3 flex space-x-3 overflow-x-auto hide-scrollbar snap-x">
+            <button onclick="switchPlatform('douyin')" id="btn-douyin" class="snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-black text-white shadow-lg shadow-gray-200 transition-all active:scale-95">
+                <i class="fa-brands fa-tiktok mr-1.5"></i> 抖音
+            </button>
+            <button onclick="switchPlatform('kuaishou')" id="btn-kuaishou" class="snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500 border border-gray-100 hover:text-gray-800 transition-all active:scale-95">
+                <i class="fa-solid fa-video mr-1.5"></i> 快手
+            </button>
+            <button onclick="switchPlatform('xhs')" id="btn-xhs" class="snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500 border border-gray-100 hover:text-gray-800 transition-all active:scale-95">
+                <i class="fa-solid fa-book-open mr-1.5"></i> 小红书
+            </button>
+            <button onclick="switchPlatform('wechat')" id="btn-wechat" class="snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500 border border-gray-100 hover:text-gray-800 transition-all active:scale-95">
+                <i class="fa-brands fa-weixin mr-1.5"></i> 视频号
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-5 space-y-6 pb-24">
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Card Component Function -->
+            <script>
+                const renderCard = (id, icon, title, subtitle, colorClass, gradientClass, clickFn) => `
+                    <div onclick="${clickFn}" class="glass-card p-4 rounded-2xl cursor-pointer relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 active:scale-95">
+                        <div class="absolute right-0 top-0 w-20 h-20 bg-gradient-to-bl ${gradientClass} rounded-bl-full -mr-6 -mt-6 opacity-20 group-hover:scale-110 transition-transform duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-11 h-11 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center ${colorClass} mb-3 text-lg group-hover:rotate-12 transition-transform duration-300">
+                                <i class="${icon}"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-700 text-sm">${title}</h3>
+                            <p class="text-[10px] text-gray-400 mt-0.5 font-medium">${subtitle}</p>
+                        </div>
+                    </div>`;
+
+                document.write(renderCard('weight', 'fa-solid fa-scale-balanced', '权重查询', '账号健康度评分', 'text-blue-500', 'from-blue-500 to-transparent', "openModal('weight')"));
+                document.write(renderCard('ban', 'fa-solid fa-shield-halved', '限流检测', '违规与小黑屋', 'text-red-500', 'from-red-500 to-transparent', "openModal('ban')"));
+                document.write(renderCard('valuation', 'fa-solid fa-sack-dollar', '账号估值', 'AI 市场溢价模型', 'text-amber-500', 'from-amber-500 to-transparent', "openModal('valuation')"));
+                document.write(renderCard('analysis', 'fa-solid fa-magnifying-glass-chart', '作品诊断', '完播与互动指标', 'text-purple-500', 'from-purple-500 to-transparent', "openModal('analysis')"));
+                document.write(renderCard('fans', 'fa-solid fa-users-line', '粉丝排行', '活跃粉丝贡献榜', 'text-cyan-500', 'from-cyan-500 to-transparent', "openModal('fans')"));
+                document.write(renderCard('hot_list', 'fa-solid fa-fire-flame-curved', '热门榜单', '全站实时热榜', 'text-rose-500', 'from-rose-500 to-transparent', "openModal('hot_list')"));
+                document.write(renderCard('hot_topic', 'fa-solid fa-hashtag', '热门话题', '流量飙升风向标', 'text-indigo-500', 'from-indigo-500 to-transparent', "openModal('hot_topic')"));
+                document.write(renderCard('ai_script', 'fa-solid fa-pen-nib', 'AI 爆款脚本', '一键生成视频文案', 'text-pink-500', 'from-pink-500 to-transparent', "openModal('ai_script')"));
+                document.write(renderCard('risk_check', 'fa-solid fa-file-medical', '违规词检测', '文案/直播敏感词', 'text-emerald-500', 'from-emerald-500 to-transparent', "openModal('risk_check')"));
+                document.write(renderCard('live_data', 'fa-solid fa-tower-broadcast', '直播复盘', '在线人数/GMV', 'text-fuchsia-500', 'from-fuchsia-500 to-transparent', "openModal('live_data')"));
+
+                // 新增功能：营销日历 & 爆款配乐
+                document.write(renderCard('calendar', 'fa-regular fa-calendar-check', '营销日历', '借势节点提醒', 'text-teal-500', 'from-teal-500 to-transparent', "openModal('calendar')"));
+                document.write(renderCard('bgm_rank', 'fa-solid fa-music', '爆款配乐', '热门BGM榜单', 'text-lime-500', 'from-lime-500 to-transparent', "openModal('bgm_rank')"));
+            </script>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 glass border-t border-gray-200/60 pb-[env(safe-area-inset-bottom)] z-50 max-w-md mx-auto">
+        <div class="flex justify-around items-center h-16">
+            <div class="nav-item active flex flex-col items-center justify-center w-full h-full cursor-pointer text-black transition-colors" onclick="switchNav(this)">
+                <i class="fa-solid fa-house text-lg mb-1"></i>
+                <span class="text-[10px] font-medium">首页</span>
+            </div>
+            <div class="nav-item flex flex-col items-center justify-center w-full h-full cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" onclick="switchNav(this)">
+                <div class="relative">
+                    <i class="fa-regular fa-compass text-lg mb-1"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </div>
+                <span class="text-[10px] font-medium">发现</span>
+            </div>
+            <div class="nav-item flex flex-col items-center justify-center w-full h-full cursor-pointer text-gray-400 hover:text-gray-600 transition-colors" onclick="switchNav(this)">
+                <i class="fa-regular fa-user text-lg mb-1"></i>
+                <span class="text-[10px] font-medium">我的</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Enhanced Modal -->
+<div id="modal-overlay" class="fixed inset-0 bg-slate-900/30 backdrop-blur-[2px] z-[60] hidden flex items-center justify-center p-5 opacity-0 transition-opacity duration-300">
+    <div id="modal-content" class="bg-white/95 backdrop-blur-xl w-full max-w-sm rounded-[2rem] shadow-2xl border border-white/50 overflow-hidden transform scale-90 opacity-0 transition-all duration-300">
+        <!-- Content injected by JS -->
+    </div>
+</div>
+
+<script>
+    // State & Config
+    let currentPlatform = 'douyin';
+
+    const themes = {
+        douyin: {
+            name: '抖音',
+            color: '#000000',
+            btnClass: 'bg-black text-white shadow-gray-400/30',
+            icon: 'fa-brands fa-tiktok'
+        },
+        kuaishou: {
+            name: '快手',
+            color: '#f97316',
+            btnClass: 'bg-orange-500 text-white shadow-orange-500/30',
+            icon: 'fa-solid fa-video'
+        },
+        xhs: {
+            name: '小红书',
+            color: '#ff2442',
+            btnClass: 'bg-[#ff2442] text-white shadow-red-500/30',
+            icon: 'fa-solid fa-book-open'
+        },
+        wechat: {
+            name: '视频号',
+            color: '#07c160',
+            btnClass: 'bg-[#07c160] text-white shadow-green-500/30',
+            icon: 'fa-brands fa-weixin'
+        }
+    };
+
+    // UI Interactions
+    function switchPlatform(platform) {
+        currentPlatform = platform;
+        const theme = themes[platform];
+
+        // Update Buttons State
+        document.querySelectorAll('#btn-douyin, #btn-kuaishou, #btn-xhs, #btn-wechat').forEach(btn => {
+            btn.className = 'snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500 border border-gray-100 hover:text-gray-800 transition-all active:scale-95';
+        });
+        const activeBtn = document.getElementById(`btn-${platform}`);
+        // Use specific styling per platform for the active button
+        let activeClass = '';
+        if(platform === 'douyin') activeClass = 'bg-black text-white shadow-lg shadow-gray-200';
+        else if(platform === 'kuaishou') activeClass = 'bg-orange-500 text-white shadow-lg shadow-orange-200 border-orange-500';
+        else if(platform === 'xhs') activeClass = 'bg-[#ff2442] text-white shadow-lg shadow-red-200 border-[#ff2442]';
+        else activeClass = 'bg-[#07c160] text-white shadow-lg shadow-green-200 border-[#07c160]';
+
+        activeBtn.className = `snap-start flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 ${activeClass}`;
+
+        // Update UI Elements
+        document.getElementById('app-icon').className = `w-8 h-8 rounded-xl shadow-lg flex items-center justify-center transition-all duration-300 transform hover:scale-105 ${activeClass.split(' ')[0]} text-white`;
+        document.getElementById('platform-label').textContent = theme.name;
+        document.getElementById('platform-label').className = `text-[10px] font-bold text-white px-2 py-0.5 rounded shadow-sm transition-colors ${activeClass.split(' ')[0]}`;
+    }
+
+    function switchNav(el) {
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('text-black', 'active');
+            item.classList.add('text-gray-400');
+        });
+        el.classList.remove('text-gray-400');
+        el.classList.add('text-black', 'active');
+    }
+
+    // Modal System
+    const overlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+
+    function openModal(type) {
+        const inputVal = "当前账号";
+
+        // Animation In
+        overlay.classList.remove('hidden');
+        // Trigger reflow
+        void overlay.offsetWidth;
+        overlay.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-90', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+
+        renderLoading(type);
+
+        // Mock Async Delay
+        setTimeout(() => {
+            renderResult(type, inputVal);
+        }, 1800);
+    }
+
+    function closeModal() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-90', 'opacity-0');
+        overlay.classList.add('opacity-0');
+
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+        }, 300);
+    }
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+
+    function renderLoading(type) {
+        const theme = themes[currentPlatform];
+        const titles = {
+            weight: '正在计算账号权重...',
+            ban: '全库扫描违规词...',
+            valuation: '构建AI估值模型...',
+            analysis: '深度扫描近期作品...',
+            fans: '分析粉丝活跃数据...',
+            hot_list: '同步全站实时榜单...',
+            hot_topic: '挖掘潜在爆款话题...',
+            ai_script: 'AI 正在生成脚本...',
+            risk_check: '比对广告法词库...',
+            live_data: '获取直播流数据...',
+            calendar: '加载营销节点...',
+            bgm_rank: '同步音乐榜单...'
+        };
+
+        modalContent.innerHTML = `
+                <div class="p-8 flex flex-col items-center justify-center min-h-[300px]">
+                    <div class="relative w-20 h-20 mb-6">
+                        <div class="absolute inset-0 rounded-full border-4 border-gray-100"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-t-transparent animate-spin" style="border-color: ${theme.color} transparent transparent transparent"></div>
+                        <div class="absolute inset-2 rounded-full bg-gray-50 flex items-center justify-center">
+                            <i class="${theme.icon} text-2xl animate-pulse" style="color:${theme.color}"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-lg mb-2 animate-pulse">${titles[type]}</h3>
+                    <p class="text-xs text-gray-400">正在连接 ${theme.name} 核心数据接口...</p>
+                    
+                    <!-- Skeleton UI -->
+                    <div class="w-full space-y-3 mt-8 opacity-50">
+                        <div class="h-3 bg-gray-100 rounded-full w-3/4 mx-auto animate-pulse"></div>
+                        <div class="h-3 bg-gray-100 rounded-full w-1/2 mx-auto animate-pulse delay-75"></div>
+                    </div>
+                </div>
+            `;
+    }
+
+    function renderResult(type, username) {
+        const theme = themes[currentPlatform];
+        // Random Data Generator
+        const score = Math.floor(Math.random() * 30) + 65;
+        const money = (Math.random() * 5000 + 1000).toFixed(2);
+
+        let content = '';
+
+        const header = `
+                <div class="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50/50">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-6 rounded-full" style="background:${theme.color}"></div>
+                        <span class="font-bold text-slate-800">分析报告</span>
+                    </div>
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-200/50 hover:bg-gray-200 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-gray-500"></i>
+                    </button>
+                </div>
+            `;
+
+        if (type === 'weight') {
+            const deg = -45 + (1.8 * score);
+            content = `
+                    <div class="p-6 text-center animate-enter">
+                        <div class="mb-4 inline-block px-3 py-1 rounded-full bg-gray-100 text-xs text-gray-500 font-mono">ID: ${username}</div>
+                        
+                        <div class="relative w-40 h-20 mx-auto overflow-hidden mb-2">
+                            <div class="absolute top-0 left-0 w-40 h-40 rounded-full border-[12px] border-gray-100 box-border"></div>
+                            <div class="gauge-fill absolute top-0 left-0 w-40 h-40 rounded-full border-[12px] border-transparent box-border" 
+                                 style="border-top-color: ${theme.color}; border-right-color: ${theme.color}; transform: rotate(${deg}deg);"></div>
+                        </div>
+                        <div class="text-4xl font-black text-slate-800 tracking-tighter">${score}</div>
+                        <div class="text-xs text-gray-400 uppercase tracking-widest mt-1 font-bold">综合权重分</div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-8">
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 mb-1">账号评级</div>
+                                <div class="font-bold text-base" style="color:${theme.color}">${score > 80 ? 'S级 (极优)' : 'A级 (良好)'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <div class="text-[10px] text-gray-400 mb-1">流量池层级</div>
+                                <div class="font-bold text-slate-700 text-base">Level ${Math.floor(score/10)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'ban') {
+            const isSafe = Math.random() > 0.2;
+            content = `
+                    <div class="p-8 text-center animate-enter">
+                        <div class="relative inline-flex items-center justify-center w-24 h-24 rounded-full ${isSafe ? 'bg-green-50' : 'bg-red-50'} mb-4">
+                            ${!isSafe ? `<div class="absolute inset-0 rounded-full border-2 border-red-200 animate-ping opacity-20"></div>` : ''}
+                            <i class="fa-solid ${isSafe ? 'fa-shield-check text-green-500' : 'fa-triangle-exclamation text-red-500'} text-4xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800 mb-1">${isSafe ? '账号状态正常' : '检测到异常风险'}</h2>
+                        <p class="text-xs text-gray-400 mb-6">${isSafe ? '未发现明显的违规记录或限流迹象' : '系统检测到近期有疑似违规操作'}</p>
+                        
+                        <div class="space-y-3 text-left">
+                            <div class="flex justify-between text-sm p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-500">作品搬运检测</span>
+                                <span class="font-bold text-green-600"><i class="fa-solid fa-check mr-1"></i>通过</span>
+                            </div>
+                            <div class="flex justify-between text-sm p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-500">敏感词检测</span>
+                                <span class="font-bold ${isSafe ? 'text-green-600' : 'text-red-500'}">
+                                    ${isSafe ? '<i class="fa-solid fa-check mr-1"></i>通过' : '<i class="fa-solid fa-xmark mr-1"></i>3处风险'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'valuation') {
+            content = `
+                    <div class="p-8 text-center animate-enter">
+                         <p class="text-xs text-gray-400 mb-2">基于 AI 粉丝画像与互动率估算</p>
+                         <div class="text-5xl font-black text-slate-800 mb-1 flex justify-center items-start">
+                            <span class="text-2xl mt-1 mr-1 text-gray-400">¥</span>${money}
+                         </div>
+                         <div class="inline-block px-2 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold mb-8">
+                            <i class="fa-solid fa-arrow-up"></i> 环比上周 +5.2%
+                         </div>
+
+                         <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 text-left">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm mr-3 text-amber-500">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-slate-700">商业潜力极高</div>
+                                    <div class="text-[10px] text-gray-400">超过了 85% 的同类账号</div>
+                                </div>
+                            </div>
+                            <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full" style="width: 85%; background: ${theme.color}"></div>
+                            </div>
+                         </div>
+                    </div>
+                 `;
+        } else if (type === 'analysis') {
+            content = `
+                    <div class="p-6 bg-white animate-enter">
+                        <h4 class="text-sm font-bold text-slate-800 mb-5 flex items-center">
+                            <i class="fa-solid fa-wave-square text-purple-500 mr-2"></i> 近5条作品深度诊断
+                        </h4>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span class="text-gray-500">5s完播率</span>
+                                    <span class="font-bold text-green-500">优秀 (52%)</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden border border-gray-100/50">
+                                    <div class="h-full rounded-full bg-gradient-to-r from-green-400 to-green-500 relative" style="width: 75%">
+                                        <div class="absolute inset-0 bg-white/20 animate-[pulse_2s_infinite]"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span class="text-gray-500">互动指数 (转/评/赞)</span>
+                                    <span class="font-bold text-amber-500">一般</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden border border-gray-100/50">
+                                    <div class="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-purple-50/50 rounded-xl border border-purple-100 relative overflow-hidden">
+                                <div class="absolute -right-2 -top-2 text-purple-100 text-6xl opacity-20"><i class="fa-solid fa-lightbulb"></i></div>
+                                <div class="text-xs text-purple-700 font-bold mb-1.5 flex items-center relative z-10">
+                                    <span class="w-1.5 h-1.5 bg-purple-500 rounded-full mr-1.5"></span> 优化建议
+                                </div>
+                                <p class="text-xs text-purple-800/70 leading-relaxed relative z-10">
+                                    检测到前3秒用户流失率较高，建议优化视频封面标题，或在开篇设置更强的悬念钩子。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'fans') {
+            content = `
+                    <div class="animate-enter">
+                        <div class="px-5 py-3 bg-cyan-50/50 border-b border-cyan-100 flex justify-between items-center">
+                            <h4 class="text-xs font-bold text-cyan-800">本周活跃粉丝 Top 5</h4>
+                            <span class="text-[10px] bg-white px-2 py-0.5 rounded-full text-cyan-600 shadow-sm">互动指数</span>
+                        </div>
+                        <div class="max-h-[320px] overflow-y-auto">
+                            ${[1,2,3,4,5].map((i) => `
+                                <div class="flex items-center px-5 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs font-bold text-gray-400 mr-3 border border-white shadow-sm">
+                                        <i class="fa-regular fa-user"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-bold text-slate-700">用户8829${i}</div>
+                                        <div class="text-[10px] text-gray-400">点赞 1${i} · 评论 ${5-i}</div>
+                                    </div>
+                                    <div class="text-xs font-bold text-cyan-600">${99-i*2}分</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                         <div class="p-4 bg-gray-50 text-center border-t border-gray-100">
+                            <p class="text-[10px] text-gray-400">你的粉丝主要集中在 <span class="font-bold text-slate-600">20-25岁</span>，活跃时间为 <span class="font-bold text-slate-600">21:00-23:00</span></p>
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'hot_list') {
+            const items = currentPlatform === 'xhs'
+                ? ['早八人伪素颜妆容教程', '沉浸式收纳解压视频', '低卡便利店减脂餐测评', '独居女生的安全好物', '2024最全拍照姿势合集']
+                : ['反转！这结局万万没想到', '街头挑战：路人反应太真实', '三分钟看完最新悬疑片', '萌宠成精了，建议查查', '这波操作直接封神'];
+
+            content = `
+                    <div class="animate-enter">
+                        <div class="px-5 py-3 bg-rose-50/50 border-b border-rose-100 flex items-center">
+                            <i class="fa-solid fa-fire text-rose-500 mr-2 text-xs"></i>
+                            <h4 class="text-xs font-bold text-rose-800">实时热门作品榜</h4>
+                        </div>
+                        <div class="max-h-[320px] overflow-y-auto">
+                            ${items.map((item, i) => `
+                                <div class="flex items-start px-5 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors group cursor-pointer">
+                                    <span class="text-sm font-black italic mr-3 ${i<3 ? 'text-rose-500' : 'text-gray-300'}">${i+1}</span>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-bold text-slate-700 mb-1 group-hover:text-rose-600 transition-colors line-clamp-1">${item}</div>
+                                        <div class="flex items-center space-x-2 text-[10px] text-gray-400">
+                                            <span><i class="fa-solid fa-play text-[8px] mr-0.5"></i> ${(10-i)*10}w</span>
+                                            ${i < 2 ? '<span class="px-1 rounded bg-rose-100 text-rose-600 font-bold scale-90 origin-left">爆</span>' : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'hot_topic') {
+            const topics = currentPlatform === 'xhs'
+                ? ['OOTD每日穿搭', '我的平价好物', '周末去哪儿', '情感树洞', '美妆分享']
+                : ['搞笑剧情', '生活小妙招', '音乐现场', '美食探店', '正能量'];
+
+            content = `
+                    <div class="p-5 animate-enter bg-white">
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            ${topics.map((t, i) => `
+                                <div class="px-3 py-1.5 rounded-lg border border-indigo-100 bg-indigo-50/30 text-xs font-medium text-indigo-600 flex items-center cursor-pointer hover:bg-indigo-50 transition-colors">
+                                    <span class="mr-1">#</span> ${t}
+                                    ${i === 0 ? '<span class="ml-1.5 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <h4 class="text-xs font-bold text-slate-700 mb-3 flex items-center">
+                                <i class="fa-solid fa-arrow-trend-up text-indigo-500 mr-1.5"></i> 趋势预测
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-gray-500">#${topics[0]}</span>
+                                    <span class="text-green-500 font-bold"><i class="fa-solid fa-angles-up"></i> 124%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-indigo-500 rounded-full" style="width: 80%"></div>
+                                </div>
+                                <div class="flex justify-between items-center text-xs mt-2">
+                                    <span class="text-gray-500">#${topics[1]}</span>
+                                    <span class="text-green-500 font-bold"><i class="fa-solid fa-angle-up"></i> 45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                                    <div class="h-full bg-indigo-400/60 rounded-full" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'ai_script') {
+            content = `
+                    <div class="p-5 animate-enter">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-xs font-bold text-slate-700">AI 生成结果：爆款模板</h4>
+                            <button class="text-xs text-pink-500 font-bold flex items-center bg-pink-50 px-2 py-1 rounded-md"><i class="fa-regular fa-copy mr-1"></i>复制</button>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 space-y-4 text-xs">
+                            <div>
+                                <div class="text-pink-500 font-bold mb-1"><i class="fa-solid fa-quote-left mr-1"></i>黄金前3秒 (钩子)</div>
+                                <p class="text-slate-600 leading-relaxed">“千万别再这么做了！90%的人都不知道的${currentPlatform === 'xhs' ? '变美' : '省钱'}小技巧，今天一次性告诉你！”</p>
+                            </div>
+                            <div>
+                                <div class="text-slate-700 font-bold mb-1">核心内容 (干货)</div>
+                                <p class="text-slate-600 leading-relaxed">第一步：准备好... <br>第二步：注意细节... <br>第三步：直接看效果！</p>
+                            </div>
+                             <div>
+                                <div class="text-slate-700 font-bold mb-1">结尾引导 (转化)</div>
+                                <p class="text-slate-600 leading-relaxed">学会了吗？记得点赞收藏，不然刷着刷着就找不到了！</p>
+                            </div>
+                        </div>
+                    </div>
+                 `;
+        } else if (type === 'risk_check') {
+            content = `
+                    <div class="p-6 text-center animate-enter">
+                         <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-500 text-3xl">
+                            <i class="fa-solid fa-shield-cat"></i>
+                         </div>
+                         <h2 class="font-bold text-slate-800 text-lg mb-1">文案检测通过</h2>
+                         <p class="text-xs text-gray-400 mb-6">未发现“极限词”、“虚假宣传”等高危词汇</p>
+
+                         <div class="text-left bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="flex justify-between items-center text-xs mb-3 pb-3 border-b border-gray-200/50">
+                                <span class="text-gray-500">敏感词库版本</span>
+                                <span class="font-mono text-slate-600">v2024.11.05</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-gray-500">安全指数</span>
+                                <span class="font-bold text-emerald-500">100/100</span>
+                            </div>
+                         </div>
+                    </div>
+                `;
+        } else if (type === 'live_data') {
+            content = `
+                    <div class="p-5 animate-enter">
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-fuchsia-50 p-3 rounded-xl text-center">
+                                <div class="text-[10px] text-fuchsia-400 mb-1">最高在线 (PCU)</div>
+                                <div class="text-lg font-bold text-fuchsia-600">3,421</div>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-xl text-center">
+                                <div class="text-[10px] text-blue-400 mb-1">累计场观 (PV)</div>
+                                <div class="text-lg font-bold text-blue-600">5.2w</div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 mb-2">
+                             <div class="flex justify-between text-xs mb-3">
+                                <span class="text-gray-500">平均停留时长</span>
+                                <span class="font-bold text-slate-700">1分24秒</span>
+                            </div>
+                             <div class="flex justify-between text-xs">
+                                <span class="text-gray-500">预估销售额 (GMV)</span>
+                                <span class="font-bold text-slate-700">¥ 12,890.00</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-center text-gray-400 mt-3">*数据来源于最近一场直播</p>
+                    </div>
+                `;
+        } else if (type === 'calendar') {
+            const events = [
+                { date: '明天', name: '夏日大促开启', tag: '购物' },
+                { date: '3天后', name: '立秋', tag: '节气' },
+                { date: '下周一', name: '七夕情人节', tag: '热门' }
+            ];
+            content = `
+                    <div class="p-5 animate-enter">
+                         <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-xs font-bold text-teal-800">近期借势节点 (7天内)</h4>
+                            <span class="text-[10px] bg-teal-50 text-teal-600 px-2 py-0.5 rounded-full font-bold">建议提前2天布局</span>
+                        </div>
+                        <div class="relative pl-4 border-l-2 border-teal-100 space-y-6">
+                            ${events.map((e, i) => `
+                                <div class="relative">
+                                    <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full border-2 border-white bg-teal-400 shadow-sm"></div>
+                                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 flex justify-between items-center group hover:bg-teal-50/50 transition-colors">
+                                        <div>
+                                            <div class="text-[10px] text-teal-500 font-bold mb-0.5">${e.date}</div>
+                                            <div class="text-sm font-bold text-slate-700">${e.name}</div>
+                                        </div>
+                                        <div class="text-[10px] px-2 py-1 rounded-md bg-white border border-gray-100 text-gray-500">${e.tag}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+        } else if (type === 'bgm_rank') {
+            const songs = ['卡点神曲01', '情感氛围感BGM', '快节奏Vlog配乐', '悬疑反转音效', '国风纯音乐'];
+            content = `
+                    <div class="animate-enter">
+                         <div class="px-5 py-3 bg-lime-50/50 border-b border-lime-100 flex items-center justify-between">
+                            <h4 class="text-xs font-bold text-lime-800">本周飙升 BGM 榜</h4>
+                            <i class="fa-solid fa-music text-lime-500"></i>
+                        </div>
+                        <div class="max-h-[320px] overflow-y-auto">
+                            ${songs.map((s, i) => `
+                                <div class="flex items-center px-5 py-3 border-b border-gray-50 hover:bg-lime-50/30 transition-colors">
+                                    <span class="w-6 text-sm font-bold text-lime-600 italic">${i+1}</span>
+                                    <div class="flex-1">
+                                        <div class="text-xs font-bold text-slate-700 mb-0.5">${s}</div>
+                                        <div class="text-[10px] text-gray-400">使用人数 ${(10-i)*5000}+</div>
+                                    </div>
+                                    <button class="w-7 h-7 rounded-full bg-lime-100 text-lime-600 flex items-center justify-center hover:bg-lime-500 hover:text-white transition-all shadow-sm">
+                                        <i class="fa-solid fa-play text-[10px] ml-0.5"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+        }
+
+        modalContent.innerHTML = header + content;
+    }
+
+    function analyzeAll() {
+        // Updated analyzeAll to just open weight check as there is no input
+        openModal('weight');
+    }
+
+    // Init
+    window.addEventListener('load', () => {
+        // Initial load actions if needed
+    });
+
+</script>
+</body>
+</html>

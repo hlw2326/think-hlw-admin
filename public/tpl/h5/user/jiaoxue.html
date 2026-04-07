@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>如何获取链接 - 使用教程</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+          animation: {
+            'enter-up': 'enterUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'fade-in': 'fadeIn 0.4s ease-out forwards',
+            'pulse-slow': 'pulse 3s infinite',
+          },
+          keyframes: {
+            enterUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'scale(0.98)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            }
+          },
+          colors: {
+            douyin: '#1C1C1E', // 抖音深黑
+            kuaishou: '#FF5000', // 快手橙红
+            xhs: '#FF2442', // 小红书红
+            weixin: '#07C160', // 微信绿
+            surface: '#ffffff',
+          },
+          boxShadow: {
+            'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
+            'glow': '0 0 15px rgba(0,0,0,0.1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #F6F8FA;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: 120px;
+    }
+
+    /* 优化后的玻璃拟态 */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .step-num { font-family: 'Inter', sans-serif; }
+
+    /* 平台 Tab 样式优化 */
+    .platform-tab {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 激活状态的 Tab 会有更明显的立体感 */
+    .platform-tab.active {
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    /* 抖音激活 */
+    #tab-douyin.active { color: #1C1C1E; }
+    #tab-douyin.active .icon-bg { background-color: #1C1C1E; color: white; }
+
+    /* 快手激活 */
+    #tab-kuaishou.active { color: #FF5000; }
+    #tab-kuaishou.active .icon-bg { background-color: #FF5000; color: white; }
+
+    /* 小红书激活 */
+    #tab-xhs.active { color: #FF2442; }
+    #tab-xhs.active .icon-bg { background-color: #FF2442; color: white; }
+
+    /* 微信激活 */
+    #tab-weixin.active { color: #07C160; }
+    #tab-weixin.active .icon-bg { background-color: #07C160; color: white; }
+
+    /* 图片容器样式升级 */
+    .tutorial-img-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+    .tutorial-img-container:active {
+      transform: scale(0.98);
+    }
+    /* 悬浮时的放大镜效果 */
+    .zoom-hint {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tutorial-img-container:hover .zoom-hint {
+      opacity: 1;
+    }
+
+    /* 连接线优化 */
+    .timeline-line {
+      width: 2px;
+      background: linear-gradient(to bottom, #e2e8f0 50%, transparent 100%);
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden selection:bg-blue-100/50">
+
+<!-- 背景装饰 - 更柔和的极光色 -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+  <div class="absolute top-[-10%] left-[-20%] w-[90vw] h-[90vw] rounded-full bg-blue-100/60 blur-[80px]"></div>
+  <div class="absolute bottom-[10%] right-[-10%] w-[80vw] h-[80vw] rounded-full bg-purple-100/60 blur-[80px]"></div>
+</div>
+
+<!-- 1. Header -->
+<header class="w-full max-w-md sticky top-0 z-50 glass-panel border-b-0">
+  <div class="px-5 h-14 flex items-center justify-between">
+    <a href="#" onclick="history.back()" class="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-600 active:scale-95">
+      <i class="fa-solid fa-arrow-left text-sm"></i>
+    </a>
+    <h1 class="font-bold text-slate-800 tracking-tight text-[17px]">获取链接教程</h1>
+    <div class="w-9"></div>
+  </div>
+</header>
+
+<main class="w-full max-w-md flex-1 flex flex-col gap-5 p-5">
+
+  <!-- 2. Intro Area -->
+  <div class="animate-enter-up flex justify-between items-end px-1">
+    <div>
+      <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-1">选择平台</h2>
+      <p class="text-xs text-slate-500 font-medium">查看对应平台的链接/ID获取方法</p>
+    </div>
+    <div class="text-[10px] bg-white/60 border border-white/60 backdrop-blur-sm px-2 py-1 rounded-full text-slate-400 shadow-sm">
+      <i class="fa-regular fa-image mr-1"></i>点图放大
+    </div>
+  </div>
+
+  <!-- 3. Platform Tabs (更加精致) -->
+  <div class="animate-enter-up" style="animation-delay: 0.1s;">
+    <div class="flex p-1.5 bg-slate-200/40 backdrop-blur-md rounded-2xl gap-1.5">
+      <!-- 抖音 -->
+      <button onclick="switchTab('douyin')" id="tab-douyin" class="platform-tab active flex-1 py-3 rounded-xl text-xs text-slate-400 font-medium transition-all flex flex-col items-center gap-1.5">
+                    <span class="icon-bg w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center text-sm shadow-sm transition-colors">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </span>
+        <span>抖音</span>
+      </button>
+      <!-- 快手 -->
+      <button onclick="switchTab('kuaishou')" id="tab-kuaishou" class="platform-tab flex-1 py-3 rounded-xl text-xs text-slate-400 font-medium transition-all flex flex-col items-center gap-1.5">
+                    <span class="icon-bg w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center text-sm shadow-sm transition-colors">
+                        <i class="fa-solid fa-play"></i>
+                    </span>
+        <span>快手</span>
+      </button>
+      <!-- 小红书 -->
+      <button onclick="switchTab('xhs')" id="tab-xhs" class="platform-tab flex-1 py-3 rounded-xl text-xs text-slate-400 font-medium transition-all flex flex-col items-center gap-1.5">
+                    <span class="icon-bg w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center text-sm shadow-sm transition-colors">
+                        <i class="fa-solid fa-book"></i>
+                    </span>
+        <span>小红书</span>
+      </button>
+      <!-- 视频号 -->
+      <button onclick="switchTab('weixin')" id="tab-weixin" class="platform-tab flex-1 py-3 rounded-xl text-xs text-slate-400 font-medium transition-all flex flex-col items-center gap-1.5">
+                    <span class="icon-bg w-8 h-8 rounded-full bg-white text-slate-400 flex items-center justify-center text-sm shadow-sm transition-colors">
+                        <i class="fa-brands fa-weixin"></i>
+                    </span>
+        <span>视频号</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. Content Area -->
+  <div class="relative min-h-[400px]">
+
+    <!-- 抖音 Content -->
+    <div id="content-douyin" class="tutorial-content animate-fade-in absolute w-full top-0 left-0">
+      <div class="glass-panel rounded-2xl p-6 mb-5">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white shadow-lg shadow-gray-200">
+            <i class="fa-brands fa-tiktok text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800">抖音获取方法</h3>
+            <p class="text-[10px] text-slate-400">Douyin / TikTok</p>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="flex gap-4 mb-8 relative group">
+          <!-- Connecting Line -->
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-black group-hover:text-white group-hover:border-black transition-colors duration-300 step-num">1</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-1">进入个人主页</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">打开抖音App，点击底部导航栏右下角的“我”。</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-black group-hover:text-white group-hover:border-black transition-colors duration-300 step-num">2</div>
+          <div class="flex-1 pt-1">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="font-bold text-sm text-slate-800">复制抖音号 <span class="text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-1">推荐</span></h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">轻触头像下方即可复制</p>
+              </div>
+            </div>
+
+            <div class="tutorial-img-container mb-3" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：点击抖音号区域" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 font-mono border border-slate-200 border-dashed flex items-center justify-between group/code hover:bg-slate-100 transition-colors cursor-default">
+              <span>抖音号：12345678</span>
+              <i class="fa-regular fa-copy text-slate-400 group-hover/code:text-slate-600"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex gap-4 group">
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-black group-hover:text-white group-hover:border-black transition-colors duration-300 step-num">3</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-1">或 复制主页链接</h4>
+            <p class="text-xs text-slate-500 mb-3">右上角菜单 <i class="fa-solid fa-bars text-[10px] bg-slate-100 p-1 rounded"></i> 或 <i class="fa-solid fa-share text-[10px] bg-slate-100 p-1 rounded"></i> ➜ 复制链接</p>
+
+            <div class="tutorial-img-container" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x320/f8fafc/94a3b8?text=示意图：分享菜单 -> 复制链接" class="w-full object-cover h-36">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Correct Example -->
+      <div class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-16 h-16 bg-green-100 rounded-full blur-xl -mr-6 -mt-6"></div>
+        <h5 class="text-xs font-bold text-slate-700 mb-2.5 flex items-center gap-1.5 relative z-10">
+          <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 正确的链接示例
+        </h5>
+        <div class="text-[11px] text-slate-600 bg-white border border-slate-100 p-3 rounded-xl break-all leading-relaxed font-mono shadow-sm relative z-10">
+          8.52 复制打开抖音，看看【用户A的作品】https://v.douyin.com/iJ2x8L/
+        </div>
+      </div>
+    </div>
+
+    <!-- 快手 Content -->
+    <div id="content-kuaishou" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+      <div class="glass-panel rounded-2xl p-6 mb-5">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-[#FF5000] flex items-center justify-center text-white shadow-lg shadow-orange-100">
+            <i class="fa-solid fa-play text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800">快手获取方法</h3>
+            <p class="text-[10px] text-slate-400">Kuaishou</p>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF5000] group-hover:text-white group-hover:border-[#FF5000] transition-colors duration-300 step-num">1</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-1">进入个人主页</h4>
+            <p class="text-xs text-slate-500">打开快手App，点击左上角菜单点击头像。</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF5000] group-hover:text-white group-hover:border-[#FF5000] transition-colors duration-300 step-num">2</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">点击分享按钮</h4>
+            <div class="tutorial-img-container" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：右上角分享按钮" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4 group">
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF5000] group-hover:text-white group-hover:border-[#FF5000] transition-colors duration-300 step-num">3</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">复制链接</h4>
+            <div class="tutorial-img-container" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：面板中点击复制链接" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Correct Example -->
+      <div class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+        <h5 class="text-xs font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
+          <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 正确的链接示例
+        </h5>
+        <div class="text-[11px] text-slate-600 bg-white border border-slate-100 p-3 rounded-xl break-all leading-relaxed font-mono shadow-sm">
+          快手搜索“用户昵称”，点击主页链接：https://v.kuaishou.com/xxxxxx
+        </div>
+      </div>
+    </div>
+
+    <!-- 小红书 Content -->
+    <div id="content-xhs" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+      <div class="glass-panel rounded-2xl p-6 mb-5">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-[#FF2442] flex items-center justify-center text-white shadow-lg shadow-red-100">
+            <i class="fa-solid fa-book text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800">小红书获取方法</h3>
+            <p class="text-[10px] text-slate-400">RED / Xiaohongshu</p>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF2442] group-hover:text-white group-hover:border-[#FF2442] transition-colors duration-300 step-num">1</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-1">进入“我”的页面</h4>
+            <p class="text-xs text-slate-500">打开App，点击右下角进入个人中心。</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF2442] group-hover:text-white group-hover:border-[#FF2442] transition-colors duration-300 step-num">2</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">复制小红书号</h4>
+            <div class="tutorial-img-container mb-3" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：点击复制小红书号" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 font-mono border border-slate-200 border-dashed flex items-center justify-between">
+              <span>小红书号：RED123456</span>
+              <i class="fa-regular fa-copy text-slate-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4 group">
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#FF2442] group-hover:text-white group-hover:border-[#FF2442] transition-colors duration-300 step-num">3</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">或 复制链接</h4>
+            <div class="tutorial-img-container" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：右上角菜单复制链接" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Correct Example -->
+      <div class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+        <h5 class="text-xs font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
+          <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div> 正确的链接示例
+        </h5>
+        <div class="text-[11px] text-slate-600 bg-white border border-slate-100 p-3 rounded-xl break-all leading-relaxed font-mono shadow-sm">
+          【用户昵称】 https://www.xiaohongshu.com/user/profile/xxxxxx
+        </div>
+      </div>
+    </div>
+
+    <!-- 视频号 Content -->
+    <div id="content-weixin" class="tutorial-content hidden animate-fade-in absolute w-full top-0 left-0">
+      <div class="glass-panel rounded-2xl p-6 mb-5">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-[#07C160] flex items-center justify-center text-white shadow-lg shadow-green-100">
+            <i class="fa-brands fa-weixin text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800">视频号获取方法</h3>
+            <p class="text-[10px] text-slate-400">WeChat Channels</p>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 mb-6 flex items-start gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 text-sm"></i>
+          <p class="text-xs text-amber-700 leading-relaxed font-medium">
+            视频号暂不支持链接查询，必须使用<span class="font-bold underline">ID</span>进行查询。
+          </p>
+        </div>
+
+        <!-- Steps -->
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#07C160] group-hover:text-white group-hover:border-[#07C160] transition-colors duration-300 step-num">1</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-1">进入视频号主页</h4>
+            <p class="text-xs text-slate-500">微信 -> 发现 -> 视频号 -> 点击右上角人像。</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mb-8 relative group">
+          <div class="timeline-line absolute left-[14px] top-10 bottom-[-24px]"></div>
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#07C160] group-hover:text-white group-hover:border-[#07C160] transition-colors duration-300 step-num">2</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">进入账号管理</h4>
+            <div class="tutorial-img-container" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：菜单 -> 账号管理" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4 group">
+          <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 text-slate-600 font-bold flex items-center justify-center shrink-0 z-10 shadow-sm group-hover:bg-[#07C160] group-hover:text-white group-hover:border-[#07C160] transition-colors duration-300 step-num">3</div>
+          <div class="flex-1 pt-1">
+            <h4 class="font-bold text-sm text-slate-800 mb-2">长按复制ID</h4>
+            <div class="tutorial-img-container mb-3" onclick="openImageModal(this.children[0].src)">
+              <img src="https://placehold.co/600x300/f8fafc/94a3b8?text=示意图：长按ID栏复制" class="w-full object-cover h-32">
+              <div class="zoom-hint">
+                <span class="bg-black/60 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">点击放大</span>
+              </div>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 font-mono border border-slate-200 border-dashed">
+              sphXyz123...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- Fixed Bottom Button Area -->
+<div class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-slate-200/60 p-5 pb-safe z-50 flex justify-center shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
+  <div class="w-full max-w-md">
+    <button onclick="alert('跳转回首页')" class="w-full py-3.5 rounded-xl font-bold text-sm bg-slate-900 text-white shadow-lg shadow-slate-300 hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center gap-2 group relative overflow-hidden">
+      <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+      <span class="relative flex items-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i> 我已复制，去查询
+                </span>
+    </button>
+  </div>
+</div>
+
+<!-- Image Modal (Lightbox) -->
+<div id="imageModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center opacity-0 transition-opacity duration-300" onclick="closeImageModal()">
+  <img id="modalImage" src="" class="max-w-[90%] max-h-[85%] object-contain rounded-lg shadow-2xl transform scale-95 transition-all duration-300">
+  <button class="absolute top-6 right-6 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white/80 hover:bg-white/20 hover:text-white transition-colors backdrop-blur-md">
+    <i class="fa-solid fa-xmark text-lg"></i>
+  </button>
+  <p class="absolute bottom-10 text-white/60 text-xs font-medium tracking-wide">点击任意处关闭</p>
+</div>
+
+<script>
+  function switchTab(platform) {
+    document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(`tab-${platform}`).classList.add('active');
+
+    document.querySelectorAll('.tutorial-content').forEach(content => content.classList.add('hidden'));
+
+    const selectedContent = document.getElementById(`content-${platform}`);
+    selectedContent.classList.remove('hidden');
+    selectedContent.style.animation = 'none';
+    selectedContent.offsetHeight; /* trigger reflow */
+    selectedContent.style.animation = null;
+  }
+
+  // Image Modal Logic
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+
+  function openImageModal(src) {
+    modalImg.src = src;
+    modal.classList.remove('hidden');
+    // Force reflow
+    void modal.offsetWidth;
+    modal.classList.remove('opacity-0');
+    modalImg.classList.remove('scale-95');
+    modalImg.classList.add('scale-100');
+  }
+
+  function closeImageModal() {
+    modal.classList.add('opacity-0');
+    modalImg.classList.remove('scale-100');
+    modalImg.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 300);
+  }
+</script>
+</body>
+</html>

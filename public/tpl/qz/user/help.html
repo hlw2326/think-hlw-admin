@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>帮助中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* FAQ 动画核心样式 */
+        .faq-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out;
+        }
+
+        /* 激活状态：展开高度 */
+        .faq-item.active .faq-body {
+            grid-template-rows: 1fr;
+        }
+
+        /* 激活状态：箭头旋转 */
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* 激活状态：标题高亮 */
+        .faq-item.active .faq-title {
+            color: #3b82f6; /* blue-500 */
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden selection:bg-blue-100 pb-24">
+
+<!-- 背景装饰 -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full bg-blue-400/10 blur-3xl"></div>
+    <div class="absolute bottom-[-10%] right-[-20%] w-[100vw] h-[100vw] rounded-full bg-indigo-500/10 blur-3xl"></div>
+</div>
+
+<main class="w-full max-w-md flex-1 p-5 flex flex-col gap-5 animate-fade-in">
+
+    <!-- 2. Hot Questions (Animated Accordion) -->
+    <div class="bg-white/95 backdrop-blur border border-white shadow-sm rounded-2xl overflow-hidden px-4 mt-2" id="faq-container">
+        <div class="py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-fire text-red-500"></i> 热门问题
+            </h3>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="faq-item group border-b border-slate-50 last:border-0" onclick="toggleFaq(this)">
+            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors -mx-4 px-8 select-none">
+                <span class="faq-title text-sm font-medium text-slate-700 transition-colors duration-300">如何找回忘记的密码？</span>
+                <i class="faq-icon fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-300"></i>
+            </div>
+            <div class="faq-body">
+                <div class="overflow-hidden">
+                    <div class="px-4 pb-4 text-xs text-gray-500 leading-relaxed">
+                        您可以在登录页面点击“忘记密码”，通过注册时绑定的手机号或邮箱接收验证码来重置密码。如手机号已停用，请联系人工客服进行申诉。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 (Default Active) -->
+        <div class="faq-item active group border-b border-slate-50 last:border-0" onclick="toggleFaq(this)">
+            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors -mx-4 px-8 select-none">
+                <span class="faq-title text-sm font-medium text-slate-700 transition-colors duration-300">PRO会员有哪些特权？</span>
+                <i class="faq-icon fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-300"></i>
+            </div>
+            <div class="faq-body">
+                <div class="overflow-hidden">
+                    <div class="px-4 pb-4 text-xs text-gray-500 leading-relaxed">
+                        PRO会员享有极速通道、无限次查询、专属身份标识、免广告体验以及每月赠送的积分礼包。
+                        <a href="#" class="text-blue-500 font-bold block mt-2" onclick="event.stopPropagation()">查看详细对比 ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="faq-item group border-b border-slate-50 last:border-0" onclick="toggleFaq(this)">
+            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors -mx-4 px-8 select-none">
+                <span class="faq-title text-sm font-medium text-slate-700 transition-colors duration-300">充值未到账怎么办？</span>
+                <i class="faq-icon fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-300"></i>
+            </div>
+            <div class="faq-body">
+                <div class="overflow-hidden">
+                    <div class="px-4 pb-4 text-xs text-gray-500 leading-relaxed">
+                        网络延迟可能导致到账滞后，请您耐心等待3-5分钟。如果仍未到账，请保留支付凭证截图，点击下方的“联系客服”按钮进行处理。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="faq-item group border-b border-slate-50 last:border-0" onclick="toggleFaq(this)">
+            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors -mx-4 px-8 select-none">
+                <span class="faq-title text-sm font-medium text-slate-700 transition-colors duration-300">如何修改绑定手机号？</span>
+                <i class="faq-icon fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-300"></i>
+            </div>
+            <div class="faq-body">
+                <div class="overflow-hidden">
+                    <div class="px-4 pb-4 text-xs text-gray-500 leading-relaxed">
+                        请前往“个人中心 - 系统设置 - 账号与安全”中进行修改。为了安全起见，修改前需要验证原手机号。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="faq-item group last:border-0" onclick="toggleFaq(this)">
+            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors -mx-4 px-8 select-none">
+                <span class="faq-title text-sm font-medium text-slate-700 transition-colors duration-300">账号被封禁如何申诉？</span>
+                <i class="faq-icon fa-solid fa-chevron-down text-gray-300 text-xs transition-transform duration-300"></i>
+            </div>
+            <div class="faq-body">
+                <div class="overflow-hidden">
+                    <div class="px-4 pb-4 text-xs text-gray-500 leading-relaxed">
+                        如果您的账号被系统误封，可以通过点击底部的“联系客服”提交申诉材料。请提供账号ID及相关操作证明，我们会在24小时内审核。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- Bottom Floating Contact Bar -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 z-50">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-4">
+        <div class="flex flex-col">
+            <span class="text-xs text-gray-400">没找到答案？</span>
+            <span class="text-sm font-bold text-slate-700">服务时间: 9:00 - 22:00</span>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="alert('正在连接人工客服...')" class="px-5 h-10 bg-slate-900 text-white text-xs font-bold rounded-full shadow-lg shadow-slate-200 active:scale-95 transition-transform flex items-center gap-2 hover:bg-slate-800">
+                <i class="fa-solid fa-headset"></i>
+                联系客服
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFaq(element) {
+        // 1. 检查当前点击的项是否已经是激活状态
+        const isActive = element.classList.contains('active');
+
+        // 2. 获取容器内所有 FAQ 项目
+        const container = document.getElementById('faq-container');
+        const items = container.getElementsByClassName('faq-item');
+
+        // 3. 关闭所有项目
+        for (let item of items) {
+            item.classList.remove('active');
+        }
+
+        // 4. 如果点击的不是已激活项，则将其激活 (如果点击已激活项，上面步骤3已经将其关闭，实现了“收起”效果)
+        if (!isActive) {
+            element.classList.add('active');
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>抖音账号估价 - 权重助手</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #fff5f5 0%, #fff 100%);
+            color: #1d1d1f;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 0 0;
+        }
+
+        .page {
+            max-width: 440px;
+            margin: 0 auto;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        /* 返回导航 */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: #f5f5f5;
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #333;
+        }
+
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin-right: 36px;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* 输入区域 */
+        .input-section {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-label::before {
+            content: '';
+            width: 3px;
+            height: 12px;
+            background: linear-gradient(180deg, #fe2c55, #ff6b9d);
+            border-radius: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 52px;
+            background: #f7f7f7;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 0 50px 0 16px;
+            font-size: 15px;
+            color: #1d1d1f;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-field::placeholder {
+            color: #bbb;
+        }
+
+        .input-field:focus {
+            border-color: #fe2c55;
+            background: #fff;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            background: #e8e8e8;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .clear-btn.show {
+            display: flex;
+        }
+
+        .input-tips {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .input-tips span {
+            color: #fe2c55;
+        }
+
+        /* 查询按钮 */
+        .submit-btn {
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .submit-btn.loading .loading {
+            display: block;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 结果区域 */
+        .result-section {
+            display: none;
+            animation: fadeUp 0.4s ease;
+            margin-top: 20px;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 账号信息卡片 */
+        .account-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 24px 20px;
+            margin-bottom: 12px;
+        }
+
+        .account-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .account-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 3px solid #fff;
+        }
+
+        .account-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1d1d1f;
+        }
+
+        .account-id {
+            font-size: 13px;
+            color: #86868b;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(254, 44, 85, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #fe2c55;
+            margin-left: 8px;
+        }
+
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #86868b;
+        }
+
+        /* 估值结果卡片 */
+        .value-card {
+            background: linear-gradient(135deg, #fff5f7, #fff);
+            border: 1px solid rgba(254, 44, 85, 0.15);
+            border-radius: 6px;
+            padding: 24px 20px;
+            text-align: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(254, 44, 85, 0.05) 0%, transparent 70%);
+        }
+
+        .value-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .value-amount {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .value-amount .currency {
+            font-size: 24px;
+        }
+
+        .value-range {
+            font-size: 13px;
+            color: #86868b;
+        }
+
+        /* 详细分析 */
+        .analysis-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .analysis-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1d1d1f;
+        }
+
+        .analysis-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #fe2c55, #ff6b9d);
+            border-radius: 2px;
+        }
+
+        .analysis-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .analysis-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .analysis-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analysis-icon {
+            width: 32px;
+            height: 32px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .analysis-name {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .analysis-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .analysis-value.high {
+            color: #52c41a;
+        }
+
+        .analysis-value.medium {
+            color: #faad14;
+        }
+
+        .analysis-value.low {
+            color: #ff4d4f;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fe2c55, #ff6b9d);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* 提示信息 */
+        .tips-card {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+
+        .tips-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            color: #8c6d1f;
+            line-height: 1.6;
+        }
+
+        .tips-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 30px 0 24px;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        /* 历史记录 */
+        .history-section {
+            margin-top: 24px;
+        }
+
+        .history-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:active {
+            background: #f9f9f9;
+        }
+
+        .history-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .history-name {
+            font-size: 14px;
+            color: #1d1d1f;
+        }
+
+        .history-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fe2c55;
+        }
+
+        @media (max-width: 360px) {
+            .page {
+                padding: 16px;
+            }
+
+            .header-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .value-amount {
+                font-size: 36px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="back-btn" onclick="history.back()">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </div>
+        <span class="nav-title">账号估价</span>
+    </nav>
+
+    <!-- 头部 -->
+    <header class="header">
+        <div class="header-icon">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
+            </div>
+        <h1>抖音账号估价</h1>
+        <p>专业评估账号市场价值</p>
+    </header>
+
+    <!-- 输入区域 -->
+    <section class="input-section">
+        <div class="input-label">输入抖音号或主页链接</div>
+        <div class="input-wrapper">
+            <input type="text" class="input-field" id="accountInput" placeholder="请输入抖音号或粘贴主页链接">
+            <div class="clear-btn" id="clearBtn" onclick="clearInput()">×</div>
+        </div>
+        <div class="input-tips">
+            支持格式：<span>抖音号</span> 或 <span>https://v.douyin.com/xxx</span>
+        </div>
+    </section>
+
+    <!-- 查询按钮 -->
+    <button class="submit-btn" id="submitBtn" onclick="queryAccount()">
+        <span class="loading"></span>
+        <span class="btn-text">立即估价</span>
+    </button>
+
+    <!-- 结果区域 -->
+    <section class="result-section" id="resultSection">
+        <!-- 账号信息 -->
+        <div class="account-card">
+            <div class="account-header">
+                <div class="account-avatar" id="accountAvatar">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div class="account-info">
+                    <div class="account-name">
+                        <span id="accountName">账号昵称</span>
+                        <span class="verified-badge" id="verifiedBadge" style="display:none;">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="#fe2c55"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            已认证
+                        </span>
+                    </div>
+                    <div class="account-id">抖音号：<span id="accountIdText">--</span></div>
+                </div>
+            </div>
+            <div class="account-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="fansCount">--</div>
+                    <div class="stat-label">粉丝数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="likesCount">--</div>
+                    <div class="stat-label">获赞数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="worksCount">--</div>
+                    <div class="stat-label">作品数</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 估值结果 -->
+        <div class="value-card">
+            <div class="value-label">账号估值</div>
+            <div class="value-amount"><span class="currency">¥</span><span id="valueAmount">0</span></div>
+            <div class="value-range">估值范围：<span id="valueRange">¥0 - ¥0</span></div>
+        </div>
+
+        <!-- 详细分析 -->
+        <div class="analysis-card">
+            <div class="analysis-title">估值分析</div>
+            <div class="analysis-list">
+                <div class="analysis-item">
+                    <div class="analysis-item-left">
+                        <div class="analysis-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#fe2c55"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                        </div>
+                        <span class="analysis-name">粉丝质量</span>
+                    </div>
+                    <span class="analysis-value high" id="fansQuality">优秀</span>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-left">
+                        <div class="analysis-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#ff6b00"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+                        </div>
+                        <span class="analysis-name">互动率</span>
+                    </div>
+                    <span class="analysis-value medium" id="interactionRate">良好</span>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-left">
+                        <div class="analysis-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#52c41a"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                        </div>
+                        <span class="analysis-name">增长趋势</span>
+                    </div>
+                    <span class="analysis-value high" id="growthTrend">上升</span>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-left">
+                        <div class="analysis-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#722ed1"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        </div>
+                        <span class="analysis-name">内容垂直度</span>
+                    </div>
+                    <span class="analysis-value medium" id="contentVertical">中等</span>
+                </div>
+                <div class="analysis-item">
+                    <div class="analysis-item-left">
+                        <div class="analysis-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#faad14"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/></svg>
+                        </div>
+                        <span class="analysis-name">商业价值</span>
+                    </div>
+                    <span class="analysis-value high" id="commercialValue">较高</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- 提示 -->
+        <div class="tips-card">
+            <div class="tips-content">
+                <span class="tips-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#faad14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </span>
+                <span>以上估值仅供参考，实际交易价格受市场供需、账号领域、粉丝活跃度等多种因素影响。建议结合实际情况综合评估。</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 历史记录 -->
+    <section class="history-section" id="historySection" style="display:none;">
+        <div class="history-title">查询历史</div>
+        <div class="history-list" id="historyList">
+            <!-- 历史记录项会动态生成 -->
+        </div>
+    </section>
+
+    <footer class="footer">数据仅供参考 · 权重助手</footer>
+</main>
+
+<script>
+    const input = document.getElementById('accountInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultSection = document.getElementById('resultSection');
+    const historySection = document.getElementById('historySection');
+    const historyList = document.getElementById('historyList');
+
+    // 输入监听
+    input.addEventListener('input', function() {
+        clearBtn.classList.toggle('show', this.value.length > 0);
+    });
+
+    // 清空输入
+    function clearInput() {
+        input.value = '';
+        clearBtn.classList.remove('show');
+        input.focus();
+    }
+
+    // 格式化数字
+    function formatNumber(num) {
+        if (num >= 10000) {
+            return (num / 10000).toFixed(1) + 'w';
+        }
+        return num.toString();
+    }
+
+    // 格式化金额
+    function formatMoney(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    // 模拟查询
+    function queryAccount() {
+        const value = input.value.trim();
+        if (!value) {
+            alert('请输入抖音号或主页链接');
+            return;
+        }
+
+        // 显示加载状态
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        // 模拟API请求
+        setTimeout(() => {
+            // 模拟数据
+            const mockData = generateMockData(value);
+
+            // 更新UI
+            updateResult(mockData);
+
+            // 保存历史
+            saveHistory(mockData);
+
+            // 隐藏加载状态
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+
+            // 显示结果
+            resultSection.classList.add('show');
+
+            // 滚动到结果区域
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1500);
+    }
+
+    // 生成模拟数据
+    function generateMockData(accountId) {
+        const fans = Math.floor(Math.random() * 5000000) + 10000;
+        const likes = Math.floor(fans * (Math.random() * 5 + 2));
+        const works = Math.floor(Math.random() * 500) + 20;
+
+        // 估值算法（简化版）
+        let baseValue = fans * 0.05;
+        const interactionBonus = (likes / fans) * 0.1;
+        baseValue = baseValue * (1 + interactionBonus);
+
+        const minValue = Math.floor(baseValue * 0.7);
+        const maxValue = Math.floor(baseValue * 1.3);
+        const avgValue = Math.floor((minValue + maxValue) / 2);
+
+        return {
+            accountId: accountId.length > 15 ? accountId.substring(0, 15) + '...' : accountId,
+            name: '创作者_' + Math.random().toString(36).substring(2, 8),
+            fans: fans,
+            likes: likes,
+            works: works,
+            value: avgValue,
+            minValue: minValue,
+            maxValue: maxValue,
+            verified: Math.random() > 0.7,
+            fansQuality: Math.random() > 0.5 ? 'high' : 'medium',
+            interactionRate: Math.random() > 0.6 ? 'high' : (Math.random() > 0.3 ? 'medium' : 'low'),
+            growthTrend: Math.random() > 0.4 ? 'high' : 'medium',
+            contentVertical: Math.random() > 0.5 ? 'high' : 'medium',
+            commercialValue: Math.random() > 0.5 ? 'high' : 'medium',
+            score: Math.floor(Math.random() * 30) + 70
+        };
+    }
+
+    // 更新结果UI
+    function updateResult(data) {
+        document.getElementById('accountName').textContent = data.name;
+        document.getElementById('accountIdText').textContent = data.accountId;
+        document.getElementById('fansCount').textContent = formatNumber(data.fans);
+        document.getElementById('likesCount').textContent = formatNumber(data.likes);
+        document.getElementById('worksCount').textContent = data.works;
+
+        // 认证标识
+        document.getElementById('verifiedBadge').style.display = data.verified ? 'inline-flex' : 'none';
+
+        // 估值金额（动画效果）
+        animateValue('valueAmount', 0, data.value, 1000);
+        document.getElementById('valueRange').textContent = '¥' + formatMoney(data.minValue) + ' - ¥' + formatMoney(data.maxValue);
+
+        // 分析结果
+        updateAnalysis('fansQuality', data.fansQuality);
+        updateAnalysis('interactionRate', data.interactionRate);
+        updateAnalysis('growthTrend', data.growthTrend);
+        updateAnalysis('contentVertical', data.contentVertical);
+        updateAnalysis('commercialValue', data.commercialValue);
+
+        // 进度条
+        setTimeout(() => {
+            document.getElementById('progressFill').style.width = data.score + '%';
+        }, 300);
+    }
+
+    // 更新分析项
+    function updateAnalysis(id, level) {
+        const el = document.getElementById(id);
+        el.className = 'analysis-value ' + level;
+        const labels = { high: '优秀', medium: '良好', low: '一般' };
+        el.textContent = labels[level];
+    }
+
+    // 数字动画
+    function animateValue(id, start, end, duration) {
+        const el = document.getElementById(id);
+        const range = end - start;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + range * easeProgress);
+            el.textContent = formatMoney(current);
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    // 保存历史记录
+    function saveHistory(data) {
+        let history = JSON.parse(localStorage.getItem('gujiHistory') || '[]');
+        history.unshift({
+            name: data.name,
+            value: data.value,
+            time: Date.now()
+        });
+        history = history.slice(0, 5);
+        localStorage.setItem('gujiHistory', JSON.stringify(history));
+        renderHistory();
+    }
+
+    // 渲染历史记录
+    function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('gujiHistory') || '[]');
+        if (history.length === 0) {
+            historySection.style.display = 'none';
+            return;
+        }
+
+        historySection.style.display = 'block';
+        historyList.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="history-info">
+                    <div class="history-avatar">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <span class="history-name">${item.name}</span>
+                </div>
+                <span class="history-value">¥${formatMoney(item.value)}</span>
+            </div>
+        `).join('');
+    }
+
+    // 初始化
+    renderHistory();
+
+    // 回车查询
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            queryAccount();
+        }
+    });
+</script>
+</body>
+</html>

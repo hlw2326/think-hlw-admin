@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>作品限流诊断报告</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+            },
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      background-image:
+              linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+      background-size: 24px 24px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* 自定义 Toast 动画 */
+    .toast-enter { transform:translateY(-20px); opacity:0; }
+    .toast-enter-active { transform:translateY(0); opacity:1; transition: all 0.3s ease; }
+    .toast-exit { transform:translateY(0); opacity:1; }
+    .toast-exit-active { transform:translateY(-20px); opacity:0; transition: all 0.3s ease; }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden pb-20">
+
+<main class="w-full max-w-md flex-1 px-3 flex flex-col gap-4 pt-4 relative z-0">
+
+  <!-- 0. 用户信息卡片 -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 relative overflow-hidden shadow-sm animate-fade-in-up">
+    <!-- 头部信息 -->
+    <div class="flex items-center gap-4 relative z-10">
+      <div class="w-14 h-14 rounded-full bg-slate-100 overflow-hidden shrink-0 border-2 border-slate-50 shadow-sm group cursor-pointer">
+        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-bold text-slate-800 text-lg truncate">快乐小狗🐶</h3>
+        <div class="flex items-center gap-2 mt-0.5">
+          <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono border border-slate-200/50">ID: 8848123</span>
+          <!-- VIP 状态切换按钮 -->
+          <button id="vipBadge" onclick="toggleVip()" class="text-[10px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded border border-slate-200 font-bold transition-all active:scale-95 flex items-center gap-1">
+            <i class="fa-solid fa-user"></i> 普通用户
+          </button>
+          <span class="text-[9px] text-slate-300 transform scale-90 origin-left">(点击切换)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据统计 -->
+    <div class="grid grid-cols-3 gap-4 border-t border-slate-100 mt-4 pt-4 relative z-10">
+      <div class="flex flex-col items-center group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+        <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">12.8w</span>
+        <span class="text-[10px] text-slate-400 font-medium mt-0.5">粉丝数</span>
+      </div>
+      <div class="flex flex-col items-center border-l border-slate-100 group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+        <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">108w</span>
+        <span class="text-[10px] text-slate-400 font-medium mt-0.5">点赞数</span>
+      </div>
+      <div class="flex flex-col items-center border-l border-slate-100 group cursor-pointer hover:bg-slate-50/50 rounded-lg transition-colors py-1">
+        <span class="text-lg font-black text-slate-800 font-mono tracking-tight group-hover:text-indigo-600 transition-colors">342</span>
+        <span class="text-[10px] text-slate-400 font-medium mt-0.5">作品数</span>
+      </div>
+    </div>
+
+    <!-- 装饰背景 -->
+    <div class="absolute right-0 top-0 h-24 w-24 bg-gradient-to-l from-slate-50 to-transparent pointer-events-none opacity-50"></div>
+  </div>
+
+  <!-- 2. 作品列表区域 -->
+  <div id="workList" class="flex flex-col gap-3">
+    <!-- JS 动态渲染列表 -->
+  </div>
+
+  <!-- 3. 加载更多按钮 (默认隐藏，JS控制显示) -->
+  <div id="paginationSection" class="pb-10 pt-4 px-1 hidden">
+    <button id="loadMoreBtn" onclick="loadMore()" class="w-full py-3.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-2xl shadow-sm hover:shadow-md hover:border-slate-300 hover:text-slate-700 hover:-translate-y-0.5 transition-all active:scale-[0.98] active:translate-y-0 flex items-center justify-center gap-2 group">
+      <span>查看更多历史记录</span>
+      <i class="fa-solid fa-angle-down text-slate-400 group-hover:text-slate-600 group-hover:translate-y-0.5 transition-transform"></i>
+    </button>
+    <div id="noMoreText" class="hidden text-center text-[10px] text-slate-300 py-4 flex items-center justify-center gap-2">
+      <span class="w-8 h-[1px] bg-slate-200"></span>
+      已显示全部作品
+      <span class="w-8 h-[1px] bg-slate-200"></span>
+    </div>
+  </div>
+
+</main>
+
+<!-- 全局提示框 (Toast) -->
+<div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg z-50 transition-all duration-300 opacity-0 translate-y-[-20px] pointer-events-none flex items-center gap-2 w-max max-w-[90%]">
+  <i class="fa-solid fa-circle-check text-green-400"></i>
+  <span id="toastMsg">操作成功</span>
+</div>
+
+<script>
+  // 全局状态：是否是VIP
+  let isVip = false;
+
+  // 模拟作品数据 (优化后的数据集)
+  // tagType: 'viral' | 'normal' | 'limited' | 'severe'
+  const allWorksData = [
+    {
+      id: 101,
+      title: "家人们谁懂啊，今天遇到一个...",
+      cover: "bg-red-100",
+      date: "10-24 18:30",
+      play: 258,
+      status: "limited", // limited, normal, viral
+      tagLabel: "🚫 限流",
+      tagType: "limited",
+      likeRate: "0.8%",
+      commentRate: "0.1%",
+      collectRate: "0.2%",
+      reason: "检测到疑似搬运/非原创内容",
+      desc: "系统识别到画面与站内高度相似，流量被降权",
+      suggestion: "建议进行原创申诉或删除重发"
+    },
+    {
+      id: 999, // 优质作品
+      title: "超级可爱的修勾！萌化了❤️",
+      cover: "bg-amber-100",
+      date: "10-23 20:00",
+      play: "208w",
+      status: "viral",
+      tagLabel: "🔥 爆款",
+      tagType: "viral",
+      likeRate: "12.5%",
+      commentRate: "3.2%",
+      collectRate: "5.6%",
+      reason: "🔥 热门推荐爆款",
+      desc: "内容质量极高，完播率超过 60%",
+      suggestion: "太棒了！请继续保持这种风格！"
+    },
+    {
+      id: 102,
+      title: "好物推荐第58期，这个真的绝了！",
+      cover: "bg-orange-100",
+      date: "10-22 12:15",
+      play: 512,
+      status: "limited",
+      tagLabel: "⚠️ 营销",
+      tagType: "limited",
+      likeRate: "1.2%",
+      commentRate: "0.5%",
+      collectRate: "0.8%",
+      reason: "疑似营销广告性质过重",
+      desc: "文案或画面包含明显的诱导营销信息",
+      suggestion: "建议修改文案去除营销词"
+    },
+    {
+      id: 998, // 优质作品
+      title: "沉浸式收纳，强迫症福音",
+      cover: "bg-teal-100",
+      date: "10-21 18:00",
+      play: "56w",
+      status: "normal",
+      tagLabel: "✅ 正常",
+      tagType: "normal",
+      likeRate: "8.4%",
+      commentRate: "1.8%",
+      collectRate: "4.2%",
+      reason: "👍 粉丝互动极佳",
+      desc: "评论区讨论热烈，账号活跃度高",
+      suggestion: "建议多回复评论，趁热打铁！"
+    },
+    {
+      id: 103,
+      title: "深夜emo时刻，网抑云时间",
+      cover: "bg-slate-200",
+      date: "10-20 23:45",
+      play: 124,
+      status: "limited",
+      tagLabel: "⛔️ 低质",
+      tagType: "severe",
+      likeRate: "0.2%",
+      commentRate: "0%",
+      collectRate: "0%",
+      reason: "画面包含低俗或不适内容",
+      desc: "触发由于画面昏暗或内容导向判定",
+      suggestion: "建议立即隐藏该作品"
+    },
+    {
+      id: 104,
+      title: "日常Vlog：快乐的一天",
+      cover: "bg-green-100",
+      date: "10-18 09:00",
+      play: "1.2w",
+      status: "normal",
+      tagLabel: "✅ 正常",
+      tagType: "normal",
+      likeRate: "4.5%",
+      commentRate: "0.9%",
+      collectRate: "1.5%",
+      reason: "✅ 账号状态良好",
+      desc: "各项指标正常，流量稳定",
+      suggestion: "继续保持，稳定更新"
+    },
+    {
+      id: 105,
+      title: "挑战100元吃遍夜市！",
+      cover: "bg-blue-100",
+      date: "10-15 19:20",
+      play: 88,
+      status: "limited",
+      tagLabel: "⚠️ 低质",
+      tagType: "limited",
+      likeRate: "0.5%",
+      commentRate: "0.1%",
+      collectRate: "0.1%",
+      reason: "视频画面质量过低",
+      desc: "画面模糊或过度抖动，不符合推荐标准",
+      suggestion: "建议使用高清设备拍摄并稳定画面"
+    },
+    {
+      id: 106,
+      title: "教你如何快速涨粉黑科技",
+      cover: "bg-purple-100",
+      date: "10-12 10:00",
+      play: 1024,
+      status: "limited",
+      tagLabel: "🚫 违规",
+      tagType: "severe",
+      likeRate: "1.1%",
+      commentRate: "2.3%",
+      collectRate: "0.3%",
+      reason: "标题或文案涉及违规诱导",
+      desc: "使用了夸大或欺诈性的引导关注话术",
+      suggestion: "修改文案，避免使用绝对化用语"
+    },
+    {
+      id: 107,
+      title: "纯音乐分享 - 治愈系",
+      cover: "bg-indigo-100",
+      date: "10-10 22:10",
+      play: 45,
+      status: "limited",
+      tagLabel: "🔇 侵权",
+      tagType: "limited",
+      likeRate: "0%",
+      commentRate: "0%",
+      collectRate: "0%",
+      reason: "音频版权争议",
+      desc: "背景音乐未获得授权，音频被静音",
+      suggestion: "更换为平台正版音乐库素材"
+    },
+    {
+      id: 108,
+      title: "震惊！居然发生了这种事",
+      cover: "bg-yellow-100",
+      date: "10-09 14:30",
+      play: 330,
+      status: "limited",
+      tagLabel: "⚠️ 标题党",
+      tagType: "limited",
+      likeRate: "0.9%",
+      commentRate: "4.5%",
+      collectRate: "0.2%",
+      reason: "标题党/夸大事实",
+      desc: "标题与内容严重不符，影响用户体验",
+      suggestion: "修改标题，客观描述内容"
+    }
+  ];
+
+  // 分页状态管理
+  let currentPage = 0;
+  const PAGE_SIZE = 5; // 每页显示5条，演示分页效果
+  const displayWorks = allWorksData; // 显示所有数据
+
+  window.onload = function() {
+    // 初始加载第一页
+    loadMore();
+
+    // 显示分页区域
+    document.getElementById('paginationSection').classList.remove('hidden');
+  };
+
+  function loadMore() {
+    const btn = document.getElementById('loadMoreBtn');
+    const container = document.getElementById('workList');
+    const noMoreText = document.getElementById('noMoreText');
+
+    // 如果不是第一次加载，显示loading状态
+    if (currentPage > 0) {
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 加载中...`;
+
+      // 模拟网络延迟
+      setTimeout(() => {
+        renderBatch();
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        checkPaginationStatus();
+      }, 600);
+    } else {
+      renderBatch();
+      checkPaginationStatus();
+    }
+
+    function renderBatch() {
+      const start = currentPage * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const batch = displayWorks.slice(start, end);
+
+      if (batch.length === 0) return;
+
+      let html = '';
+      batch.forEach((work, index) => {
+        // 判断是否是正常/优质作品
+        const isNormalOrViral = work.status === 'normal' || work.status === 'viral';
+
+        // 1. 诊断框颜色和图标
+        let statusColor, icon;
+        if (work.status === 'viral') {
+          statusColor = 'text-indigo-600 bg-indigo-50 border-indigo-100';
+          icon = 'fa-fire';
+        } else if (work.status === 'normal') {
+          statusColor = 'text-green-600 bg-green-50 border-green-100';
+          icon = 'fa-thumbs-up';
+        } else {
+          // 异常作品样式
+          const isSevere = work.tagType === 'severe';
+          statusColor = isSevere ? 'text-red-500 bg-red-50 border-red-100' : 'text-orange-500 bg-orange-50 border-orange-100';
+          icon = isSevere ? 'fa-ban' : 'fa-triangle-exclamation';
+        }
+
+        // 2. 状态标签（徽章）样式
+        let badgeClass = '';
+        if (work.tagType === 'viral') {
+          badgeClass = 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent';
+        } else if (work.tagType === 'normal') {
+          badgeClass = 'bg-slate-100 text-slate-500 border-slate-200';
+        } else if (work.tagType === 'severe') {
+          badgeClass = 'bg-red-500 text-white border-red-500';
+        } else {
+          badgeClass = 'bg-orange-50 text-orange-600 border-orange-200';
+        }
+
+
+        // 计算动画延迟
+        const delay = index * 50;
+
+        // 3. 生成按钮 HTML
+        let buttonHtml = '';
+        if (isNormalOrViral) {
+          // 正常作品显示夸奖标签
+          buttonHtml = `
+                          <button disabled class="bg-green-50 text-green-600 border border-green-200 text-xs font-bold px-3 py-1.5 rounded-lg cursor-default flex items-center gap-1.5 opacity-80">
+                             <i class="fa-solid fa-check-circle"></i>
+                             <span>状态完美</span>
+                          </button>
+                    `;
+        } else {
+          // 异常作品显示解除按钮
+          const btnText = isVip ? "VIP免费解除" : "一键解除";
+          const btnIcon = isVip ? "fa-solid fa-crown text-amber-500" : "fa-solid fa-wand-magic-sparkles";
+          const btnClass = isVip
+                  ? "bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1.5"
+                  : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95 transition-all flex items-center gap-1.5 group-hover:bg-slate-200/80";
+
+          buttonHtml = `
+                          <button onclick="handleFix(${work.id}, this)" class="${btnClass}">
+                             <i class="${btnIcon} text-[10px]"></i>
+                             <span>${btnText}</span>
+                          </button>
+                    `;
+        }
+
+        html += `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-3 animate-fade-in-up flex gap-3 relative overflow-hidden group" style="animation-delay: ${delay}ms" id="card-${work.id}">
+                        <!-- 左侧封面 -->
+                        <div class="w-20 aspect-[3/4] ${work.cover} rounded-lg shrink-0 relative overflow-hidden bg-slate-100 self-start">
+                             <div class="absolute inset-0 flex items-center justify-center text-slate-300">
+                                <i class="fa-solid fa-image text-xl"></i>
+                             </div>
+                             <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent text-white text-[9px] text-center pb-1 pt-3 font-mono">
+                                <i class="fa-solid fa-play text-[8px] mr-0.5"></i>${work.play}
+                             </div>
+                        </div>
+
+                        <!-- 中间内容 -->
+                        <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                            <div>
+                                <!-- 标题 + 状态标签 -->
+                                <div class="flex items-start justify-between gap-2 mb-1">
+                                    <h3 class="font-bold text-slate-800 text-sm truncate leading-snug flex-1">${work.title}</h3>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold border ${badgeClass} shadow-sm shrink-0 ml-1">
+                                        ${work.tagLabel}
+                                    </span>
+                                </div>
+
+                                <!-- 日期 -->
+                                <div class="flex items-center gap-2 mb-2">
+                                     <div class="text-[10px] text-slate-400 font-mono">${work.date}</div>
+                                </div>
+
+                                <!-- 新增：点赞率与评论率数据 -->
+                                <div class="flex items-center gap-3 mb-2 px-0.5">
+                                    <div class="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
+                                        <i class="fa-solid fa-heart text-pink-400 text-[10px]"></i>
+                                        <span class="font-mono">${work.likeRate}</span>
+                                    </div>
+                                    <div class="w-[1px] h-2 bg-slate-200"></div>
+                                    <div class="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
+                                        <i class="fa-solid fa-comment text-blue-400 text-[10px]"></i>
+                                        <span class="font-mono">${work.commentRate}</span>
+                                    </div>
+                                    <div class="w-[1px] h-2 bg-slate-200"></div>
+                                    <div class="flex items-center gap-1 text-[10px] text-slate-500 font-medium">
+                                        <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                                        <span class="font-mono">${work.collectRate}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 底部操作栏 -->
+                            <div class="flex items-center justify-end gap-2 mt-2">
+                                 ${buttonHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+      });
+
+      container.insertAdjacentHTML('beforeend', html);
+      currentPage++;
+    }
+
+    function checkPaginationStatus() {
+      // 如果所有数据都已加载
+      if (currentPage * PAGE_SIZE >= displayWorks.length) {
+        btn.classList.add('hidden');
+        noMoreText.classList.remove('hidden');
+        noMoreText.classList.add('flex');
+      } else {
+        // 更新按钮文案，显示剩余数量
+        const remaining = displayWorks.length - (currentPage * PAGE_SIZE);
+        btn.querySelector('span').innerText = `加载更多 (${remaining})`;
+      }
+    }
+  }
+
+  // 点击解除按钮的总入口
+  function handleFix(id, btn) {
+    if (isVip) {
+      executeFix(id, btn);
+    } else {
+      simulateButtonAd(id, btn);
+    }
+  }
+
+  // 在按钮上模拟广告倒计时
+  function simulateButtonAd(id, btn) {
+    let seconds = 5;
+    const originalContent = btn.innerHTML;
+    const originalClass = btn.className;
+
+    btn.disabled = true;
+    btn.className = "bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg cursor-not-allowed flex items-center gap-2 transition-all shadow-inner w-full justify-center";
+    btn.innerHTML = `<i class="fa-solid fa-video text-amber-400 animate-pulse"></i> 广告 ${seconds}s`;
+
+    const timer = setInterval(() => {
+      seconds--;
+      if (seconds > 0) {
+        btn.innerHTML = `<i class="fa-solid fa-video text-amber-400 animate-pulse"></i> 广告 ${seconds}s`;
+      } else {
+        clearInterval(timer);
+        showToast("广告奖励已发放，正在解除...");
+        btn.className = "bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5";
+        executeFix(id, btn);
+      }
+    }, 1000);
+  }
+
+  // 真正的解除逻辑
+  function executeFix(id, btn) {
+    btn.disabled = true;
+    btn.className = "bg-slate-100 text-slate-400 text-xs font-bold px-3 py-1.5 rounded-lg cursor-not-allowed flex items-center gap-1.5 border border-slate-200 w-max ml-auto";
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 处理中...`;
+
+    setTimeout(() => {
+      showToast("解除申请已提交，系统处理中");
+      const card = document.getElementById(`card-${id}`);
+      btn.className = "bg-orange-50 text-orange-500 border border-orange-200 text-xs font-bold px-3 py-1.5 rounded-lg cursor-default flex items-center gap-1.5 w-max ml-auto";
+      btn.innerHTML = `<i class="fa-regular fa-clock"></i> 处理中`;
+    }, 1500);
+  }
+
+  // 切换 VIP 状态
+  function toggleVip() {
+    isVip = !isVip;
+    const badge = document.getElementById('vipBadge');
+
+    if (isVip) {
+      badge.className = "text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded border border-amber-200 font-bold transition-all active:scale-95 flex items-center gap-1";
+      badge.innerHTML = `<i class="fa-solid fa-crown text-amber-500"></i> VIP会员`;
+      showToast("已切换为 VIP 身份：免广告特权生效");
+    } else {
+      badge.className = "text-[10px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded border border-slate-200 font-bold transition-all active:scale-95 flex items-center gap-1";
+      badge.innerHTML = `<i class="fa-solid fa-user"></i> 普通用户`;
+      showToast("已切换为 普通用户");
+    }
+
+    // 刷新列表
+    currentPage = 0;
+    document.getElementById('workList').innerHTML = '';
+    document.getElementById('loadMoreBtn').classList.remove('hidden');
+    document.getElementById('noMoreText').classList.add('hidden');
+    document.getElementById('noMoreText').classList.remove('flex');
+    loadMore();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    toastMsg.innerText = msg;
+    toast.classList.remove('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+    }, 3000);
+  }
+</script>
+</body>
+</html>

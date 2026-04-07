@@ -1,0 +1,175 @@
+---
+description: ThinkAdmin v6 模型规范：模型写法、select 枚举（const vs 静态方法）、广告枚举、卡密业务模型
+alwaysApply: true
+---
+
+# ThinkAdmin v6 模型规范
+
+## 一、基本规则
+
+- 继承 `think\admin\Model`，**不是** `think\Model`
+- 表名自动从类名转下划线：`MiniCardPoints` → `mini_card_points`
+- 必须用 `@property` 注释所有字段
+- 插件模型显式指定表名：`protected $table = 'plugin_collect_tag'`
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace app\mini\model;
+
+use think\admin\Model;
+
+/**
+ * @property int $id
+ * @property string $name 名称
+ * @property int $status 状态(0禁用,1启用)
+ * @property string $create_at 创建时间
+ * @property string $update_at 更新时间
+ * @class MiniXxx
+ */
+class MiniXxx extends Model {}
+```
+
+---
+
+## 二、select 下拉选项写法规范
+
+**选项数据必须定义在模型的静态方法里**，禁止在模板中逐条硬编码。
+
+### 简单枚举（无需 lang()，如状态）→ 用 const
+
+```php
+class MiniTools extends Model
+{
+    const STATUSES = [1 => '已启用', 0 => '已禁用'];
+}
+```
+
+### 复杂枚举（需要 lang() 或样式信息）→ 用静态方法
+
+```php
+public static function getJumpTypes(): array
+{
+    return [
+        'navigateTo'   => ['label' => 'navigateTo ' . lang('普通跳转'),  'class' => 'layui-bg-blue'],
+        'redirectTo'   => ['label' => 'redirectTo ' . lang('重定向'),    'class' => 'layui-bg-cyan'],
+        'switchTab'    => ['label' => 'switchTab '  . lang('底部菜单'),  'class' => 'layui-bg-green'],
+        'reLaunch'     => ['label' => 'reLaunch '   . lang('重启跳转'),  'class' => 'layui-bg-orange'],
+        'webview'      => ['label' => 'webview H5'  . lang('网页'),      'class' => 'layui-bg-red'],
+        'miniprogram'  => ['label' => 'miniprogram '. lang('其他小程序'),'class' => 'layui-bg-gray'],
+    ];
+}
+```
+
+### 控制器获取并传给模板
+
+```php
+MiniTools::mQuery()->layTable(function () {
+    $this->jump_types = MiniTools::getJumpTypes();
+}, ...);
+
+protected function _form_filter(array &$data): void
+{
+    $this->jump_types = MiniTools::getJumpTypes();
+    $this->statuses   = MiniTools::STATUSES;
+}
+```
+
+### 模型 select 方法模板输出规范
+
+**所有 select 必须加 `lay-append-to`**，防止下拉菜单被父容器裁剪：
+
+```html
+<select name="jump_type" lay-append-to>
+    <option value="">-- {:lang('全部')} --</option>
+    {foreach $jump_types as $k => $v}
+    <option value="{$k}" {if isset($get.jump_type) && $get.jump_type == $k}selected{/if}>{$v}</option>
+    {/foreach}
+</select>
+```
+
+**禁止在模板中出现多个 `{if $vo.xxx eq '1'}selected{/if}`**，使用 `$vo.xxx eq $k` 一次判断：
+
+```html
+<!-- ✅ 正确 -->
+<option value="{$k}" {if isset($vo.jump_type) and $vo.jump_type eq $k}selected{/if}>{$v}</option>
+
+<!-- ❌ 禁止：重复 if -->
+<option value="1" {if $vo.jump_type eq 1}selected{/if}>...</option>
+<option value="2" {if $vo.jump_type eq 2}selected{/if}>...</option>
+```
+
+---
+
+## 三、广告模块枚举（mini_ad）
+
+```php
+public static function getAdTypes(): array
+{
+    return [
+        'banner'        => ['label' => 'Banner '        . lang('横幅广告'), 'class' => 'layui-bg-blue'],
+        'video'         => ['label' => 'Video '         . lang('视频贴片'), 'class' => 'layui-bg-cyan'],
+        'interstitial'  => ['label' => 'Interstitial '  . lang('插屏广告'), 'class' => 'layui-bg-orange'],
+        'rewarded_video'=> ['label' => 'RewardedVideo ' . lang('激励视频'), 'class' => 'layui-bg-green'],
+        'box'           => ['label' => 'Box '           . lang('格子广告'), 'class' => 'layui-bg-gray'],
+    ];
+}
+```
+
+position 命名约定：格式 `{页面}_{位置/类型}`，全小写下划线，如 `home_top`、`detail_bottom`、`task_rewarded`。同一 appid 下 `position` 值唯一。
+
+---
+
+## 四、PHP 数据传递给 JS
+
+**禁止在 `<script>` 块里直接嵌 PHP 模板语法**，用 `<textarea>` 注入：
+
+```html
+<!-- ✅ 正确 -->
+<label class="layui-hide">
+    <textarea id="JumpTypesData">{:json_encode($jump_types, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
+
+<script>
+    var types = JSON.parse($('#JumpTypesData').text());
+</script>
+```
+
+**id 命名规范**：`XxxData`（大驼峰 + `Data` 后缀），如 `JumpTypesData`、`CateListData`、`AdTypesData`。
+
+---
+
+## 五、卡密业务模型规范（mini 模块）
+
+### 积分卡密（mini_card_points）
+
+核心字段：`points`（充值积分数），无 `face_value`（积分卡不需要面值）。
+
+### 会员卡密（mini_card_vip）
+
+核心字段：`vip_days`（充值天数）、`face_value`（面值，仅展示）。
+
+### 两种卡密共同字段
+
+```
+max_users   int   最多允许几人使用，0=无限制
+user_limit  int   每人最多使用几次，默认1
+expire_time int   卡密截止时间戳，0=永不过期（不是使用后过期）
+```
+
+**已删除字段，禁止再添加**：`used_uid`、`used_time`、`use_expire_time`、积分卡的 `face_value`。
+
+### 使用记录表（mini_card_use_log）
+
+多用户使用记录必须存在独立日志表，不能存在卡密主表。
+
+```php
+// 检查是否可以使用
+$canUse = MiniCardUseLog::canUseCard($cardType, $cardCode, $userId);
+
+// 记录使用（事务内）
+Db::startTrans();
+MiniCardUseLog::recordUse($cardType, $cardId, $cardCode, $userId, $useData);
+Db::commit();
+```

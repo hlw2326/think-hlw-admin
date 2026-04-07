@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>抖音实时热点榜</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    colors: {
+                        douyin: {
+                            pink: '#fe2c55',
+                            cyan: '#25f4ee',
+                            black: '#161823',
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image:
+                    linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+            background-size: 24px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .text-gradient-douyin {
+            background: linear-gradient(to right, #fe2c55, #ff0050);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden pb-20">
+
+<main class="w-full max-w-md flex-1 px-3 flex flex-col gap-4 pt-4 relative z-0">
+
+    <!-- 0. 头部看板 -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 relative overflow-hidden animate-fade-in-up shadow-sm">
+
+        <!-- 头部标题区 -->
+        <div class="flex items-center justify-between relative z-10 mb-4">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white shadow-lg">
+                    <i class="fa-brands fa-tiktok text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-xl text-slate-800 tracking-tight">抖音热榜</h1>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <p class="text-[10px] text-slate-400 font-mono">实时更新 14:32:05</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 搜索按钮 -->
+            <button class="w-9 h-9 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+        </div>
+
+        <!-- 关键指标 -->
+        <div class="grid grid-cols-2 gap-3 relative z-10">
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                <div class="text-[10px] text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-fire text-orange-500"></i> 全站最高热度
+                </div>
+                <div class="text-xl font-black font-mono text-slate-800">1,284w</div>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                <div class="text-[10px] text-slate-400 mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-bolt text-yellow-500"></i> 新上榜话题
+                </div>
+                <div class="text-xl font-black font-mono text-slate-800">32<span class="text-xs font-normal text-slate-400 ml-1">个</span></div>
+            </div>
+        </div>
+
+        <!-- 装饰背景 -->
+        <div class="absolute -right-6 -top-6 h-32 w-32 bg-gradient-to-br from-pink-100/50 to-cyan-100/50 blur-2xl rounded-full pointer-events-none"></div>
+    </div>
+
+    <!-- 1. 分类Tab (横向滚动) -->
+    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1 animate-fade-in-up" style="animation-delay: 100ms">
+        <button class="shrink-0 px-4 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-full shadow-sm">总榜</button>
+        <button class="shrink-0 px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-medium rounded-full whitespace-nowrap">娱乐</button>
+        <button class="shrink-0 px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-medium rounded-full whitespace-nowrap">社会</button>
+        <button class="shrink-0 px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-medium rounded-full whitespace-nowrap">挑战赛</button>
+        <button class="shrink-0 px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-medium rounded-full whitespace-nowrap">直播</button>
+    </div>
+
+    <!-- 2. 榜单列表区域 -->
+    <div id="hotList" class="flex flex-col gap-3">
+        <!-- JS 动态渲染列表 -->
+    </div>
+
+    <!-- 3. 加载更多按钮 -->
+    <div id="paginationSection" class="pb-10 pt-2 hidden">
+        <button id="loadMoreBtn" onclick="loadMore()" class="w-full py-3 flex items-center justify-center gap-2 text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all group">
+            <span>查看更多热点</span>
+            <i class="fa-solid fa-angle-down group-hover:translate-y-0.5 transition-transform"></i>
+        </button>
+        <div id="noMoreText" class="hidden text-center text-[10px] text-slate-300 py-4 flex items-center justify-center gap-2">
+            <span class="w-8 h-[1px] bg-slate-200"></span>
+            已显示全部内容
+            <span class="w-8 h-[1px] bg-slate-200"></span>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // 模拟热榜数据
+    // type: 1=爆, 2=新, 3=热, 4=商(广告)
+    const hotTopicsData = [
+        {
+            rank: 1,
+            title: "这简直是打工人的嘴替！太真实了😂",
+            heat: "1284.5w",
+            tag: "职场吐槽",
+            type: 1, // 爆
+            previewImg: "bg-gradient-to-br from-pink-200 to-rose-100",
+            desc: "已有 5.2w 人参与合拍"
+        },
+        {
+            rank: 2,
+            title: "这只萨摩耶怎么会说话？",
+            heat: "982.1w",
+            tag: "萌宠成精",
+            type: 3, // 热
+            previewImg: "bg-gradient-to-br from-amber-100 to-orange-100",
+            desc: "2345 条新评论"
+        },
+        {
+            rank: 3,
+            title: "国内油价迎年内最大降幅",
+            heat: "856.0w",
+            tag: "社会民生",
+            type: 2, // 新
+            previewImg: "bg-gradient-to-br from-blue-100 to-indigo-100",
+            desc: "多家媒体已报道"
+        },
+        {
+            rank: 4,
+            title: "挑战100元在便利店吃自助",
+            heat: "720w",
+            tag: "美食挑战",
+            type: 0,
+            desc: "观看次数飙升"
+        },
+        {
+            rank: 5,
+            title: "新款折叠屏手机发布会",
+            heat: "680w",
+            tag: "数码科技",
+            type: 4, // 广告
+            desc: "品牌官方直播中"
+        },
+        {
+            rank: 6,
+            title: "为什么现在的年轻人不爱发朋友圈了",
+            heat: "550w",
+            tag: "情感共鸣",
+            type: 3,
+            desc: "热度持续上升"
+        },
+        {
+            rank: 7,
+            title: "这就是中国基建速度！",
+            heat: "480w",
+            tag: "大国重器",
+            type: 2,
+            desc: "人民日报点赞"
+        },
+        {
+            rank: 8,
+            title: "这首歌的前奏一响就哭了",
+            heat: "420w",
+            tag: "音乐回忆杀",
+            type: 0,
+            desc: ""
+        },
+        {
+            rank: 9,
+            title: "这是什么神仙滤镜，原相机直出",
+            heat: "390w",
+            tag: "拍照技巧",
+            type: 0,
+            desc: ""
+        },
+        {
+            rank: 10,
+            title: "猫咪绝育后的反应",
+            heat: "360w",
+            tag: "萌宠",
+            type: 0,
+            desc: ""
+        },
+        {
+            rank: 11,
+            title: "第一次去男朋友家吃饭要注意什么",
+            heat: "310w",
+            tag: "生活经验",
+            type: 2,
+            desc: ""
+        },
+        {
+            rank: 12,
+            title: "这件毛衣也太好穿了吧",
+            heat: "280w",
+            tag: "穿搭种草",
+            type: 4,
+            desc: "限时折扣中"
+        }
+    ];
+
+    // 分页状态管理
+    let currentPage = 0;
+    const PAGE_SIZE = 5;
+
+    window.onload = function() {
+        loadMore();
+        document.getElementById('paginationSection').classList.remove('hidden');
+    };
+
+    function loadMore() {
+        const btn = document.getElementById('loadMoreBtn');
+        const container = document.getElementById('hotList');
+        const noMoreText = document.getElementById('noMoreText');
+
+        if (currentPage > 0) {
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 加载中...`;
+
+            setTimeout(() => {
+                renderBatch();
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                checkPaginationStatus();
+            }, 500);
+        } else {
+            renderBatch();
+            checkPaginationStatus();
+        }
+
+        function renderBatch() {
+            const start = currentPage * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            const batch = hotTopicsData.slice(start, end);
+
+            if (batch.length === 0) return;
+
+            let html = '';
+            batch.forEach((item, index) => {
+                const globalIndex = start + index;
+                const delay = (index % 5) * 50;
+
+                // 排名样式处理
+                let rankClass = "text-slate-400 font-medium text-sm";
+                let rankIcon = "";
+
+                if (item.rank === 1) {
+                    rankClass = "text-red-500 font-black text-xl italic";
+                    rankIcon = `<i class="fa-solid fa-crown text-[10px] text-yellow-500 absolute -top-1.5 -right-1.5 transform rotate-12"></i>`;
+                } else if (item.rank === 2) {
+                    rankClass = "text-orange-500 font-bold text-lg italic";
+                } else if (item.rank === 3) {
+                    rankClass = "text-amber-500 font-bold text-lg italic";
+                }
+
+                // 标签处理
+                let badgeHtml = '';
+                if (item.type === 1) { // 爆
+                    badgeHtml = `<span class="bg-gradient-to-r from-red-500 to-pink-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded leading-none">爆</span>`;
+                } else if (item.type === 2) { // 新
+                    badgeHtml = `<span class="bg-gradient-to-r from-emerald-400 to-teal-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded leading-none">新</span>`;
+                } else if (item.type === 3) { // 热
+                    badgeHtml = `<span class="bg-gradient-to-r from-orange-400 to-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded leading-none">热</span>`;
+                } else if (item.type === 4) { // 商
+                    badgeHtml = `<span class="bg-slate-100 text-slate-400 border border-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded leading-none">商</span>`;
+                }
+
+                // 前三名如果有图片
+                let imageHtml = '';
+                if (item.previewImg && item.rank <= 3) {
+                    imageHtml = `
+                        <div class="w-16 h-16 rounded-lg ${item.previewImg} shrink-0 ml-2 relative overflow-hidden group-hover:scale-105 transition-transform duration-300 hidden sm:block">
+                             <div class="absolute inset-0 flex items-center justify-center text-white/50">
+                                <i class="fa-solid fa-play"></i>
+                             </div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-3 animate-fade-in-up flex items-center gap-3 relative overflow-hidden group hover:border-slate-300 transition-all active:scale-[0.99]" style="animation-delay: ${delay}ms">
+
+                        <!-- 排名 -->
+                        <div class="w-8 flex flex-col items-center justify-center shrink-0 relative">
+                            <span class="${rankClass} font-mono">${item.rank}</span>
+                            ${rankIcon}
+                        </div>
+
+                        <!-- 内容 -->
+                        <div class="flex-1 min-w-0 flex flex-col gap-1">
+                            <div class="flex items-start justify-between gap-2">
+                                <h3 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2">${item.title}</h3>
+                            </div>
+
+                            <div class="flex items-center gap-2 mt-0.5">
+                                ${badgeHtml}
+                                <span class="text-[10px] text-slate-400 flex items-center gap-1 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                                    <i class="fa-solid fa-fire-flame-curved ${item.rank <= 3 ? 'text-red-400' : 'text-slate-300'} text-[10px]"></i>
+                                    <span class="font-mono">${item.heat}</span>
+                                </span>
+                                ${item.tag ? `<span class="text-[10px] text-slate-400 opacity-80">#${item.tag}</span>` : ''}
+                            </div>
+
+                            ${item.desc ? `<div class="text-[10px] text-slate-400/70 mt-0.5 truncate">${item.desc}</div>` : ''}
+                        </div>
+
+                        <!-- 缩略图 (Top 3) -->
+                        ${imageHtml}
+
+                        <!-- 右侧箭头 -->
+                        <div class="text-slate-300 text-xs shrink-0 group-hover:text-slate-400 transition-colors">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.insertAdjacentHTML('beforeend', html);
+            currentPage++;
+        }
+
+        function checkPaginationStatus() {
+            if (currentPage * PAGE_SIZE >= hotTopicsData.length) {
+                btn.classList.add('hidden');
+                noMoreText.classList.remove('hidden');
+                noMoreText.classList.add('flex');
+            } else {
+                const remaining = hotTopicsData.length - (currentPage * PAGE_SIZE);
+                btn.querySelector('span').innerText = `加载更多 (${remaining})`;
+            }
+        }
+    }
+</script>
+</body>
+</html>

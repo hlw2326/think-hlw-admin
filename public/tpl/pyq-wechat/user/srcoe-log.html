@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>积分明细 - Momentum Ultra</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.04)',
+                        'glow': '0 0 30px rgba(99, 102, 241, 0.15)',
+                        'premium': '0 20px 60px -15px rgba(0,0,0,0.08)',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F9FAFF;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        .tab-active {
+            color: #6366f1;
+            background: #eef2ff;
+        }
+
+        /* 列表出现动画 */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-list-item {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col items-center overflow-x-hidden pb-12">
+
+<!-- 顶部状态栏 -->
+<header class="w-full max-w-md px-6 pt-12 pb-6 flex items-center sticky top-0 bg-[#F9FAFF]/80 backdrop-blur-xl z-50">
+    <button onclick="window.history.back()" class="w-10 h-10 rounded-2xl bg-white shadow-soft flex items-center justify-center text-slate-600 active:scale-90 transition-all">
+        <i class="fa-solid fa-chevron-left text-sm"></i>
+    </button>
+    <h2 class="flex-1 text-center mr-10 text-lg font-black tracking-tight text-slate-800">积分明细</h2>
+</header>
+
+<main class="w-full max-w-md px-6 flex flex-col gap-6">
+
+    <!-- 当前积分卡片 -->
+    <section class="bg-indigo-600 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-premium">
+        <!-- 装饰性光圈 -->
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-400/20 rounded-full blur-2xl"></div>
+
+        <div class="relative z-10 flex flex-col items-center">
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mb-2">当前可用积分</span>
+            <div class="flex items-baseline gap-2">
+                <span class="text-5xl font-black">850</span>
+                <i class="fa-solid fa-coins text-amber-300 text-xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- 筛选 Tabs -->
+    <section class="flex gap-3 mt-2">
+        <button onclick="filterType('all', this)" class="px-5 py-2.5 rounded-2xl text-xs font-black tab-active transition-all">全部</button>
+        <button onclick="filterType('in', this)" class="px-5 py-2.5 rounded-2xl text-xs font-black text-slate-400 bg-white shadow-soft transition-all">收入</button>
+        <button onclick="filterType('out', this)" class="px-5 py-2.5 rounded-2xl text-xs font-black text-slate-400 bg-white shadow-soft transition-all">支出</button>
+    </section>
+
+    <!-- 明细列表 -->
+    <section id="detailList" class="flex flex-col gap-4 mb-20">
+        <!-- 数据将通过 JS 渲染 -->
+    </section>
+
+</main>
+
+<!-- 全局提示 Toast (保持一致) -->
+<div id="toast" class="fixed top-12 left-1/2 -translate-x-1/2 z-[300] px-6 py-3 bg-slate-900/95 backdrop-blur rounded-2xl text-white text-[10px] font-black shadow-2xl transform -translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-3">
+    <div class="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-info text-[10px]"></i></div>
+    <span id="toastMsg">加载成功</span>
+</div>
+
+<script>
+    // 模拟数据
+    const detailData = [
+        { id: 1, type: 'in', title: '观看视频广告', time: '2023-10-24 14:20', amount: 50, icon: 'fa-circle-play', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600' },
+        { id: 2, type: 'out', title: '下载：自然景观超清壁纸', time: '2023-10-24 12:05', amount: -20, icon: 'fa-download', iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
+        { id: 3, type: 'in', title: '每日签到奖励', time: '2023-10-24 08:30', amount: 10, icon: 'fa-calendar-check', iconBg: 'bg-amber-50', iconColor: 'text-amber-500' },
+        { id: 4, type: 'in', title: '新用户注册大礼包', time: '2023-10-23 18:00', amount: 500, icon: 'fa-gift', iconBg: 'bg-pink-50', iconColor: 'text-pink-500' },
+        { id: 5, type: 'out', title: '下载：赛博朋克风格头像', time: '2023-10-23 15:45', amount: -20, icon: 'fa-download', iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
+        { id: 6, type: 'in', title: '邀请好友注册', time: '2023-10-22 10:12', amount: 100, icon: 'fa-user-plus', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-500' },
+        { id: 7, type: 'out', title: '兑换：限定头像框 (7天)', time: '2023-10-22 09:30', amount: -150, icon: 'fa-crown', iconBg: 'bg-orange-50', iconColor: 'text-orange-500' },
+    ];
+
+    const listContainer = document.getElementById('detailList');
+
+    function renderList(filter = 'all') {
+        listContainer.innerHTML = '';
+        const filtered = filter === 'all' ? detailData : detailData.filter(item => item.type === filter);
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20 opacity-20">
+                    <i class="fa-solid fa-folder-open text-5xl mb-4"></i>
+                    <p class="text-xs font-black">暂无相关记录</p>
+                </div>
+            `;
+            return;
+        }
+
+        filtered.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-5 rounded-[2rem] shadow-soft border border-slate-50 flex items-center gap-4 animate-list-item';
+            div.style.animationDelay = `${index * 0.05}s`;
+
+            div.innerHTML = `
+                <div class="w-12 h-12 rounded-2xl ${item.iconBg} flex items-center justify-center ${item.iconColor}">
+                    <i class="fa-solid ${item.icon} text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <h5 class="text-[13px] font-black text-slate-800 mb-1">${item.title}</h5>
+                    <p class="text-[10px] font-bold text-slate-400 tracking-tight">${item.time}</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-black ${item.amount > 0 ? 'text-indigo-600' : 'text-slate-900'}">
+                        ${item.amount > 0 ? '+' : ''}${item.amount}
+                    </span>
+                </div>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    function filterType(type, btn) {
+        // 更新 UI 样式
+        const btns = btn.parentElement.querySelectorAll('button');
+        btns.forEach(b => {
+            b.classList.remove('tab-active', 'text-indigo-600');
+            b.classList.add('text-slate-400', 'bg-white', 'shadow-soft');
+        });
+        btn.classList.add('tab-active');
+        btn.classList.remove('text-slate-400', 'bg-white', 'shadow-soft');
+
+        // 执行过滤
+        renderList(type);
+    }
+
+    // 初始化渲染
+    window.onload = () => {
+        renderList();
+    };
+
+    // Toast 组件 (与主页一致)
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').innerText = msg;
+        toast.classList.add('opacity-100', 'translate-y-0');
+        toast.classList.remove('-translate-y-24');
+        setTimeout(() => {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('-translate-y-24');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

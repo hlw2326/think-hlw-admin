@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>文案违规词检测</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image:
+                    linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+            background-size: 24px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* 自定义高亮样式 */
+        .highlight-risk {
+            background-color: #fef2f2;
+            color: #ef4444;
+            border-bottom: 2px dashed #fca5a5;
+            padding: 0 2px;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+        textarea:focus {
+            outline: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden pb-20">
+
+<main class="w-full max-w-md flex-1 px-3 flex flex-col gap-4 pt-4 relative z-0">
+
+    <!-- 标题栏 -->
+    <div class="flex items-center justify-between px-1 animate-fade-in-up">
+        <h1 class="font-black text-xl text-slate-800 tracking-tight">违规词检测 <span class="text-indigo-500">PRO</span></h1>
+        <div class="text-[10px] bg-white border border-slate-200 px-2 py-1 rounded-full text-slate-400 font-mono">
+            V 2.4.1
+        </div>
+    </div>
+
+    <!-- 1. 检测输入区域 -->
+    <!-- 移除了 shadow-sm -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-4 relative overflow-hidden animate-fade-in-up" style="animation-delay: 50ms;">
+
+        <!-- 头部工具栏 -->
+        <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-1.5 h-4 bg-indigo-500 rounded-full"></div>
+                <h3 class="font-bold text-slate-700 text-sm">文案输入</h3>
+            </div>
+            <button onclick="clearText()" class="text-xs text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i> 清空
+            </button>
+        </div>
+
+        <!-- 输入框 -->
+        <div class="relative group">
+            <textarea id="inputText"
+                      class="w-full h-40 bg-slate-50 rounded-xl p-3 text-sm text-slate-700 placeholder-slate-400 resize-none border border-transparent focus:border-indigo-200 focus:bg-white transition-all leading-relaxed"
+                      placeholder="在此粘贴您的视频标题、口播文案或评论内容，系统将自动识别违规词、敏感词及营销限制词..."></textarea>
+
+            <!-- 字数统计 -->
+            <div class="absolute bottom-3 right-3 text-[10px] text-slate-400 font-mono bg-slate-100/80 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                <span id="charCount">0</span>/500
+            </div>
+        </div>
+
+        <!-- 检测按钮 -->
+        <!-- 移除了 shadow-lg shadow-indigo-200 hover:shadow-indigo-300 -->
+        <button id="checkBtn" onclick="performCheck()" class="w-full mt-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-3 rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+            <i class="fa-solid fa-magnifying-glass group-hover:scale-110 transition-transform"></i>
+            <span>立即检测风险</span>
+        </button>
+
+        <!-- 装饰背景 -->
+        <div class="absolute right-0 top-0 h-32 w-32 bg-gradient-to-l from-indigo-50 to-transparent pointer-events-none opacity-40"></div>
+    </div>
+
+    <!-- 2. 检测结果显示区 (默认隐藏) -->
+    <div id="resultSection" class="hidden flex-col gap-3 animate-fade-in-up">
+        <!-- 结果概览卡片 -->
+        <div id="resultCard" class="bg-white border rounded-2xl p-4 relative overflow-hidden transition-colors">
+            <div class="flex items-start justify-between relative z-10">
+                <div>
+                    <div id="resultStatus" class="text-sm font-bold flex items-center gap-2">
+                        <!-- JS填充状态文本 -->
+                    </div>
+                    <p id="resultDesc" class="text-xs text-slate-500 mt-1 leading-relaxed max-w-[85%]">
+                        <!-- JS填充描述 -->
+                    </p>
+                </div>
+                <div id="scoreBadge" class="flex flex-col items-center justify-center w-12 h-12 rounded-full border-4 bg-white shrink-0">
+                    <span class="text-xs font-black" id="riskScore">--</span>
+                </div>
+            </div>
+
+            <!-- 违规词列表 -->
+            <div id="forbiddenWordsList" class="mt-4 flex flex-wrap gap-2 relative z-10">
+                <!-- JS填充 Tag -->
+            </div>
+
+            <!-- 装饰 -->
+            <div class="absolute right-0 bottom-0 h-20 w-20 bg-gradient-to-tl from-current to-transparent opacity-5 pointer-events-none text-current" id="resultBg"></div>
+        </div>
+
+        <!-- 修正后的文案预览 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 animate-fade-in-up" style="animation-delay: 100ms;">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-slate-700 text-xs">检测详情</h3>
+                <span class="text-[10px] text-slate-400">标红为疑似违规</span>
+            </div>
+            <div id="highlightedText" class="text-sm text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 min-h-[80px]">
+                <!-- JS填充高亮文案 -->
+            </div>
+            <div class="mt-3 flex gap-2">
+                <button onclick="copyResult()" class="flex-1 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center justify-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i> 复制结果
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 历史记录标题 -->
+    <div class="flex items-center justify-between px-1 pt-2 animate-fade-in-up" style="animation-delay: 150ms;">
+        <h2 class="font-bold text-slate-700 text-sm">历史检测记录</h2>
+        <span class="text-[10px] text-slate-400">最近 7 天</span>
+    </div>
+
+    <!-- 4. 历史列表 -->
+    <div id="historyList" class="flex flex-col gap-3 pb-10">
+        <!-- JS 动态渲染列表 -->
+    </div>
+
+</main>
+
+<script>
+    // 模拟违规词库
+    const sensitiveWords = [
+        { word: "最", type: "极限词", replace: "较好" },
+        { word: "第一", type: "极限词", replace: "前列" },
+        { word: "绝对", type: "绝对化", replace: "可能" },
+        { word: "赚钱", type: "营销", replace: "搞米" },
+        { word: "加微信", type: "引流", replace: "看主页" },
+        { word: "私信", type: "引流", replace: "踢踢" },
+        { word: "死", type: "不良", replace: "s" },
+        { word: "杀", type: "暴力", replace: "sha" },
+        { word: "国家级", type: "权威性", replace: "相关级别" },
+        { word: "百分百", type: "夸大", replace: "大概率" }
+    ];
+
+    // 模拟历史数据
+    let historyData = [
+        {
+            id: 1,
+            text: "这款面膜绝对是全网最好用的，用一次就百分百变白...",
+            date: "10-24 14:20",
+            riskLevel: "high", // high, medium, safe
+            wordsFound: ["绝对", "最好", "百分百"]
+        },
+        {
+            id: 2,
+            text: "今天天气真不错，带狗狗去公园玩了一下午。",
+            date: "10-24 10:05",
+            riskLevel: "safe",
+            wordsFound: []
+        },
+        {
+            id: 3,
+            text: "想要兼职赚钱的宝宝们，记得私信我领取资料。",
+            date: "10-23 18:30",
+            riskLevel: "medium",
+            wordsFound: ["赚钱", "私信"]
+        }
+    ];
+
+    const inputText = document.getElementById('inputText');
+    const charCount = document.getElementById('charCount');
+    const checkBtn = document.getElementById('checkBtn');
+    const resultSection = document.getElementById('resultSection');
+
+    // 监听输入字数
+    inputText.addEventListener('input', function() {
+        const len = this.value.length;
+        charCount.innerText = len;
+        if(len > 500) {
+            charCount.classList.add('text-red-500');
+        } else {
+            charCount.classList.remove('text-red-500');
+        }
+    });
+
+    // 清空文本
+    function clearText() {
+        inputText.value = '';
+        charCount.innerText = '0';
+        resultSection.classList.add('hidden');
+        resultSection.classList.remove('flex');
+        inputText.focus();
+    }
+
+    // 执行检测
+    function performCheck() {
+        const text = inputText.value.trim();
+        if (!text) {
+            alert('请输入需要检测的文案');
+            return;
+        }
+
+        // 按钮Loading状态
+        const originalBtnHtml = checkBtn.innerHTML;
+        checkBtn.disabled = true;
+        checkBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 正在深度扫描...`;
+
+        // 模拟API延迟
+        setTimeout(() => {
+            analyzeText(text);
+            checkBtn.disabled = false;
+            checkBtn.innerHTML = originalBtnHtml;
+
+            // 滚动到结果区
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 800);
+    }
+
+    // 分析文本逻辑
+    function analyzeText(text) {
+        let foundWords = [];
+        let highlightedHtml = text;
+        let riskScore = 100;
+
+        // 查找敏感词
+        sensitiveWords.forEach(item => {
+            if (text.includes(item.word)) {
+                foundWords.push(item);
+                // 全局替换高亮 (简单正则，实际需防止嵌套)
+                const reg = new RegExp(item.word, 'g');
+                highlightedHtml = highlightedHtml.replace(reg, `<span class="highlight-risk" title="建议替换：${item.replace}">${item.word}</span>`);
+                riskScore -= 15; // 扣分逻辑
+            }
+        });
+
+        if (riskScore < 0) riskScore = 0;
+
+        // 渲染结果卡片
+        renderResultCard(foundWords, riskScore, highlightedHtml);
+
+        // 添加到历史记录 (模拟)
+        const newRecord = {
+            id: Date.now(),
+            text: text,
+            date: "刚刚",
+            riskLevel: foundWords.length === 0 ? 'safe' : (foundWords.length > 2 ? 'high' : 'medium'),
+            wordsFound: foundWords.map(w => w.word)
+        };
+        historyData.unshift(newRecord);
+        renderHistory();
+
+        // 显示结果区
+        resultSection.classList.remove('hidden');
+        resultSection.classList.add('flex');
+    }
+
+    // 渲染结果详情
+    function renderResultCard(foundWords, score, html) {
+        const card = document.getElementById('resultCard');
+        const statusDiv = document.getElementById('resultStatus');
+        const descP = document.getElementById('resultDesc');
+        const scoreBadge = document.getElementById('scoreBadge');
+        const scoreSpan = document.getElementById('riskScore');
+        const wordListDiv = document.getElementById('forbiddenWordsList');
+        const highlightDiv = document.getElementById('highlightedText');
+        const bgDiv = document.getElementById('resultBg');
+
+        highlightDiv.innerHTML = html;
+        scoreSpan.innerText = score;
+
+        // 清除旧样式类 (移除 shadow-sm)
+        card.className = "bg-white border rounded-2xl p-4 relative overflow-hidden transition-colors";
+        scoreBadge.className = "flex flex-col items-center justify-center w-12 h-12 rounded-full border-4 shrink-0 transition-colors";
+
+        if (foundWords.length === 0) {
+            // 安全状态
+            card.classList.add('border-green-200');
+            bgDiv.classList.add('text-green-500');
+            statusDiv.innerHTML = `<i class="fa-solid fa-shield-check text-green-500 text-lg"></i> <span class="text-green-600">检测通过，文案安全</span>`;
+            descP.innerText = "未发现明显违规词，符合平台发布规范，建议保持。";
+            scoreBadge.classList.add('border-green-100', 'text-green-600');
+            wordListDiv.innerHTML = `<span class="text-xs text-slate-400 italic">暂无敏感词</span>`;
+        } else {
+            // 违规状态
+            const isHighRisk = score < 60;
+            const colorClass = isHighRisk ? 'red' : 'orange';
+
+            card.classList.add(`border-${colorClass}-200`);
+            bgDiv.classList.add(`text-${colorClass}-500`);
+
+            statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-${colorClass}-500 text-lg"></i> <span class="text-${colorClass}-600">发现 ${foundWords.length} 处疑似违规</span>`;
+            descP.innerText = isHighRisk
+                ? "文案包含多个高风险词汇，极大概率会被限流，建议立即修改。"
+                : "文案包含少量敏感词，建议优化用词以获得更好流量。";
+
+            scoreBadge.classList.add(`border-${colorClass}-100`, `text-${colorClass}-600`);
+
+            // 生成标签
+            wordListDiv.innerHTML = foundWords.map(w => `
+                <div class="flex items-center gap-1.5 bg-${colorClass}-50 border border-${colorClass}-100 px-2 py-1 rounded-lg">
+                    <span class="text-xs font-bold text-${colorClass}-600">${w.word}</span>
+                    <i class="fa-solid fa-arrow-right text-[8px] text-${colorClass}-300"></i>
+                    <span class="text-xs text-slate-500 line-through decoration-${colorClass}-300">${w.replace}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 渲染历史列表
+    function renderHistory() {
+        const container = document.getElementById('historyList');
+        container.innerHTML = '';
+
+        historyData.forEach((item, index) => {
+            let statusColor, icon, statusText;
+
+            if (item.riskLevel === 'safe') {
+                statusColor = 'bg-green-50 text-green-600 border-green-100';
+                icon = 'fa-check';
+                statusText = '通过';
+            } else if (item.riskLevel === 'medium') {
+                statusColor = 'bg-orange-50 text-orange-600 border-orange-100';
+                icon = 'fa-exclamation';
+                statusText = '警告';
+            } else {
+                statusColor = 'bg-red-50 text-red-600 border-red-100';
+                icon = 'fa-xmark';
+                statusText = '高危';
+            }
+
+            const delay = index * 50;
+
+            const html = `
+                <div class="bg-white border border-slate-200 rounded-xl p-3 flex gap-3 animate-fade-in-up group hover:border-slate-300 transition-all cursor-pointer" style="animation-delay: ${delay}ms" onclick="loadHistory(${item.id})">
+                    <!-- 左侧状态指示条 -->
+            <div class="w-1.5 rounded-full ${item.riskLevel === 'safe' ? 'bg-green-400' : (item.riskLevel === 'medium' ? 'bg-orange-400' : 'bg-red-400')} shrink-0"></div>
+
+            <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start mb-1">
+            <span class="text-[10px] text-slate-400 font-mono">${item.date}</span>
+            <div class="flex items-center gap-1 px-1.5 py-0.5 rounded ${statusColor} border text-[9px] font-bold">
+            <i class="fa-solid ${icon}"></i> ${statusText}
+            </div>
+            </div>
+            <p class="text-sm text-slate-700 truncate font-medium">${item.text}</p>
+            <div class="mt-1.5 flex gap-2 items-center overflow-hidden">
+            ${item.wordsFound.length > 0
+            ? item.wordsFound.slice(0, 3).map(w => `<span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">${w}</span>`).join('')
+            : '<span class="text-[10px] text-slate-300"><i class="fa-regular fa-circle-check"></i> 无敏感词</span>'}
+            </div>
+            </div>
+
+            <div class="flex items-center justify-center text-slate-300">
+            <i class="fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
+            </div>
+            </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // 点击历史记录回填
+    function loadHistory(id) {
+        const item = historyData.find(i => i.id === id);
+        if(item) {
+            inputText.value = item.text;
+            charCount.innerText = item.text.length;
+            performCheck(); // 重新触发检测动画
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // 复制结果
+    function copyResult() {
+        const text = document.getElementById('highlightedText').innerText; // 只复制文本，不复制HTML标签
+        navigator.clipboard.writeText(text).then(() => {
+            alert('已复制检测结果文案');
+        });
+    }
+
+    // 初始化渲染
+    window.onload = function() {
+        renderHistory();
+    }
+</script>
+</body>
+</html>

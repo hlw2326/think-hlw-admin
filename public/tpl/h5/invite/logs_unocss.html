@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>积分明细 - UnoCSS版本</title>
+    <!-- 引入 UnoCSS Runtime -->
+    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- 预设一些重置样式，虽然UnoCSS会自动处理大部分，但为了保持字体一致性稍微加一点 -->
+    <style>
+        [un-cloak] { display: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Roboto, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased min-h-screen" un-cloak>
+
+<div class="max-w-md mx-auto relative pb-10">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 max-w-md mx-auto z-50 h-[52px] px-4 flex items-center justify-between bg-white border-b border-gray-100">
+        <div class="w-9 h-9 flex items-center justify-center text-gray-700 cursor-pointer hover:bg-gray-50 rounded-full transition-colors">
+            <i class="fa-solid fa-arrow-left text-lg"></i>
+        </div>
+        <h1 class="font-bold text-gray-900 text-base">积分账单</h1>
+        <div class="w-9 h-9 flex items-center justify-center text-gray-700 cursor-pointer hover:bg-gray-50 rounded-full transition-colors">
+            <i class="fa-solid fa-ellipsis text-lg"></i>
+        </div>
+    </header>
+
+    <!-- 内容区域 -->
+    <main class="pt-20 px-4 flex flex-col gap-5">
+
+        <!-- 1. 资产卡片 (深色哑光风格) -->
+        <!-- 对应原 flat-card -->
+        <div class="bg-gray-800 text-white rounded-2xl p-6 relative overflow-hidden shadow-none border-none">
+            <div class="flex flex-col justify-between h-full relative z-10">
+                <!-- Top Row -->
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400 font-medium tracking-wide">当前积分</span>
+                    </div>
+
+                    <!-- Badge: 对应原 flat-badge -->
+                    <div class="flex items-center gap-1.5 bg-white/15 text-amber-400 px-2.5 py-1 rounded-full">
+                        <i class="fa-solid fa-crown text-[10px]"></i>
+                        <span class="text-[10px] font-bold tracking-wider">GOLD</span>
+                    </div>
+                </div>
+
+                <!-- Main Balance -->
+                <div class="flex items-baseline gap-2 mb-6">
+                    <div class="text-5xl leading-none font-bold tracking-tight font-sans">2,400</div>
+                    <span class="text-sm font-bold text-gray-500 mb-1">PTS</span>
+                </div>
+
+                <!-- Bottom Stats -->
+                <div class="flex items-center gap-8 pt-4 border-t border-gray-700">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-[10px] text-gray-400 font-medium">本月获取</span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-sm font-bold text-white tabular-nums">+5,600</span>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="w-px h-4 bg-gray-700"></div>
+
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-[10px] text-gray-400 font-medium">本月消耗</span>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-sm font-bold text-gray-300 tabular-nums">-3,200</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Tabs -->
+        <!-- 外层容器 -->
+        <div class="sticky top-[52px] z-40 bg-gray-50 py-2">
+            <!-- Tab 容器: 对应原 tab-container -->
+            <div class="bg-gray-200/60 rounded-lg p-1 flex">
+                <!-- Active Tab -->
+                <div class="flex-1 py-1.5 text-sm text-center rounded-md font-medium bg-white text-gray-900 shadow-sm cursor-pointer transition-all">全部</div>
+                <!-- Inactive Tabs -->
+                <div class="flex-1 py-1.5 text-sm text-center rounded-md font-medium text-gray-500 hover:text-gray-700 cursor-pointer transition-all">收入</div>
+                <div class="flex-1 py-1.5 text-sm text-center rounded-md font-medium text-gray-500 hover:text-gray-700 cursor-pointer transition-all">支出</div>
+            </div>
+        </div>
+
+        <!-- 3. 列表区域 -->
+        <div class="flex flex-col gap-3 pb-10">
+
+            <!-- Item 1 -->
+            <!-- 对应原 list-item -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-none active:bg-gray-50 transition-colors cursor-pointer">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-semibold text-gray-900 leading-tight">邀请好友 (138****8291)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-medium">2023-10-26 14:30</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2">
+                    <div class="text-lg font-bold text-amber-500 font-sans tracking-tight tabular-nums">+200</div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-none active:bg-gray-50 transition-colors cursor-pointer">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-semibold text-gray-900 leading-tight">每日签到奖励</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-medium">2023-10-26 09:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2">
+                    <div class="text-lg font-bold text-amber-500 font-sans tracking-tight tabular-nums">+10</div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-none active:bg-gray-50 transition-colors cursor-pointer">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-semibold text-gray-900 leading-tight">兑换高级会员(月卡)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-medium">2023-10-25 18:20</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2">
+                    <div class="text-lg font-bold text-gray-900 font-sans tracking-tight tabular-nums">-500</div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-none active:bg-gray-50 transition-colors cursor-pointer">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-semibold text-gray-900 leading-tight">邀请好友 (159****3341)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-medium">2023-10-25 11:15</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2">
+                    <div class="text-lg font-bold text-amber-500 font-sans tracking-tight tabular-nums">+200</div>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-none active:bg-gray-50 transition-colors cursor-pointer">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-500 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-semibold text-gray-900 leading-tight">系统补发积分</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-medium">2023-10-24 10:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2">
+                    <div class="text-lg font-bold text-amber-500 font-sans tracking-tight tabular-nums">+50</div>
+                </div>
+            </div>
+
+            <div class="text-center py-4 text-xs text-gray-400">没有更多记录了</div>
+
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

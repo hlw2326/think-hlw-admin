@@ -1,0 +1,70 @@
+{
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.org",
+            "exclude": [
+                "hlw2326/think-plugin-collect",
+                "hlw2326/think-plugin-backup",
+                "hlw2326/think-plugin-mp-base"
+            ]
+        },
+        "pluginbackup": {
+            "type": "path",
+            "url": "package/think-plugin-backup"
+        },
+        "plugincollect": {
+            "type": "path",
+            "url": "package/think-plugin-collect"
+        },
+        "pluginmpbase": {
+            "type": "path",
+            "url": "package/think-plugin-mp-base"
+        }
+    },
+    "type": "project",
+    "name": "hlw-admin",
+    "license": "MIT",
+    "homepage": "https://www.hlw2326.com",
+    "description": "Application Development Framework",
+    "keywords": [
+        "hlw2326",
+        "HlwAdmin",
+        "ThinkLibrary"
+    ],
+    "authors": [
+        {
+            "name": "hlw2326",
+            "email": "1608626143@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "topthink/think-orm": "^2.0|^3.0",
+        "zoujingli/think-library": "^6.1",
+        "zoujingli/think-plugs-admin": "^1.0",
+        "zoujingli/think-plugs-center": "^1.0",
+        "zoujingli/think-plugs-wechat": "^1.0",
+        "zoujingli/think-plugs-worker": "^1.0",
+        "hlw2326/think-plugin-backup": "*",
+        "hlw2326/think-plugin-collect": "*",
+        "hlw2326/think-plugin-mp-base": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "extend"
+        },
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "zoujingli/think-install": true
+        }
+    }
+}

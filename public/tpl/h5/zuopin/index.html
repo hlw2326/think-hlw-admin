@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>作品优化 - 权重助手</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #f0f7ff 0%, #fff 100%);
+            color: #1d1d1f;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 0 0;
+        }
+
+        .page {
+            max-width: 440px;
+            margin: 0 auto;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        /* 返回导航 */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: #f5f5f5;
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #333;
+        }
+
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin-right: 36px;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* 输入区域 */
+        .input-section {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-label::before {
+            content: '';
+            width: 3px;
+            height: 12px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 48px;
+            background: #f7f7f7;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 0 50px 0 16px;
+            font-size: 15px;
+            color: #1d1d1f;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-field::placeholder {
+            color: #bbb;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+            background: #fff;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: #e8e8e8;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .clear-btn.show {
+            display: flex;
+        }
+
+        /* 查询按钮 */
+        .submit-btn {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .submit-btn.loading .loading {
+            display: block;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 结果区域 */
+        .result-section {
+            display: none;
+            animation: fadeUp 0.4s ease;
+            margin-top: 20px;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 作品信息卡片 */
+        .work-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .work-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .work-cover {
+            width: 100px;
+            height: 133px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .work-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .work-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .work-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .work-meta {
+            font-size: 12px;
+            color: #86868b;
+            margin-bottom: auto;
+        }
+
+        .work-stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .work-stat {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .work-stat svg {
+            width: 14px;
+            height: 14px;
+            fill: #86868b;
+        }
+
+        /* 评分卡片 */
+        .score-card {
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .score-card.excellent {
+            background: linear-gradient(135deg, #52c41a, #95de64);
+            color: #fff;
+        }
+
+        .score-card.good {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .score-card.medium {
+            background: linear-gradient(135deg, #ffa502, #ffbe76);
+            color: #fff;
+        }
+
+        .score-card.poor {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: #fff;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .score-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .score-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* 维度评分 */
+        .dimension-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .dimension-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dimension-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .dimension-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dimension-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dimension-name {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .dimension-score {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .dimension-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .dimension-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* 优化建议 */
+        .suggest-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .suggest-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggest-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #ffa502, #ffbe76);
+            border-radius: 2px;
+        }
+
+        .suggest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .suggest-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: #fffbe6;
+            border-radius: 6px;
+            border: 1px solid #ffe58f;
+        }
+
+        .suggest-icon {
+            width: 28px;
+            height: 28px;
+            background: #ffa502;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .suggest-content {
+            flex: 1;
+        }
+
+        .suggest-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .suggest-content p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .suggest-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #ffa502;
+            color: #fff;
+            font-size: 11px;
+            border-radius: 3px;
+            margin-top: 6px;
+        }
+
+        /* 标题优化 */
+        .title-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .title-card-header {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-card-header::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .title-original {
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .title-label {
+            font-size: 12px;
+            color: #86868b;
+            margin-bottom: 6px;
+        }
+
+        .title-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .title-optimized {
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+        }
+
+        .title-optimized .title-label {
+            color: #667eea;
+        }
+
+        .title-optimized .title-text {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* AI优化按钮 */
+        .ai-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .ai-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ai-content {
+            flex: 1;
+            color: #fff;
+        }
+
+        .ai-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .ai-desc {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .ai-btn {
+            padding: 10px 16px;
+            background: #fff;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .ai-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 热门话题 */
+        .topic-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .topic-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topic-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #ff4757, #ff6b81);
+            border-radius: 2px;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-item {
+            padding: 6px 12px;
+            background: #f9f9f9;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topic-item:active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .topic-item.hot {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 107, 129, 0.1));
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        /* 提示 */
+        .tips-card {
+            background: #f0f7ff;
+            border: 1px solid #91caff;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+
+        .tips-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            color: #1677ff;
+            line-height: 1.6;
+        }
+
+        .tips-icon {
+            flex-shrink: 0;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 30px 0 24px;
+            font-size: 12px;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="back-btn" onclick="history.back()">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </div>
+        <span class="nav-title">作品优化</span>
+    </nav>
+
+    <!-- 头部 -->
+    <header class="header">
+        <div class="header-icon">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="#fff"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+        </div>
+        <h1>作品优化</h1>
+        <p>AI智能分析，提升作品流量</p>
+    </header>
+
+    <!-- 输入区域 -->
+    <section class="input-section">
+        <div class="input-label">输入作品链接</div>
+        <div class="input-wrapper">
+            <input type="text" class="input-field" id="workInput" placeholder="请粘贴抖音作品分享链接">
+            <div class="clear-btn" id="clearBtn" onclick="clearInput()">×</div>
+        </div>
+    </section>
+
+    <!-- 分析按钮 -->
+    <button class="submit-btn" id="submitBtn" onclick="analyzeWork()">
+        <span class="loading"></span>
+        <span class="btn-text">开始分析</span>
+    </button>
+
+    <!-- 结果区域 -->
+    <section class="result-section" id="resultSection">
+        <!-- 作品信息 -->
+        <div class="work-card">
+            <div class="work-header">
+                <div class="work-cover" id="workCover">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="rgba(255,255,255,0.8)"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="work-info">
+                    <div class="work-title" id="workTitle">作品标题加载中...</div>
+                    <div class="work-meta" id="workMeta">发布时间: --</div>
+                    <div class="work-stats">
+                        <div class="work-stat">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                            <span id="playCount">--</span>
+                        </div>
+                        <div class="work-stat">
+                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <span id="likeCount">--</span>
+                        </div>
+                        <div class="work-stat">
+                            <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+                            <span id="commentCount">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评分卡片 -->
+        <div class="score-card good" id="scoreCard">
+            <div class="score-circle" id="scoreValue">85</div>
+            <div class="score-title" id="scoreTitle">优质作品</div>
+            <div class="score-desc" id="scoreDesc">作品整体质量良好，还有提升空间</div>
+        </div>
+
+        <!-- 维度评分 -->
+        <div class="dimension-card">
+            <div class="dimension-title">维度评分</div>
+            <div class="dimension-list" id="dimensionList">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 标题优化 -->
+        <div class="title-card">
+            <div class="title-card-header">标题优化建议</div>
+            <div class="title-original">
+                <div class="title-label">原标题</div>
+                <div class="title-text" id="originalTitle">--</div>
+            </div>
+            <div class="title-optimized">
+                <div class="title-label">AI优化标题</div>
+                <div class="title-text" id="optimizedTitle">--</div>
+            </div>
+            <button class="copy-btn" onclick="copyTitle()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="#fff"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                复制优化标题
+            </button>
+        </div>
+
+        <!-- 优化建议 -->
+        <div class="suggest-card">
+            <div class="suggest-title">优化建议</div>
+            <div class="suggest-list" id="suggestList">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 热门话题推荐 -->
+        <div class="topic-card">
+            <div class="topic-title">热门话题推荐</div>
+            <div class="topic-list" id="topicList">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- AI优化 -->
+        <div class="ai-card">
+            <div class="ai-icon">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+            </div>
+            <div class="ai-content">
+                <div class="ai-title">AI一键优化</div>
+                <div class="ai-desc">智能生成爆款文案和封面</div>
+            </div>
+            <button class="ai-btn" onclick="aiOptimize()">立即优化</button>
+        </div>
+
+        <!-- 提示 -->
+        <div class="tips-card">
+            <div class="tips-content">
+                <span class="tips-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#1677ff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </span>
+                <span>优化建议仅供参考，最终效果取决于内容质量和平台推荐机制。建议结合自身定位进行调整。</span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">AI智能分析 · 权重助手</footer>
+</main>
+
+<!-- 优化弹窗 -->
+<div class="optimize-modal" id="optimizeModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:30px 40px;text-align:center;animation:popIn 0.3s ease;">
+        <div id="optimizeSpinner" style="width:50px;height:50px;margin:0 auto 16px;border:4px solid #f0f0f0;border-top-color:#667eea;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+        <div id="optimizeText" style="font-size:16px;font-weight:600;color:#333;margin-bottom:6px;">正在优化中...</div>
+        <div id="optimizeSubText" style="font-size:13px;color:#999;">AI正在分析您的作品</div>
+    </div>
+</div>
+
+<style>
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .optimize-modal.show { display: flex !important; }
+</style>
+
+<script>
+    const input = document.getElementById('workInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const resultSection = document.getElementById('resultSection');
+
+    input.addEventListener('input', function() {
+        clearBtn.classList.toggle('show', this.value.length > 0);
+    });
+
+    function clearInput() {
+        input.value = '';
+        clearBtn.classList.remove('show');
+        input.focus();
+    }
+
+    // 分析作品
+    function analyzeWork() {
+        const value = input.value.trim();
+        if (!value) {
+            alert('请输入作品链接');
+            return;
+        }
+
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+            const mockData = generateMockData(value);
+            updateResult(mockData);
+
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+            resultSection.classList.add('show');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1800);
+    }
+
+    // 生成模拟数据
+    function generateMockData(url) {
+        const score = Math.floor(Math.random() * 40) + 60;
+        let level, levelText, levelDesc;
+
+        if (score >= 90) {
+            level = 'excellent';
+            levelText = '爆款潜质';
+            levelDesc = '作品质量优秀，有成为爆款的潜质';
+        } else if (score >= 75) {
+            level = 'good';
+            levelText = '优质作品';
+            levelDesc = '作品整体质量良好，还有提升空间';
+        } else if (score >= 60) {
+            level = 'medium';
+            levelText = '中等水平';
+            levelDesc = '作品有一定基础，建议优化提升';
+        } else {
+            level = 'poor';
+            levelText = '需要优化';
+            levelDesc = '作品存在较多问题，建议重点优化';
+        }
+
+        const titles = [
+            '今天教大家一个超实用的技巧',
+            '这个方法太绝了，一学就会',
+            '分享一个改变我生活的好物',
+            '你们要的教程来了'
+        ];
+
+        const optimizedTitles = [
+            '99%的人都不知道的神技巧，学会直接起飞',
+            '这个方法太绝了！3步搞定，小白也能轻松学会',
+            '自用3年的宝藏好物，用过的都说绝了',
+            '手把手教学！保姆级教程来了，建议收藏'
+        ];
+
+        const idx = Math.floor(Math.random() * titles.length);
+
+        return {
+            title: titles[idx],
+            optimizedTitle: optimizedTitles[idx],
+            publishTime: '2025-01-' + (Math.floor(Math.random() * 15) + 1).toString().padStart(2, '0'),
+            playCount: Math.floor(Math.random() * 100000) + 5000,
+            likeCount: Math.floor(Math.random() * 10000) + 500,
+            commentCount: Math.floor(Math.random() * 1000) + 50,
+            score: score,
+            level: level,
+            levelText: levelText,
+            levelDesc: levelDesc,
+            dimensions: [
+                { name: '标题吸引力', score: Math.floor(Math.random() * 30) + 70 },
+                { name: '内容质量', score: Math.floor(Math.random() * 25) + 75 },
+                { name: '封面设计', score: Math.floor(Math.random() * 35) + 65 },
+                { name: '话题热度', score: Math.floor(Math.random() * 40) + 60 },
+                { name: '发布时机', score: Math.floor(Math.random() * 30) + 70 }
+            ],
+            suggestions: [
+                { title: '优化封面', desc: '建议使用更吸引眼球的封面图，增加文字标题', tag: '重要' },
+                { title: '添加热门话题', desc: '建议添加2-3个相关热门话题，增加曝光机会', tag: '推荐' },
+                { title: '调整发布时间', desc: '建议在晚上7-10点发布，用户活跃度更高', tag: '建议' },
+                { title: '增加互动引导', desc: '在视频结尾增加点赞关注引导，提升互动率', tag: '建议' }
+            ],
+            topics: [
+                { name: '#好物分享', hot: true },
+                { name: '#生活小技巧', hot: true },
+                { name: '#干货分享', hot: false },
+                { name: '#学习打卡', hot: false },
+                { name: '#日常vlog', hot: true },
+                { name: '#涨知识', hot: false }
+            ]
+        };
+    }
+
+    // 格式化数字
+    function formatNumber(num) {
+        if (num >= 10000) {
+            return (num / 10000).toFixed(1) + 'w';
+        }
+        return num.toString();
+    }
+
+    // 更新结果
+    function updateResult(data) {
+        document.getElementById('workTitle').textContent = data.title;
+        document.getElementById('workMeta').textContent = '发布时间: ' + data.publishTime;
+        document.getElementById('playCount').textContent = formatNumber(data.playCount);
+        document.getElementById('likeCount').textContent = formatNumber(data.likeCount);
+        document.getElementById('commentCount').textContent = formatNumber(data.commentCount);
+
+        // 评分卡片
+        const scoreCard = document.getElementById('scoreCard');
+        scoreCard.className = 'score-card ' + data.level;
+        document.getElementById('scoreValue').textContent = data.score;
+        document.getElementById('scoreTitle').textContent = data.levelText;
+        document.getElementById('scoreDesc').textContent = data.levelDesc;
+
+        // 维度评分
+        document.getElementById('dimensionList').innerHTML = data.dimensions.map(item => `
+            <div class="dimension-item">
+                <div class="dimension-header">
+                    <span class="dimension-name">${item.name}</span>
+                    <span class="dimension-score">${item.score}分</span>
+                </div>
+                <div class="dimension-bar">
+                    <div class="dimension-progress" style="width: ${item.score}%"></div>
+                </div>
+            </div>
+        `).join('');
+
+        // 标题优化
+        document.getElementById('originalTitle').textContent = data.title;
+        document.getElementById('optimizedTitle').textContent = data.optimizedTitle;
+
+        // 优化建议
+        document.getElementById('suggestList').innerHTML = data.suggestions.map(item => `
+            <div class="suggest-item">
+                <div class="suggest-icon">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="#fff"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                </div>
+                <div class="suggest-content">
+                    <h4>${item.title}</h4>
+                    <p>${item.desc}</p>
+                    <span class="suggest-tag">${item.tag}</span>
+                </div>
+            </div>
+        `).join('');
+
+        // 热门话题
+        document.getElementById('topicList').innerHTML = data.topics.map(item => `
+            <span class="topic-item ${item.hot ? 'hot' : ''}">${item.name}</span>
+        `).join('');
+    }
+
+    // 复制标题
+    function copyTitle() {
+        const title = document.getElementById('optimizedTitle').textContent;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(title).then(() => {
+                alert('已复制到剪贴板');
+            });
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = title;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('已复制到剪贴板');
+        }
+    }
+
+    // AI优化
+    function aiOptimize() {
+        const modal = document.getElementById('optimizeModal');
+        modal.classList.add('show');
+
+        setTimeout(() => {
+            document.getElementById('optimizeSpinner').style.borderTopColor = '#52c41a';
+            document.getElementById('optimizeSpinner').style.animation = 'none';
+            document.getElementById('optimizeSpinner').innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="#52c41a" style="margin:13px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+            document.getElementById('optimizeText').textContent = '优化完成！';
+            document.getElementById('optimizeText').style.color = '#52c41a';
+            document.getElementById('optimizeSubText').textContent = '已生成优化方案';
+
+            setTimeout(() => {
+                modal.classList.remove('show');
+                // 更新评分
+                const scoreCard = document.getElementById('scoreCard');
+                scoreCard.className = 'score-card excellent';
+                document.getElementById('scoreValue').textContent = '95';
+                document.getElementById('scoreTitle').textContent = '爆款潜质';
+                document.getElementById('scoreDesc').textContent = '优化后作品质量大幅提升';
+            }, 1000);
+        }, 2500);
+    }
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            analyzeWork();
+        }
+    });
+</script>
+</body>
+</html>

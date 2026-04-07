@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>个人中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'sans-serif'],
+                        mono: ['Inter', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 会员卡片渐变 (已开通状态 - 黑金) */
+        .vip-card-active {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #000000 100%);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* 金色光泽流光 */
+        .vip-shimmer-gold {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(251, 191, 36, 0.1) 50%, transparent 100%);
+            transform: skewX(-20deg) translateX(-150%);
+        }
+
+        /* 文字渐变金 */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #fcd34d, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 公众号卡片微光 */
+        .wechat-card-bg {
+            background: linear-gradient(to right bottom, #ffffff, #f0fdf4);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center relative overflow-x-hidden selection:bg-blue-100">
+
+<!-- 背景装饰 -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full bg-blue-400/10 blur-3xl"></div>
+    <div class="absolute bottom-[-10%] right-[-20%] w-[100vw] h-[100vw] rounded-full bg-indigo-500/10 blur-3xl"></div>
+</div>
+
+<!-- 顶部全局提示 (复制成功提示) -->
+<div id="copyToast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-800 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-xs font-medium transition-all duration-300 opacity-0 -translate-y-10 pointer-events-none">
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span>复制成功，快去关注吧！</span>
+</div>
+
+<main class="w-full max-w-md flex-1 p-5 flex flex-col gap-5">
+
+    <!-- 2. Profile Card -->
+    <div class="bg-white/95 backdrop-blur border border-white shadow-sm rounded-2xl p-5 flex items-center gap-4">
+        <div class="relative">
+            <!-- 头像容器：增加双层边框 (外层金色渐变 + 内层白色) -->
+            <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-amber-200 via-yellow-400 to-amber-600 shadow-lg relative z-10">
+                <div class="w-full h-full rounded-full border-[2px] border-white overflow-hidden bg-slate-200">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix&backgroundColor=FFE0B2"
+                         class="w-full h-full object-cover">
+                </div>
+            </div>
+            <!-- 修改后的等级标签：更精致小巧的黑金风格 -->
+            <div class="absolute -bottom-1 -right-1 z-20 bg-slate-900 text-amber-400 text-[9px] px-1.5 py-0.5 rounded-full border-2 border-white font-black shadow-sm flex items-center gap-0.5 leading-none">
+                <i class="fa-solid fa-crown text-[8px]"></i>
+                <span>Lv.9</span>
+            </div>
+        </div>
+        <div class="flex-1">
+            <h2 class="font-bold text-slate-800 text-xl flex items-center gap-2">
+                Guest_9527
+                <span class="text-[10px] bg-slate-900 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold flex items-center gap-1 leading-none">
+                    <i class="fa-solid fa-gem text-[8px]"></i> PRO会员
+                </span>
+            </h2>
+            <!-- 可复制 ID 区域 -->
+            <div class="flex items-center gap-2 mt-1 group cursor-pointer w-fit" onclick="copyId('88329104')">
+                <div class="text-xs text-gray-400 font-mono group-hover:text-blue-500 transition-colors">
+                    ID: <span id="userIdDisplay">88329104</span>
+                </div>
+                <i class="fa-regular fa-copy text-gray-300 text-xs group-hover:text-blue-500 transition-colors"></i>
+            </div>
+        </div>
+        <!-- 编辑按钮 -->
+        <button class="text-xs bg-white text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 font-bold active:scale-95 transition-transform hover:text-blue-600 hover:bg-slate-50">
+            编辑
+        </button>
+    </div>
+
+    <!-- 3. VIP / Membership Banner -->
+    <div class="bg-white/95 backdrop-blur border border-white shadow-sm rounded-2xl p-1 overflow-hidden">
+        <div class="vip-card-active rounded-xl p-4 text-white relative shadow-lg">
+            <div class="vip-shimmer-gold"></div>
+
+            <div class="flex justify-between items-start mb-6 relative z-10">
+                <div>
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <i class="fa-solid fa-crown text-amber-400 text-sm"></i>
+                        <span class="text-gold-gradient font-black text-lg italic tracking-wide">PRO MEMBER</span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium bg-black/30 px-2 py-0.5 rounded-full inline-block border border-white/10">
+                        尊贵身份 · 极速通道 · 无限次查询
+                    </div>
+                </div>
+                <button class="bg-amber-400 text-slate-900 text-[10px] font-bold px-3 py-1.5 rounded-full active:scale-95 transition-transform hover:bg-amber-300">
+                    立即续费
+                </button>
+            </div>
+
+            <div class="flex items-end justify-between relative z-10">
+                <div>
+                    <div class="text-[10px] text-slate-400 mb-0.5">会员有效期至</div>
+                    <div class="text-sm font-mono text-amber-100 tracking-wide">2026.08.18</div>
+                </div>
+                <div class="absolute -bottom-6 -right-2 opacity-10">
+                    <i class="fa-solid fa-gem text-7xl text-amber-200 rotate-12"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Points Center -->
+    <div class="bg-white/95 backdrop-blur border border-white shadow-sm rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-700">我的积分</h3>
+            <span class="text-[10px] text-blue-500 bg-blue-50 px-2 py-0.5 rounded cursor-pointer"
+                  onclick="alert('每日签到成功！+10积分')">
+                <i class="fa-solid fa-calendar-check mr-1"></i> 每日签到
+            </span>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="text-3xl font-black text-slate-800 tracking-tight" id="userPoints">2850</div>
+                <div class="text-[10px] text-gray-400 mt-1">当前可用积分</div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="alert('充值通道维护中，请联系客服')"
+                        class="h-9 px-3 bg-orange-500 text-white text-xs font-bold rounded-xl hover:bg-orange-600 active:opacity-80 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-wallet"></i> 充值
+                </button>
+                <button onclick="alert('今日广告任务已做完')"
+                        class="h-9 px-3 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 active:opacity-80 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-play-circle text-blue-400"></i> 领积分
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-100">
+            <div class="text-center">
+                <div class="text-sm font-bold text-slate-700">450</div>
+                <div class="text-[10px] text-gray-400">累计消耗</div>
+            </div>
+            <div class="text-center border-l border-r border-slate-100">
+                <div class="text-sm font-bold text-slate-700">128</div>
+                <div class="text-[10px] text-gray-400">历史查询</div>
+            </div>
+            <div class="text-center">
+                <div class="text-sm font-bold text-slate-700">12</div>
+                <div class="text-[10px] text-gray-400">正在监控</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4.5 Official Account Card (修复版：单一、整洁) -->
+    <div class="wechat-card-bg backdrop-blur border border-white shadow-sm rounded-2xl p-4 relative overflow-hidden group">
+        <!-- 装饰背景 -->
+        <div class="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-emerald-50 to-transparent pointer-events-none"></div>
+
+        <div class="flex items-center justify-between relative z-10">
+            <div class="flex items-center gap-3">
+                <!-- 微信图标容器 -->
+                <div class="w-10 h-10 rounded-xl bg-[#07C160] text-white flex items-center justify-center shadow-lg shadow-emerald-200 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fa-brands fa-weixin text-xl"></i>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <h3 class="text-sm font-bold text-slate-800 leading-tight">关注官方公众号</h3>
+                    <!-- 替换位置：活动文案 -->
+                    <div class="flex items-center gap-1 mt-1 text-[10px] text-slate-500">
+                        <i class="fa-solid fa-gift text-orange-500"></i>
+                        <span>回复 <span class="text-slate-900 font-bold">"666"</span> 领取 <span class="text-orange-500 font-bold">50</span> 积分</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 去关注按钮 -->
+            <button onclick="alert('正在尝试打开微信...')"
+                    class="h-8 px-3.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-700 active:scale-95 transition-all flex items-center gap-1.5 shadow-lg shadow-slate-200">
+                <span>去关注</span>
+                <i class="fa-solid fa-chevron-right text-[10px] opacity-70"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. Function Menu List -->
+    <div class="bg-white/95 backdrop-blur border border-white shadow-sm rounded-2xl p-2 space-y-1 mb-2">
+
+        <!-- 新手教程 -->
+        <a href="#" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 active:bg-orange-50 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <span class="text-sm font-medium text-slate-700">新手教程</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-white bg-orange-400 px-1.5 rounded-full shadow-sm">必看</span>
+                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+            </div>
+        </a>
+
+        <!-- 邀请好友 -->
+        <a href="#" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 active:bg-purple-50 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+                <span class="text-sm font-medium text-slate-700">邀请好友</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-white bg-red-500 px-1.5 rounded-full">Hot</span>
+                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+            </div>
+        </a>
+
+        <!-- 帮助中心 -->
+        <a href="#" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 active:bg-cyan-50 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-circle-question"></i>
+                </div>
+                <span class="text-sm font-medium text-slate-700">帮助中心</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+        </a>
+
+        <!-- 联系客服 -->
+        <a href="#" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 active:bg-emerald-50 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <span class="text-sm font-medium text-slate-700">联系客服</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-white bg-rose-500 px-1.5 rounded-full shadow-sm animate-pulse">可领积分</span>
+                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+            </div>
+        </a>
+
+        <!-- 系统设置 -->
+        <a href="#" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/50 active:bg-slate-100 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+                <span class="text-sm font-medium text-slate-700">系统设置</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+        </a>
+    </div>
+
+    <!-- 重新登录按钮 (美化版) -->
+    <button class="w-full mx-auto mt-2 py-3.5 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-100 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)] text-slate-400 text-sm font-medium hover:text-red-500 hover:bg-red-50/80 hover:border-red-100 hover:shadow-red-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group">
+        <i class="fa-solid fa-power-off text-xs transition-transform group-hover:scale-110 group-hover:rotate-90 duration-300"></i>
+        <span>重新登录</span>
+    </button>
+
+    <!-- 6. Bottom Info -->
+    <div class="text-center pb-5 pt-3">
+        <p class="text-[10px] text-gray-400">UID: 88329104 · Version 6.0.3</p>
+    </div>
+
+</main>
+
+<script>
+    function copyId(id) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(id).then(() => {
+                showCopyToast();
+            }).catch(() => {
+                fallbackCopy(id);
+            });
+        } else {
+            fallbackCopy(id);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showCopyToast();
+        } catch (err) {
+            console.error('Copy failed', err);
+            alert('复制失败，请手动复制');
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function showCopyToast() {
+        const toast = document.getElementById('copyToast');
+        // 显示
+        toast.classList.remove('opacity-0', '-translate-y-10');
+
+        // 2秒后隐藏
+        setTimeout(() => {
+            toast.classList.add('opacity-0', '-translate-y-10');
+        }, 2000);
+    }
+</script>
+</body>
+</html>
