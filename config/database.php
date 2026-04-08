@@ -28,11 +28,11 @@ return [
             // 服务器端口
             'hostport'        => '3306',
             // 数据库名
-            'database'        => 'hlw',
+            'database'        => 'hlw-admin',
             // 用户名
-            'username'        => 'root',
+            'username'        => 'hlw-admin',
             // 密码
-            'password'        =>  'root',
+            'password'        =>  'hlw-admin',
             // 数据库连接参数
             'params'          => [],
             // 数据库表前缀

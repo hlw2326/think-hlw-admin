@@ -1,83 +1,85 @@
 ---
-description: ThinkAdmin v6 基础规范：技术栈、模块权限、admin 功能总览
+description: ThinkAdmin v6 项目基础规范：技术栈、模块权限、参考模块总览
 alwaysApply: true
 ---
 
 # ThinkAdmin v6 项目基础规范
 
-## 技术栈
+## 一、技术栈
 
 - **框架**：ThinkPHP 6 + ThinkAdmin v6
 - **模板引擎**：ThinkTemplate（不是 Blade，不是 Twig）
 - **前端**：Layui 2.x（不是 Bootstrap，不是 Element UI）
 - **数据库**：MySQL
-- **参考模块**：`app/admin/`（标准实现）、`app/wechat/`（业务参考）、`app/mini/`（当前业务）
+- **PHP 版本**：>= 8.2
+- **参考模块**：`app/admin/`（标准实现参考）、`app/wechat/`（微信业务参考）、`app/mini/`（当前业务模块）
 
 ---
 
-## 模块修改权限
+## 二、模块修改权限
 
 | 模块 | 路径 | 是否可修改 |
 |------|------|-----------|
 | admin 管理模块 | `app/admin/` | ❌ **禁止修改** |
 | wechat 微信模块 | `app/wechat/` | ❌ **禁止修改** |
 | mini 小程序模块 | `app/mini/` | ✅ 当前业务模块 |
-| package 插件目录 | `package/` | ✅ 可扩展插件目录（`think-plugin-collect`、`think-plugin-backup`） |
+| 插件目录 | 第三方 Composer 包 | ❌ 禁止本地修改 |
 
 > `app/admin/` 和 `app/wechat/` 是框架固定实现，仅作为**参考范本**，不得改动任何文件。
 
 ---
 
-## admin 模块功能一览
+## 三、目录结构
 
-`app/admin/` 是 ThinkAdmin 的管理后台核心，提供以下标准功能模块。遇到实现问题时，先查阅 `app/admin/` 中是否有现成实现。
+```
+app/
+├── admin/          # 管理后台（禁止修改）
+│   ├── controller/ # 标准控制器参考
+│   ├── model/     # 标准模型参考
+│   └── view/      # 视图模板参考
+├── wechat/         # 微信模块（禁止修改）
+│   ├── controller/ # 微信业务参考
+│   ├── model/
+│   └── service/
+└── mini/           # 小程序模块 ✅
+    ├── controller/
+    │   ├── card/    # 卡密子模块
+    │   ├── user/    # 用户子模块
+    │   └── api/v1/  # API 接口
+    ├── model/        # 业务模型
+    ├── service/      # 业务服务
+    ├── lang/         # 语言文件
+    └── view/         # 视图模板
+```
 
-### 内容管理类
+---
 
-| 模块 | 路径 | 说明 |
-|------|------|------|
-| 文章管理 | `app/admin/controller/article/` | 支持文章分类、内容发布 |
-| 单页管理 | `app/admin/controller/article/` | 独立页面管理 |
-| 文章分类 | `app/admin/controller/Cate` | 内容分类（树形结构） |
-| 附件管理 | `app/admin/controller/Upload` | 上传文件管理 |
+## 四、模块命名规范
 
-### 系统配置类
+| 模块 | 控制器命名空间 | 模型命名空间 | 视图目录 |
+|------|--------------|------------|---------|
+| mini | `app\mini\controller` | `app\mini\model` | `app/mini/view/` |
 
-| 模块 | 路径 | 说明 |
-|------|------|------|
-| 系统配置 | `app/admin/controller/Config` | `sysconf()` 读写全局配置 |
-| 存储配置 | `app/admin/controller/Storage` | 文件存储驱动配置 |
-| 系统日志 | `app/admin/controller/Log` | 操作日志查看 |
-| 数据备份 | `think-plugin-backup` 插件 | 数据库备份（参考 `package/think-plugin-backup/`） |
-| 菜单管理 | `app/admin/controller/Menu` | 后台菜单配置 |
+---
 
-### 用户权限类
+## 五、标准控制器方法（参考）
 
-| 模块 | 路径 | 说明 |
-|------|------|------|
-| 登录/登出 | `app/admin/controller/Index` | 管理员登录认证 |
-| 用户管理 | `app/admin/controller/User` | 后台用户 CRUD |
-| 用户等级 | `app/admin/controller/Level` | 用户等级设置 |
-| 权限节点 | `app/admin/controller/Node` | 权限规则节点 |
-
-### 标准控制器方法（参考）
-
-每个业务模块应参照 `app/admin/` 的实现方式，实现以下标准方法：
+每个业务控制器应参照 `app/admin/` 的实现方式，实现以下标准方法：
 
 ```php
 class Xxx extends Controller
 {
-    public function index(): void   // 列表页（layTable）
-    public function add(): void     // 新增（弹窗 mForm）
-    public function edit(): void    // 编辑（弹窗 mForm）
-    public function state(): void   // 修改状态（switch，mSave）
-    public function remove(): void  // 删除（mDelete，批量）
+    public function index(): void {}  // 列表页（layTable）
+    public function add(): void   {}  // 新增（弹窗 mForm）
+    public function edit(): void  {}  // 编辑（弹窗 mForm）
+    public function state(): void {}  // 修改状态（switch，mSave）
+    public function remove(): void {} // 删除（mDelete，批量）
 }
 ```
 
 ---
 
-## 常用系统函数
+## 六、常用系统函数
 
 | 函数 | 说明 |
 |------|------|
@@ -92,3 +94,18 @@ class Xxx extends Controller
 | `AdminService::getUserId()` | 当前管理员 ID |
 | `AdminService::isSuper()` | 是否超级管理员 |
 | `AdminService::isLogin()` | 是否已登录 |
+
+---
+
+## 七、常用类引用
+
+```php
+use think\admin\Controller;           // 控制器基类
+use think\admin\Model;                // 模型基类
+use think\admin\Service;             // 服务基类
+use think\admin\helper\QueryHelper;   // 查询助手
+use think\admin\service\AdminService; // 管理员服务
+use think\admin\extend\CodeExtend;   // 编码扩展
+use think\admin\extend\DataExtend;   // 数据扩展
+use think\admin\extend\HttpExtend;   // HTTP 扩展
+```

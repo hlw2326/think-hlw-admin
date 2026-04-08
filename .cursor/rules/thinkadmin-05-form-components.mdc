@@ -1,0 +1,274 @@
+---
+description: ThinkAdmin v6 表单组件规范：图片上传、form字段、sort内联编辑、广告列表JS辅助
+alwaysApply: true
+---
+
+# ThinkAdmin v6 表单组件规范
+
+## 一、图片上传组件写法
+
+### 标准写法
+
+```html
+<div class="relative block">
+    <label>
+        <input class="layui-input layui-bg-gray" readonly placeholder="请上传图片"
+               data-tips-hover data-tips-image name="cover" value='{$vo.cover|default=""}'>
+    </label>
+    <a class="layui-icon layui-icon-upload input-right-icon"
+       data-file="image" data-field="cover" data-type="gif,png,jpg"></a>
+</div>
+```
+
+### 关键属性说明
+
+| 属性 | 说明 |
+|------|------|
+| `data-file="image"` | 打开**图片空间**选择图片（推荐） |
+| `data-file` 或 `data-file="btn"` | 直接**本地上传**文件 |
+| `data-field="xxx"` | 上传/选择完成后自动填入 `name="xxx"` 的 input |
+| `data-type="gif,png,jpg"` | 限制允许的文件类型 |
+| `data-tips-image` | 鼠标悬停时预览图片 |
+| `data-tips-hover` | 配合 `data-tips-image` 使用 |
+| `readonly` + `layui-bg-gray` | input 只读灰色背景 |
+
+### 列表页图片列
+
+**禁止**单独定义 `XxxImageTpl` 模板块，直接用 `$.layTable.showImage` 行内写法：
+
+```javascript
+// ✅ 正确
+{field: 'avatar_url', title: '{:lang("头像")}', width: 65, align: "center", templet: "<div>{{-$.layTable.showImage(d.avatar_url)}}</div>"}
+
+// ❌ 禁止
+{field: 'avatar_url', title: '{:lang("头像")}', width: 120, align: 'center', templet: '#LogoTpl'}
+```
+
+`width` 推荐 `65`（与头像等图片列保持一致）。
+
+### 表单字段布局规范
+
+字段少的表单直接用 `label.layui-form-item.relative.block` + `span.help-label` 布局，**不需要 fieldset + layui-row + layui-col-xs6**：
+
+```html
+<!-- ✅ 正确：标准 label 布局 -->
+<label class="layui-form-item relative block">
+    <span class="help-label"><b>{:lang('分类名称')}</b>Name</span>
+    <input name="name" value='{$vo.name|default=""}' required vali-name="{:lang('分类名称')}" placeholder="{:lang('请输入分类名称')}" class="layui-input">
+</label>
+
+<!-- ✅ 图片上传：内部用 relative block 包裹 -->
+<label class="layui-form-item relative block">
+    <span class="help-label"><b>{:lang('分类图标')}</b>Logo</span>
+    <div class="relative block">
+        <input class="layui-input layui-bg-gray" readonly placeholder="{:lang('请上传图标')}"
+               data-tips-hover data-tips-image name="logo" value='{$vo.logo|default=""}'>
+        <a class="layui-icon layui-icon-upload input-right-icon"
+           data-file="image" data-field="logo" data-type="gif,png,jpg,svg"></a>
+    </div>
+</label>
+
+<!-- ❌ 错误：字段少时用 fieldset + layui-row + layui-col-xs6 过于繁琐 -->
+<fieldset class="layui-bg-gray">
+    <legend>基本信息</legend>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs6">
+            <label class="block relative">
+                <span class="help-label"><b>分类名称</b>Name</span>
+                <input class="layui-input">
+            </label>
+        </div>
+    </div>
+</fieldset>
+```
+
+---
+
+## 二、form.html 不放的字段规范
+
+以下字段**统一不放在 `form.html` 表单里**：
+
+| 字段 | 原因 | 替代方式 |
+|------|------|---------|
+| `sort` 排序权重 | 列表页内联直接编辑更高效 | `SortInputTpl` + 框架默认 sort() |
+| `status` 状态 | 列表页 switch 开关更直观 | `StatusSwitchTpl` + 控制器 `state()` |
+
+**控制器不需要定义 `sort()` 方法**，框架底层已默认实现，**一律删除**。
+
+### sort 内联编辑
+
+```javascript
+// index.html cols 定义
+{field: 'sort', title: '{:lang("排序")}', width: 120, align: 'center', templet: '#SortInputTpl'}
+```
+
+```html
+<!-- SortInputTpl 模板 -->
+<script type="text/html" id="SortInputTpl">
+    <input type="number" data-blur-number="0"
+           data-action-blur="{:sysuri()}"
+           data-value="id#{{d.id}};action#sort;sort#{value}"
+           data-loading="false" value="{{d.sort}}" class="layui-input text-center">
+</script>
+```
+
+### state() 必须显式定义
+
+```php
+public function state(): void
+{
+    MiniXxx::mSave($this->_vali([
+        'status.in:0,1'   => '状态值范围异常！',
+        'status.require'  => '状态值不能为空！',
+    ]));
+}
+```
+
+---
+
+## 三、广告模块列表页 JS 辅助函数
+
+### 广告类型 badge
+
+```javascript
+$.adTypeLabel = (function () {
+    var types = JSON.parse($('#AdTypesData').text());
+    return function (type) {
+        var item = types[type] || {label: type, 'class': 'layui-bg-gray'};
+        return '<span class="layui-badge ' + item['class'] + '">' + item.label + '</span>';
+    };
+})();
+```
+
+### 小程序名称 badge
+
+```javascript
+$.mpName = (function () {
+    var list = JSON.parse($('#MpListData').text());
+    return function (appid) {
+        return list[appid]
+            ? '<span>' + list[appid] + '</span><span class="color-desc" style="font-size:11px">(' + appid + ')</span>'
+            : appid;
+    };
+})();
+```
+
+### 完整使用示例（ad/index.html）
+
+```html
+<label class="layui-hide">
+    <textarea id="AdTypesData">{:json_encode($ad_types, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
+<label class="layui-hide">
+    <textarea id="MpListData">{:json_encode($mp_list, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
+
+<script>
+    $.mpName = (function () { /* ... */ })();
+    $.adTypeLabel = (function () { /* ... */ })();
+
+    $(function () {
+        $('#AdTable').layTable({
+            even: true, height: 'full',
+            sort: {field: 'sort', type: 'desc'},
+            cols: [[
+                {checkbox: true, fixed: true},
+                {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
+                {field: 'sort', title: '{:lang("排序")}', width: 120, align: 'center', templet: '#SortInputTpl'},
+                {field: 'appid', title: '{:lang("所属小程序")}', width: 200, align: 'center', templet: '#MpNameTpl'},
+                {field: 'name', title: '{:lang("广告名称")}', minWidth: 140},
+                {field: 'unit_id', title: '{:lang("广告ID")}', minWidth: 220},
+                {field: 'ad_type', title: '{:lang("广告类型")}', width: 175, align: 'center', templet: '#AdTypeTpl'},
+                {field: 'position', title: '{:lang("位置标识")}', width: 150, align: 'center'},
+                {field: 'status', title: '{:lang("状态")}', width: 110, align: 'center', templet: '#StatusSwitchTpl'},
+                {field: 'create_at', title: '{:lang("创建时间")}', width: 160, align: 'center', sort: true},
+                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 300, align: 'left'}
+            ]]
+        });
+        // ...
+    });
+</script>
+
+<script type="text/html" id="AdTypeTpl">
+    {{- $.adTypeLabel(d.ad_type) }}
+</script>
+
+<script type="text/html" id="MpNameTpl">
+    {{- $.mpName(d.appid) }}
+</script>
+```
+
+---
+
+## 四、index_search.html 字段值传递
+
+**禁止在模板中直接写死枚举选项**，控制器传入枚举数组，模板 `{foreach}` 循环：
+
+```php
+// 控制器
+$this->platforms = MiniUserQuery::getPlatforms();
+```
+
+```html
+<select name="platform" class="layui-select" lay-append-to>
+    <option value="">-- {:lang('全部')} --</option>
+    {foreach $platforms as $k => $v}
+    <option value="{$k}" {if isset($get.platform) && $get.platform == $k}selected{/if}>{$v.label}</option>
+    {/foreach}
+</select>
+```
+
+**禁止在模板中调用业务模型静态方法**：
+
+```html
+<!-- ❌ 禁止 -->
+<textarea id="XxxData">{:json_encode(\app\mini\model\MiniXxx::getItems(), JSON_UNESCAPED_UNICODE)}</textarea>
+
+<!-- ✅ 正确：控制器赋值 -->
+<textarea id="XxxData">{:json_encode($xxx, JSON_UNESCAPED_UNICODE)}</textarea>
+```
+
+---
+
+## 五、特殊表单场景
+
+### 多选小程序（appid 存逗号分隔字符串）
+
+```php
+// 控制器 _form_filter
+if ($this->request->isPost()) {
+    if (!empty($data['appid_all'])) {
+        $data['appid'] = '*';
+    } else {
+        $appids = array_filter((array)($data['appid'] ?? []));
+        $data['appid'] = implode(',', $appids) ?: '*';
+    }
+    unset($data['appid_all']);
+} else {
+    $this->appid_list = $data['appid'] ?? '';
+}
+```
+
+```html
+<!-- 视图：全选复选框 + 小程序多选 -->
+<div class="layui-form-item">
+    <label class="layui-form-label">{:lang('目标小程序')}</label>
+    <div class="layui-input-block">
+        <input type="checkbox" name="appid_all" value="1" lay-skin="primary" title="{:lang('全部小程序')}"
+               {if isset($vo.appid) && $vo.appid eq '*'}checked{/if}>
+        {foreach $mp_list as $appid => $mpname}
+        <input type="checkbox" name="appid[]" value="{$appid}" title="{$mpname}" lay-skin="primary"
+               {if isset($vo.appid) && strpos($vo.appid, $appid) !== false}checked{/if}>
+        {/foreach}
+    </div>
+</div>
+```
+
+### 日期时间字段（`data-date-input`）
+
+```html
+<!-- expire_time 是 int 时间戳，GET 时控制器转字符串，POST 时控制器转时间戳 -->
+<input data-date-input name="expire_time" value='{$vo.expire_time|default=""}' placeholder="{:lang('留空永不过期')}" class="layui-input">
+```
+
+> `data-date-input` 用于单个日期，`data-date-range` 用于日期范围选择。

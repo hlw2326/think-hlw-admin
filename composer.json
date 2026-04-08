@@ -6,7 +6,8 @@
             "exclude": [
                 "hlw2326/think-plugin-collect",
                 "hlw2326/think-plugin-backup",
-                "hlw2326/think-plugin-mp-base"
+                "hlw2326/think-plugin-mp-base",
+                "hlw2326/think-plugin-mp-shared"
             ]
         },
         "pluginbackup": {
@@ -20,10 +21,14 @@
         "pluginmpbase": {
             "type": "path",
             "url": "package/think-plugin-mp-base"
+        },
+        "pluginmpshared": {
+            "type": "path",
+            "url": "package/think-plugin-mp-shared"
         }
     },
     "type": "project",
-    "name": "hlw-admin",
+    "name": "hlw2326/hlw-admin",
     "license": "MIT",
     "homepage": "https://www.hlw2326.com",
     "description": "Application Development Framework",
@@ -49,6 +54,7 @@
         "zoujingli/think-plugs-center": "^1.0",
         "zoujingli/think-plugs-wechat": "^1.0",
         "zoujingli/think-plugs-worker": "^1.0",
+        "hlw2326/think-plugin-mp-shared": "*",
         "hlw2326/think-plugin-backup": "*",
         "hlw2326/think-plugin-collect": "*",
         "hlw2326/think-plugin-mp-base": "*"

@@ -1,0 +1,164 @@
+---
+description: ThinkAdmin v6 服务类规范：Service基类、业务服务写法、静态方法规范、Service与Controller的关系
+alwaysApply: true
+---
+
+# ThinkAdmin v6 服务类规范
+
+## 一、服务类目录
+
+业务服务统一放在 `app/mini/service/` 目录，命名空间为 `app\mini\service`。
+
+## 二、服务类写法
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace app\mini\service;
+
+use app\mini\model\MiniCardScore;
+use app\mini\model\MiniCardVip;
+use app\mini\model\MiniCardLog;
+use app\mini\model\MiniUser;
+use app\mini\model\MiniUserScoreLog;
+use think\admin\Service;
+
+/**
+ * 卡密使用服务
+ * @class CardUseService
+ * @package app\mini\service
+ */
+class CardUseService extends Service
+{
+    // 业务逻辑 ...
+}
+```
+
+服务类继承 `think\admin\Service`，而非 ThinkPHP6 的 `think\Service`。
+
+## 三、Service 与 Controller 的职责划分
+
+| 层次 | 职责 | 示例 |
+|------|------|------|
+| Controller | 接收请求、参数验证、调用 Service、返回结果 | 验证参数、调用 CardUseService::useScoreCard() |
+| Service | 业务逻辑、事务控制、数据处理 | 检查卡密、更新积分、记录日志 |
+| Model | 数据访问、数据校验 | 静态查询方法 canUseCard() |
+
+**Service 不应直接处理 HTTP 请求**（不调用 `$this->request`），也不应返回 ThinkAdmin 的 `$this->success()` / `$this->error()`。
+
+## 四、Service 返回值规范
+
+Service 方法返回统一的数据结构，不依赖框架响应：
+
+```php
+// ✅ 正确：返回标准数组结构
+return ['success' => true, 'message' => '使用成功', 'data' => [...]];
+return ['success' => false, 'message' => '卡密已过期'];
+
+// ❌ 错误：在 Service 中调用框架响应方法
+$this->success('操作成功');  // Controller 层处理
+```
+
+Controller 层根据 Service 返回值决定调用 `$this->success()` 或 `$this->error()`：
+
+```php
+$result = CardUseService::useScoreCard($cardCode, $userId);
+if ($result['success']) {
+    $this->success($result['message']);
+} else {
+    $this->error($result['message']);
+}
+```
+
+## 五、静态方法 vs 实例方法
+
+业务服务类以**静态方法**为主，因为不需要维护状态：
+
+```php
+public static function useScoreCard(string $cardCode, int $userId): array
+{
+    // 静态方法，无状态
+}
+
+public static function useVipCard(string $cardCode, int $userId): array
+{
+    // 静态方法
+}
+```
+
+如果需要共享状态或配置，使用实例方法：
+
+```php
+protected string $appid;
+
+public function setAppid(string $appid): self
+{
+    $this->appid = $appid;
+    return $this;
+}
+```
+
+## 六、事务处理规范
+
+事务在 Service 层处理：
+
+```php
+public static function useScoreCard(string $cardCode, int $userId): array
+{
+    // ... 前置检查 ...
+
+    try {
+        \think\facade\Db::startTrans();
+
+        // 记录使用日志
+        MiniCardLog::recordUse(...);
+
+        // 更新用户积分
+        $currentScore = intval(MiniUser::mk()->where(['id' => $userId])->value('score') ?: 0);
+        $newBalance = $currentScore + intval($card->score);
+        MiniUser::mk()->where(['id' => $userId])->update(['score' => $newBalance]);
+
+        // 记录积分流水
+        MiniUserScoreLog::record(...);
+
+        \think\facade\Db::commit();
+        return ['success' => true, 'message' => '使用成功', 'data' => $stats];
+    } catch (\Exception $e) {
+        \think\facade\Db::rollback();
+        return ['success' => false, 'message' => '使用失败：' . $e->getMessage()];
+    }
+}
+```
+
+## 七、常用工具类引用
+
+```php
+use think\admin\extend\CodeExtend;   // 编码工具
+use think\admin\extend\DataExtend;   // 数据工具
+use think\admin\extend\HttpExtend;   // HTTP 工具
+use think\facade\Db;                 // 数据库（事务用）
+```
+
+## 八、QueryService 查询服务
+
+如果业务需要封装复杂的查询逻辑，可以创建独立的查询服务：
+
+```php
+<?php
+
+namespace app\mini\service;
+
+use think\admin\Service;
+
+/**
+ * 查询服务
+ * @class QueryService
+ */
+class QueryService extends Service
+{
+    // 查询相关业务逻辑
+}
+```
+
+通常查询逻辑直接放在 Controller 的 QueryHelper 回调中，只有复用程度高的查询才封装到 Service。

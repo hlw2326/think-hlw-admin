@@ -1,5 +1,5 @@
 ---
-description: ThinkAdmin v6 模型规范：模型写法、select 枚举（const vs 静态方法）、广告枚举、卡密业务模型
+description: ThinkAdmin v6 模型规范：模型写法、select 枚举、广告枚举、JSON字段、append虚拟字段
 alwaysApply: true
 ---
 
@@ -8,9 +8,9 @@ alwaysApply: true
 ## 一、基本规则
 
 - 继承 `think\admin\Model`，**不是** `think\Model`
-- 表名自动从类名转下划线：`MiniCardPoints` → `mini_card_points`
+- 表名自动从类名转下划线：`MiniCardScore` → `mini_card_score`
 - 必须用 `@property` 注释所有字段
-- 插件模型显式指定表名：`protected $table = 'plugin_collect_tag'`
+- 模型类注释放在 `@class` 前面，类名后面
 
 ```php
 <?php
@@ -21,70 +21,159 @@ namespace app\mini\model;
 use think\admin\Model;
 
 /**
- * @property int $id
- * @property string $name 名称
+ * 积分充值卡密模型
+ * @property int $id 主键ID
+ * @property string $batch_no 批次号
+ * @property string $card_code 卡密码
+ * @property int $score 积分数量
+ * @property int $max_users 最大使用用户数(0无限制)
+ * @property int $user_limit 每用户使用次数限制
+ * @property int $expire_time 卡密到期时间戳(0永不过期)
  * @property int $status 状态(0禁用,1启用)
  * @property string $create_at 创建时间
  * @property string $update_at 更新时间
- * @class MiniXxx
+ * @property int $used_count 已使用用户数（虚拟）
+ * @class MiniCardScore
+ * @package app\mini\model
  */
-class MiniXxx extends Model {}
+class MiniCardScore extends Model
+{
+}
 ```
 
 ---
 
-## 二、select 下拉选项写法规范
+## 二、JSON 字段配置
+
+如果数据库字段存储 JSON 字符串，需要在模型中声明 `$json` 属性，自动序列化/反序列化：
+
+```php
+/**
+ * @property int $id
+ * @property string $use_data 使用数据(JSON格式)
+ * @class MiniCardLog
+ */
+class MiniCardLog extends Model
+{
+    /** @var array JSON 自动序列化字段 */
+    protected $json = ['use_data'];
+}
+```
+
+---
+
+## 三、append 追加（虚拟字段）
+
+通过 `$append` 可以追加非数据库字段（模型访问器），在列表查询时自动计算：
+
+```php
+class MiniCardScore extends Model
+{
+    /** 追加虚拟字段（不存库，仅读取时计算） */
+    protected $append = ['used_count'];
+
+    public function getUsedCountAttr($value, $data): int
+    {
+        if (empty($data['card_code'])) return 0;
+        return MiniCardLog::mk()
+            ->where(['card_code' => $data['card_code'], 'card_type' => MiniCardLog::TYPE_SCORE])
+            ->group('user_id')
+            ->count();
+    }
+}
+```
+
+> 注意：append 字段在 `mQuery` 的 leftJoin 等子查询中可能导致问题，卡密模块的 `used_count` 直接通过 SQL 子查询在列表查询时计算。
+
+---
+
+## 四、select 下拉选项写法规范
 
 **选项数据必须定义在模型的静态方法里**，禁止在模板中逐条硬编码。
 
-### 简单枚举（无需 lang()，如状态）→ 用 const
+### 简单枚举（无需 lang()）→ 用 const
 
 ```php
-class MiniTools extends Model
+class MiniUserScoreLog extends Model
 {
-    const STATUSES = [1 => '已启用', 0 => '已禁用'];
+    const SOURCE_ADMIN_ADJUST = 'admin_adjust';
+    const SOURCE_CARD_SCORE  = 'card_score';
+    const SOURCE_QUERY_COST  = 'query_cost';
+    const SOURCE_QUERY_REFUND = 'query_refund';
 }
 ```
 
 ### 复杂枚举（需要 lang() 或样式信息）→ 用静态方法
 
 ```php
+public static function getTypes(): array
+{
+    return [
+        'system'   => ['label' => lang('系统通知'), 'class' => 'layui-bg-blue'],
+        'activity' => ['label' => lang('活动公告'), 'class' => 'layui-bg-orange'],
+        'update'   => ['label' => lang('版本更新'), 'class' => 'layui-bg-green'],
+    ];
+}
+
 public static function getJumpTypes(): array
 {
     return [
-        'navigateTo'   => ['label' => 'navigateTo ' . lang('普通跳转'),  'class' => 'layui-bg-blue'],
-        'redirectTo'   => ['label' => 'redirectTo ' . lang('重定向'),    'class' => 'layui-bg-cyan'],
-        'switchTab'    => ['label' => 'switchTab '  . lang('底部菜单'),  'class' => 'layui-bg-green'],
-        'reLaunch'     => ['label' => 'reLaunch '   . lang('重启跳转'),  'class' => 'layui-bg-orange'],
-        'webview'      => ['label' => 'webview H5'  . lang('网页'),      'class' => 'layui-bg-red'],
-        'miniprogram'  => ['label' => 'miniprogram '. lang('其他小程序'),'class' => 'layui-bg-gray'],
+        ''            => ['label' => lang('仅展示（无跳转）'),           'class' => 'layui-bg-gray'],
+        'navigateTo'  => ['label' => 'navigateTo ' . lang('普通跳转'),   'class' => 'layui-bg-blue'],
+        'redirectTo'  => ['label' => 'redirectTo ' . lang('重定向'),     'class' => 'layui-bg-cyan'],
+        'switchTab'   => ['label' => 'switchTab '  . lang('底部菜单'),   'class' => 'layui-bg-green'],
+        'reLaunch'    => ['label' => 'reLaunch '   . lang('重启跳转'),   'class' => 'layui-bg-orange'],
+        'webview'     => ['label' => 'webview H5'  . lang('网页'),       'class' => 'layui-bg-red'],
+        'miniprogram' => ['label' => 'miniprogram '. lang('其他小程序'), 'class' => 'layui-bg-gray'],
     ];
 }
 ```
 
-### 控制器获取并传给模板
+### 广告类型枚举（mini_ad）
 
 ```php
-MiniTools::mQuery()->layTable(function () {
-    $this->jump_types = MiniTools::getJumpTypes();
-}, ...);
-
-protected function _form_filter(array &$data): void
+public static function getAdTypes(): array
 {
-    $this->jump_types = MiniTools::getJumpTypes();
-    $this->statuses   = MiniTools::STATUSES;
+    return [
+        'banner'       => ['label' => 'Banner ' . lang('横幅广告'),      'class' => 'layui-bg-blue'],
+        'interstitial' => ['label' => lang('插屏广告'),                'class' => 'layui-bg-orange'],
+        'video'        => ['label' => lang('激励视频广告'),            'class' => 'layui-bg-green'],
+        'native'       => ['label' => lang('原生模板广告'),            'class' => 'layui-bg-cyan'],
+        'grid'         => ['label' => lang('格子广告'),                'class' => 'layui-bg-red'],
+    ];
 }
 ```
 
-### 模型 select 方法模板输出规范
+---
+
+## 五、控制器获取并传给模板
+
+```php
+// layTable 回调中赋值（列表页）
+MiniAd::mQuery()->layTable(function () {
+    $this->ad_types = MiniAd::getAdTypes();
+    $this->mp_list  = MiniMp::mk()->where('status', 1)->column('name', 'appid');
+}, ...);
+
+// _form_filter 中赋值（表单页）
+protected function _form_filter(array &$data): void
+{
+    $this->ad_types = MiniAd::getAdTypes();
+    $this->mp_list  = MiniMp::mk()->where('status', 1)->column('name', 'appid');
+}
+```
+
+---
+
+## 六、模型 select 模板输出规范
 
 **所有 select 必须加 `lay-append-to`**，防止下拉菜单被父容器裁剪：
 
 ```html
-<select name="jump_type" lay-append-to>
-    <option value="">-- {:lang('全部')} --</option>
-    {foreach $jump_types as $k => $v}
-    <option value="{$k}" {if isset($get.jump_type) && $get.jump_type == $k}selected{/if}>{$v}</option>
+<select name="ad_type" vali-name="{:lang('广告类型')}" required lay-append-to>
+    <option value="">{:lang('请选择广告类型')}</option>
+    {foreach $ad_types as $k => $v}
+    <option value="{$k}" {if isset($vo.ad_type) and $vo.ad_type eq $k}selected{/if}>{$v.label}</option>
     {/foreach}
 </select>
 ```
@@ -93,83 +182,98 @@ protected function _form_filter(array &$data): void
 
 ```html
 <!-- ✅ 正确 -->
-<option value="{$k}" {if isset($vo.jump_type) and $vo.jump_type eq $k}selected{/if}>{$v}</option>
+<option value="{$k}" {if isset($vo.ad_type) and $vo.ad_type eq $k}selected{/if}>{$v.label}</option>
 
 <!-- ❌ 禁止：重复 if -->
-<option value="1" {if $vo.jump_type eq 1}selected{/if}>...</option>
-<option value="2" {if $vo.jump_type eq 2}selected{/if}>...</option>
+<option value="1" {if $vo.ad_type eq 1}selected{/if}>...</option>
+<option value="2" {if $vo.ad_type eq 2}selected{/if}>...</option>
 ```
 
 ---
 
-## 三、广告模块枚举（mini_ad）
-
-```php
-public static function getAdTypes(): array
-{
-    return [
-        'banner'        => ['label' => 'Banner '        . lang('横幅广告'), 'class' => 'layui-bg-blue'],
-        'video'         => ['label' => 'Video '         . lang('视频贴片'), 'class' => 'layui-bg-cyan'],
-        'interstitial'  => ['label' => 'Interstitial '  . lang('插屏广告'), 'class' => 'layui-bg-orange'],
-        'rewarded_video'=> ['label' => 'RewardedVideo ' . lang('激励视频'), 'class' => 'layui-bg-green'],
-        'box'           => ['label' => 'Box '           . lang('格子广告'), 'class' => 'layui-bg-gray'],
-    ];
-}
-```
-
-position 命名约定：格式 `{页面}_{位置/类型}`，全小写下划线，如 `home_top`、`detail_bottom`、`task_rewarded`。同一 appid 下 `position` 值唯一。
-
----
-
-## 四、PHP 数据传递给 JS
+## 七、PHP 数据传递给 JS
 
 **禁止在 `<script>` 块里直接嵌 PHP 模板语法**，用 `<textarea>` 注入：
 
 ```html
-<!-- ✅ 正确 -->
 <label class="layui-hide">
-    <textarea id="JumpTypesData">{:json_encode($jump_types, JSON_UNESCAPED_UNICODE)}</textarea>
+    <textarea id="AdTypesData">{:json_encode($ad_types, JSON_UNESCAPED_UNICODE)}</textarea>
 </label>
-
-<script>
-    var types = JSON.parse($('#JumpTypesData').text());
-</script>
+<label class="layui-hide">
+    <textarea id="MpListData">{:json_encode($mp_list, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
 ```
 
-**id 命名规范**：`XxxData`（大驼峰 + `Data` 后缀），如 `JumpTypesData`、`CateListData`、`AdTypesData`。
+```javascript
+$.adTypeLabel = (function () {
+    var types = JSON.parse($('#AdTypesData').text());
+    return function (type) {
+        var item = types[type] || {label: type, 'class': 'layui-bg-gray'};
+        return '<span class="layui-badge ' + item['class'] + '">' + item.label + '</span>';
+    };
+})();
+
+$.mpName = (function () {
+    var list = JSON.parse($('#MpListData').text());
+    return function (appid) {
+        return list[appid]
+            ? '<span>' + list[appid] + '</span><span class="color-desc" style="font-size:11px">(' + appid + ')</span>'
+            : appid;
+    };
+})();
+```
+
+**id 命名规范**：`XxxData`（大驼峰 + `Data` 后缀），如 `AdTypesData`、`MpListData`、`PlatformsData`。
 
 ---
 
-## 五、卡密业务模型规范（mini 模块）
+## 八、业务模型常用方法
 
-### 积分卡密（mini_card_points）
-
-核心字段：`points`（充值积分数），无 `face_value`（积分卡不需要面值）。
-
-### 会员卡密（mini_card_vip）
-
-核心字段：`vip_days`（充值天数）、`face_value`（面值，仅展示）。
-
-### 两种卡密共同字段
-
-```
-max_users   int   最多允许几人使用，0=无限制
-user_limit  int   每人最多使用几次，默认1
-expire_time int   卡密截止时间戳，0=永不过期（不是使用后过期）
-```
-
-**已删除字段，禁止再添加**：`used_uid`、`used_time`、`use_expire_time`、积分卡的 `face_value`。
-
-### 使用记录表（mini_card_use_log）
-
-多用户使用记录必须存在独立日志表，不能存在卡密主表。
+### 通用查询
 
 ```php
-// 检查是否可以使用
-$canUse = MiniCardUseLog::canUseCard($cardType, $cardCode, $userId);
+// 获取单条（不存在返回空模型）
+$card = MiniCardScore::mk()->where(['card_code' => $code])->findOrEmpty();
 
-// 记录使用（事务内）
-Db::startTrans();
-MiniCardUseLog::recordUse($cardType, $cardId, $cardCode, $userId, $useData);
-Db::commit();
+// 检查是否存在
+if (!$card->isExists()) {
+    // 不存在
+}
+
+// 统计数量
+$count = MiniCardScore::mk()->where(['batch_no' => $batchNo])->count();
+
+// 列表
+$list = MiniCardScore::mk()->where(['status' => 1])->select()->toArray();
+
+// 获取某字段值
+$score = MiniCardScore::mk()->where(['id' => $id])->value('score');
+```
+
+### 静态方法示例（卡密检查）
+
+```php
+/**
+ * 检查卡密是否可以使用
+ * @param int $cardType 卡密类型
+ * @param string $cardCode 卡密码
+ * @param int $userId 用户ID
+ * @return array ['can' => bool, 'reason' => string]
+ */
+public static function canUseCard(int $cardType, string $cardCode, int $userId): array
+{
+    $card = MiniCardScore::mk()->where(['card_code' => $cardCode])->findOrEmpty();
+
+    if (!$card->isExists()) {
+        return ['can' => false, 'reason' => '卡密不存在！'];
+    }
+    if (intval($card->status) !== 1) {
+        return ['can' => false, 'reason' => '卡密已被禁用！'];
+    }
+    if ($cardType === self::TYPE_VIP && $card->expire_time > 0 && $card->expire_time < time()) {
+        return ['can' => false, 'reason' => '卡密已过期！'];
+    }
+    // ... 更多检查
+    return ['can' => true, 'reason' => ''];
+}
 ```

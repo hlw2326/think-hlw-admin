@@ -1,5 +1,5 @@
 ---
-description: ThinkAdmin v6 视图模板规范：继承路径、ThinkTemplate 陷阱、layTable、data-* 属性、index/index_search/form 标准结构
+description: ThinkAdmin v6 视图模板规范：继承路径、ThinkTemplate陷阱、layTable、data-*属性、标准结构
 alwaysApply: true
 ---
 
@@ -9,24 +9,29 @@ alwaysApply: true
 
 ### 模块（app/mini/ 等）
 
-| 页面类型 | 正确写法 |
-|----------|----------|
+**优先使用当前模块自己的 base 模板（如果存在），其次回退到 admin 模板。**
+
+#### 自定义 base 模板查找顺序
+
+| base 模板 | 优先路径 | 回退路径 |
+|-----------|---------|---------|
+| 列表页 | `app/mini/view/table.html` | `app/admin/view/table` |
+| 整页表单 | `app/mini/view/main.html` 或 `app/mini/view/main/index.html` | `app/admin/view/main` |
+| 弹窗表单 | `app/mini/view/form.html` | `app/admin/view/form` |
+
+> **当前项目**：mini 模块有 `app/mini/view/main/index.html`，无 `table.html` 和 `form.html`，所以：
+> - 列表页 → `{extend name="../../admin/view/table"}`（使用 admin 的 table）
+> - 整页表单（data-open） → `{extend name="../../admin/view/main"}` 或 `{extend name="main/index"}`（优先用自己的 main）
+
+#### 实际写法
+
+| 页面类型 | 当前项目写法 |
+|----------|-------------|
 | 列表页 | `{extend name="../../admin/view/table"}` |
 | 弹窗表单（data-modal） | `{extend name="../../admin/view/form"}` |
-| 整页表单（data-open） | `{extend name="../../admin/view/main"}` |
+| 整页表单（data-open） | `{extend name="main/index"}`（用 mini 自己的 main） |
 
-**禁止** `{extend name='table'}` / `{extend name='form'}`（模块找不到模板）。
-
-### 插件（package/think-plugin-*/src/view/）
-
-| 页面类型 | 正确写法 |
-|----------|----------|
-| 列表页 | `{extend name="table"}` |
-| 整页表单（data-open） | `{extend name="main"}` |
-| 弹窗表单（data-modal） | 不继承，写完整独立 HTML |
-| 详情页 | 不继承，写完整独立 HTML |
-
-**include 路径**同样相对于 `src/view/` 根目录，如 `{include file='tag/index_search'}`。
+**禁止** `{extend name='table'}` / `{extend name='form'`（除非当前模块目录下确实存在同名文件）。
 
 ---
 
@@ -44,11 +49,13 @@ alwaysApply: true
 
 ### 陷阱2：JS templet 中嵌套 `{:lang()}` 引号冲突
 
-```js
+```javascript
 // ❌ 错误：双引号嵌套导致 PHP 解析报错
 {field: 'max', templet: '<div>{{d.max > 0 ? d.max : "{:lang("无限制")}"}}</div>'}
 
-// ✅ 正确：提取为 JS 变量
+// ✅ 正确：在 JS 外层定义变量
+var langUnlimited = '{:lang("无限制")}';
+// 然后在 laytpl 中使用
 ```
 
 ### 陷阱3：表单 action 混淆
@@ -77,7 +84,7 @@ alwaysApply: true
 <input type="hidden" name="id" value="{$vo.id|default=''}">
 
 <!-- ✅ 只在编辑时输出 -->
-{notempty name='vo.id'}<input type="hidden" value="{$vo.id}" name="id" />{/notempty}
+{notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id' />{/notempty}
 ```
 
 ---
@@ -152,13 +159,11 @@ alwaysApply: true
 | `data-url="url"` | layTable 数据接口地址 | `data-url="{:sysuri('index')}"` |
 | `data-target-search="选择器"` | 关联搜索表单自动刷新表格 | `data-target-search="form.form-search"` |
 
-> ⚠️ `data-date-pick` 不是全局支持的属性，不会触发日期选择器。
+> `data-date-pick` 不是全局支持的属性，不会触发日期选择器。
 
 ---
 
 ## 五、index.html 标准结构
-
-**模块写法（extends admin 路径）：**
 
 ```html
 {extend name="../../admin/view/table"}
@@ -166,6 +171,9 @@ alwaysApply: true
 {block name="button"}
 <!--{if auth("add")}-->
 <button data-modal='{:url("add")}' data-title="{:lang('添加')}" class='layui-btn layui-btn-sm layui-btn-primary'>{:lang('添加')}</button>
+<!--{/if}-->
+<!--{if auth("batch")}-->
+<button data-modal='{:url("batch")}' data-title="{:lang('批量生成')}" class='layui-btn layui-btn-sm layui-btn-warm'>{:lang('批量生成')}</button>
 <!--{/if}-->
 <!--{if auth("remove")}-->
 <a data-confirm="{:lang('确定要删除吗？')}" data-table-id="XxxTable" data-action='{:url("remove")}' data-rule="id#{id}" class='layui-btn layui-btn-sm layui-btn-danger'>{:lang('批量删除')}</a>
@@ -178,29 +186,15 @@ alwaysApply: true
     <table id="XxxTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
 </div>
 
-<!-- 枚举数据用 textarea 注入 JS（禁止在 script 块内嵌 PHP） -->
-<!--{if isset($platforms)}-->
-<label class="layui-hide"><textarea id="PlatformsData">{:json_encode($platforms, JSON_UNESCAPED_UNICODE)}</textarea></label>
-<!--{/if}-->
-
-<script type="text/html" id="StatusSwitchTpl">
-    <!--{if auth("state")}-->
-    <input type="checkbox" value="{{d.id}}" lay-skin="switch" lay-text="{:lang('已启用')}|{:lang('已禁用')}" lay-filter="StatusSwitch" {{-d.status>0?'checked':''}}>
-    <!--{else}-->
-    {{-d.status ? '<b class="color-green">{:lang("已启用")}</b>' : '<b class="color-red">{:lang("已禁用")}</b>'}}
-    <!--{/if}-->
-</script>
-
-<script type="text/html" id="toolbar">
-    <!--{if auth("edit")}-->
-    <a class="layui-btn layui-btn-sm" data-modal='{:url("edit")}?id={{d.id}}'>{:lang('编 辑')}</a>
-    <!--{/if}-->
-    <!--{if auth("remove")}-->
-    <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="{:lang('确定删除？')}" data-action="{:url('remove')}" data-value="id#{{d.id}}">{:lang('删 除')}</a>
-    <!--{/if}-->
-</script>
+<!-- 枚举数据用 textarea 注入 JS -->
+<label class="layui-hide">
+    <textarea id="AdTypesData">{:json_encode($ad_types, JSON_UNESCAPED_UNICODE)}</textarea>
+</label>
 
 <script>
+    var langUnlimited = '{:lang("无限制")}';
+    var langNeverExpire = '{:lang("永不过期")}';
+
     $(function () {
         $('#XxxTable').layTable({
             even: true, height: 'full',
@@ -208,50 +202,34 @@ alwaysApply: true
             cols: [[
                 {checkbox: true, fixed: true},
                 {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
+                {field: 'sort', title: '{:lang("排序")}', width: 120, align: 'center', templet: '#SortInputTpl'},
                 {field: 'name', title: '{:lang("名称")}', minWidth: 120},
                 {field: 'status', title: '{:lang("状态")}', width: 120, align: 'center', templet: '#StatusSwitchTpl'},
                 {field: 'create_at', title: '{:lang("创建时间")}', width: 160, align: 'center', sort: true},
-                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 300, align: 'left', fixed: 'right'}
+                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 200, align: 'left', fixed: 'right'}
             ]]
         });
+
         layui.form.on('switch(StatusSwitch)', function (obj) {
             var data = {id: obj.value, status: obj.elem.checked > 0 ? 1 : 0};
             $.form.load("{:url('state')}", data, 'post', function (ret) {
                 if (ret.code < 1) $.msg.error(ret.info, 3, function () {
                     $('#XxxTable').trigger('reload');
-                }); else $('#XxxTable').trigger('reload');
+                }); else {
+                    $('#XxxTable').trigger('reload');
+                }
                 return false;
             }, false);
         });
     });
 </script>
-{/block}
-```
 
-**插件写法（extends "table"，相对于插件 view 根目录）：**
-
-```html
-{extend name="table"}
-
-{block name="button"}
-<!--{if auth("add")}-->
-<button data-modal='{:url("add")}' data-title="{:lang('添加Cookie')}" class='layui-btn layui-btn-sm layui-btn-primary'>{:lang('添加Cookie')}</button>
-<!--{/if}-->
-<!--{if auth("remove")}-->
-<a data-confirm="{:lang('确定要删除吗？')}" data-table-id="CookieTable" data-action='{:url("remove")}' data-rule="id#{id}" class='layui-btn layui-btn-sm layui-btn-danger'>{:lang('批量删除')}</a>
-<!--{/if}-->
-{/block}
-
-{block name="content"}
-<div class="think-box-shadow">
-    {include file='cookie/index_search'}
-    <table id="CookieTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
-</div>
-
-<!-- 枚举数据用 textarea 注入 JS -->
-<label class="layui-hide">
-    <textarea id="PlatformsData">{:json_encode($platforms, JSON_UNESCAPED_UNICODE)}</textarea>
-</label>
+<script type="text/html" id="SortInputTpl">
+    <input type="number" data-blur-number="0"
+           data-action-blur="{:sysuri()}"
+           data-value="id#{{d.id}};action#sort;sort#{value}"
+           data-loading="false" value="{{d.sort}}" class="layui-input text-center">
+</script>
 
 <script type="text/html" id="StatusSwitchTpl">
     <!--{if auth("state")}-->
@@ -268,41 +246,6 @@ alwaysApply: true
     <!--{if auth("remove")}-->
     <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="{:lang('确定删除？')}" data-action="{:url('remove')}" data-value="id#{{d.id}}">{:lang('删 除')}</a>
     <!--{/if}-->
-</script>
-
-<script>
-    $.platformBadge = (function () {
-        var list = JSON.parse($('#PlatformsData').text());
-        return function (p) {
-            var item = list[p];
-            if (!item) return p || '-';
-            return '<span class="layui-badge ' + item.class + '">' + item.label + '</span>';
-        };
-    })();
-
-    $(function () {
-        $('#CookieTable').layTable({
-            even: true, height: 'full',
-            sort: {field: 'id', type: 'desc'},
-            cols: [[
-                {checkbox: true, fixed: true},
-                {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
-                {field: 'platform', title: '{:lang("平台")}', width: 100, align: 'center', templet: '#PlatformBadgeTpl'},
-                {field: 'status', title: '{:lang("状态")}', width: 100, align: 'center', templet: '#StatusSwitchTpl'},
-                {field: 'create_at', title: '{:lang("创建时间")}', width: 160, align: 'center', sort: true},
-                {toolbar: '#toolbar', title: '{:lang("操作面板")}', width: 200, align: 'left', fixed: 'right'}
-            ]]
-        });
-        layui.form.on('switch(StatusSwitch)', function (obj) {
-            var data = {id: obj.value, status: obj.elem.checked > 0 ? 1 : 0};
-            $.form.load("{:url('state')}", data, 'post', function (ret) {
-                if (ret.code < 1) $.msg.error(ret.info, 3, function () {
-                    $('#CookieTable').trigger('reload');
-                }); else $('#CookieTable').trigger('reload');
-                return false;
-            }, false);
-        });
-    });
 </script>
 {/block}
 ```
@@ -363,7 +306,7 @@ alwaysApply: true
 
 **不能用 hidden input 的 PHP 渲染值**，用 JS + `where` 选项：
 
-```js
+```javascript
 function getUrlParam(name) {
     var reg = new RegExp('(^|[?&])' + name + '=([^&]*)(&|$)');
     var r = location.search.match(reg);
@@ -379,4 +322,96 @@ $(function () {
         // ...
     });
 });
+```
+
+---
+
+## 八、form.html 标准结构
+
+弹窗表单不继承，直接写完整 HTML：
+
+```html
+<form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="XxxTable">
+    <div class="layui-card-body padding-left-40">
+
+        <fieldset class="layui-bg-gray">
+            <legend><b class="layui-badge think-bg-violet">{:lang('基本信息')}</b></legend>
+            <div class="layui-row layui-col-space15">
+
+                <div class="layui-col-xs6">
+                    <label class="block relative">
+                        <span class="help-label"><b>{:lang('名称')}</b>Name</span>
+                        <input name="name" value='{$vo.name|default=""}' required vali-name="{:lang('名称')}" class="layui-input">
+                        <span class="help-block color-desc">{:lang('说明文字')}</span>
+                    </label>
+                </div>
+
+            </div>
+        </fieldset>
+
+    </div>
+
+    <div class="hr-line-dashed"></div>
+    {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id' />{/notempty}
+
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>{:lang('保存数据')}</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="{:lang('确定要取消编辑吗？')}" data-close>{:lang('取消编辑')}</button>
+    </div>
+</form>
+```
+
+---
+
+## 九、列表页模板 JS 辅助函数
+
+### 导出 Excel（require 方式）
+
+```javascript
+require(['excel'], function (excel) {
+    excel.bind(function (data) {
+        data.forEach(function (item, index) {
+            data[index] = [
+                item.id,
+                item.name,
+                item.status == 1 ? '{:lang("已启用")}' : '{:lang("已禁用")}',
+                item.create_at
+            ];
+        });
+        data.unshift(['ID', '{:lang("名称")}', '{:lang("状态")}', '{:lang("创建时间")}']);
+        return this.withStyle(data, {
+            A: 60, B: 150, C: 100, D: 170
+        });
+    }, '{:lang("导出标题")}' + '_' + layui.util.toDateString(Date.now(), 'yyyyMMdd_HHmmss'));
+});
+```
+
+### 图片列（禁止单独定义模板块）
+
+```javascript
+{field: 'avatar_url', title: '{:lang("头像")}', width: 65, align: "center", templet: "<div>{{-$.layTable.showImage(d.avatar_url)}}</div>"}
+```
+
+---
+
+## 十、批量表单（batch.html）
+
+批量表单与普通 form.html 结构相同，但 POST 由控制器直接处理（不走 mSave）：
+
+```html
+<form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="XxxTable">
+    <div class="layui-card-body padding-left-40">
+        <fieldset class="layui-bg-gray">
+            <legend><b class="layui-badge think-bg-violet">{:lang('批量生成设置')}</b></legend>
+            <div class="layui-row layui-col-space15">
+                <!-- 表单项 -->
+            </div>
+        </fieldset>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>{:lang('批量生成')}</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-confirm="{:lang('确定要取消吗？')}" data-close>{:lang('取消')}</button>
+    </div>
+</form>
 ```

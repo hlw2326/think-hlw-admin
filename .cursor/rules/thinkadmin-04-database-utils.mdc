@@ -1,9 +1,9 @@
 ---
-description: ThinkAdmin v6 数据库规范、工具类速查（CodeExtend/AdminService/DataExtend/HttpExtend）、常见错误速查
+description: ThinkAdmin v6 数据库规范、Phinx 迁移文件规范、工具类速查（CodeExtend/AdminService/DataExtend/HttpExtend）、常见错误速查
 alwaysApply: true
 ---
 
-# ThinkAdmin v6 数据库与工具类规范
+# ThinkAdmin v6 数据库与迁移规范
 
 ## 一、数据库建表规范
 
@@ -19,6 +19,8 @@ CREATE TABLE `mini_xxx` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Xxx表';
 ```
 
+### 字段类型规范
+
 | 场景 | 类型 | 命名 |
 |------|------|------|
 | 字符串 | `varchar` | 超长才用 `text` |
@@ -27,13 +29,149 @@ CREATE TABLE `mini_xxx` (
 | 记录创建时间 | `timestamp` | `create_at`（自动写入） |
 | 记录更新时间 | `timestamp` | `update_at`（自动更新） |
 | 业务时间戳 | `int(11)` | 以 `_time` 结尾，0=未发生 |
+| JSON 数据 | `text` | 用模型的 `$json` 配置自动序列化 |
+| IP 地址 | `varchar(50)` | 存字符串 |
 
 - 所有字段必须有 `COMMENT`
 - 不使用外键，关联在代码层处理
 
 ---
 
-## 二、工具类速查
+## 二、Phinx 迁移文件规范
+
+### 存放位置
+
+迁移文件必须放在项目根目录的 `database/migrations/` 下，**不是** `stc/database/`。
+
+### 文件命名规范
+
+格式：`YYYYMMDDHHNNSS_{action}_{table_name}.php`
+
+- `YYYYMMDDHHNNSS`：时间戳，精确到秒，同一秒内多条按序号递增
+- `action`：建表用 `install`，添加字段用 `add`，修改字段用 `alter`，删除表用 `drop`
+- `table_name`：目标表名下划线格式
+
+示例：
+- `20260408000001_install_mini_mp_cate.php`
+- `20260408000002_add_mini_mp_menu_cate_id.php`
+
+### 标准迁移文件结构
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use think\admin\extend\PhinxExtend;
+use think\migration\Migrator;
+
+@set_time_limit(0);
+@ini_set('memory_limit', '-1');
+
+class InstallMiniMpCate extends Migrator
+{
+    /**
+     * 创建小程序菜单分类表
+     */
+    public function up(): void
+    {
+        $table = $this->table('mini_mp_cate', [
+            'engine' => 'InnoDB',
+            'collation' => 'utf8mb4_general_ci',
+            'comment' => '小程序菜单分类表',
+        ]);
+
+        PhinxExtend::upgrade($table, [
+            [
+                'name',
+                'string',
+                ['limit' => 100, 'default' => '', 'null' => false, 'comment' => '分类名称']
+            ],
+            [
+                'logo',
+                'string',
+                ['limit' => 200, 'default' => '', 'null' => false, 'comment' => '分类图标']
+            ],
+            [
+                'sort',
+                'integer',
+                ['limit' => 10, 'default' => 0, 'null' => false, 'comment' => '排序权重']
+            ],
+            [
+                'status',
+                'integer',
+                ['limit' => 1, 'default' => 1, 'null' => false, 'comment' => '状态(0禁用,1启用)']
+            ],
+            [
+                'create_at',
+                'timestamp',
+                ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '创建时间']
+            ],
+            [
+                'update_at',
+                'timestamp',
+                ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']
+            ],
+        ], [
+            'status',
+            'sort',
+            'create_at',
+        ]);
+    }
+
+    /**
+     * 回滚时删除表
+     */
+    public function down(): void
+    {
+        $this->table('mini_mp_cate')->drop();
+    }
+}
+```
+
+### 关键注意事项
+
+- `create_at` 和 `update_at` 必须用 `timestamp` 类型，**不能用 datetime**
+- 时间字段的默认值固定为 `'CURRENT_TIMESTAMP'`，`null` 为 `false`
+- 状态字段用 `integer` + `limit: 1`，**不用 boolean**
+- `collation` 统一用 `utf8mb4_general_ci`，不用 `utf8mb4_0900_ai_ci`
+- 添加字段时需判断字段是否已存在（`hasColumn`），避免重复执行报错
+- 添加字段用 `PhinxExtend::addcolumn`，添加索引用 `PhinxExtend::addIndex`
+
+### 添加字段迁移示例
+
+```php
+class AddMiniMpMenuCateId extends Migrator
+{
+    public function up(): void
+    {
+        $table = $this->table('mini_mp_menu');
+
+        if (!$table->hasColumn('cate_id')) {
+            PhinxExtend::addcolumn($table, 'cate_id', 'integer', [
+                'limit' => 10,
+                'default' => 0,
+                'null' => false,
+                'after' => 'path',
+                'comment' => '分类ID',
+            ]);
+            PhinxExtend::addIndex($table, 'cate_id');
+        }
+    }
+
+    public function down(): void
+    {
+        $table = $this->table('mini_mp_menu');
+        if ($table->hasColumn('cate_id')) {
+            $table->removeColumn('cate_id')->save();
+        }
+    }
+}
+```
+
+---
+
+## 三、工具类速查
 
 ### CodeExtend（随机码/编解码）
 
@@ -79,7 +217,7 @@ DataExtend::arr2table($list)                         // 转带缩进扁平树（
 DataExtend::getArrSubIds($list, $value)              // 获取子孙ID集合
 ```
 
-### HttpExtend（HTTP请求）
+### HttpExtend（HTTP 请求）
 
 ```php
 use think\admin\extend\HttpExtend;
@@ -99,21 +237,37 @@ sysconf('key', $value);                 // 写系统配置
 sysuri('index');                        // 生成当前模块 URL
 runtime_path();                          // 获取 runtime 目录路径
 lang('key');                             // 多语言翻译
-```
-
-### 模板中调用静态方法
-
-```html
-<!-- 带前缀的日期批次号（模板语法可调用） -->
-<input name="batch_no" value='{:\think\admin\extend\CodeExtend::uniqidDate(16,"P")}'>
-
-<!-- UUID -->
-<input name="token" value='{:\think\admin\extend\CodeExtend::uuid()}'>
+input('name');                          // 获取请求参数（等同于 request()->get('name')）
+input('name/d', 0);                     // 带默认值和类型转换
 ```
 
 ---
 
-## 三、常见错误速查
+## 四、事务处理
+
+### 标准事务写法
+
+```php
+try {
+    \think\facade\Db::startTrans();
+
+    // 业务逻辑 1
+    MiniUser::mk()->where(['id' => $userId])->update(['score' => $newBalance]);
+
+    // 业务逻辑 2
+    MiniUserScoreLog::record($userId, $score, $newBalance, 'card_score', $cardId, '卡密充值');
+
+    \think\facade\Db::commit();
+    $this->success('操作成功');
+} catch (\Exception $e) {
+    \think\facade\Db::rollback();
+    $this->error('操作失败：' . $e->getMessage());
+}
+```
+
+---
+
+## 五、常见错误速查
 
 | 错误现象 | 原因 | 修复 |
 |----------|------|------|
@@ -125,3 +279,31 @@ lang('key');                             // 多语言翻译
 | JS 模板报 PHP 解析错误 | `{:lang()}` 嵌套在双引号内 | 提取为 JS 变量 |
 | 时间字段存储/显示混乱 | POST/GET 未做时间戳转换 | POST 用 `strtotime()`，GET 用 `date()` |
 | 批次号重复或格式混乱 | 用 `date('YmdHis')` 直接生成 | 改用 `CodeExtend::uniqidDate(16, 'P')` |
+| `findOrEmpty()` 判断失败 | 用 `empty()` 判断对象 | 改用 `->isExists()` |
+| 模型 append 字段在子查询中异常 | append 访问器依赖的字段未 select | 在 index 查询中通过 leftJoin 子查询实现 |
+
+---
+
+## 六、多语言文件格式
+
+语言文件位于 `app/{module}/lang/en-us.php`，采用以下格式：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+$extra = [];
+// 带变量的提示信息（可选）
+$extra['中文原文'] = 'English translation with %s placeholder';
+$extra['另一个提示'] = 'Another tip';
+
+// 普通键值对
+return array_merge($extra, [
+    '中文键' => 'English Value',
+    '搜索'   => 'Search',
+    '删除'   => 'Delete',
+]);
+```
+
+> 注意：lang 文件中的键名使用**中文**作为 key（而不是英文 key），模板中 `lang('搜索')` 传入中文键名，返回对应的英文翻译。

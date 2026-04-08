@@ -114,11 +114,43 @@ hlw-admin/
 composer install
 ```
 
+> 若出现 `file_put_contents(...runtime/cache/...)` 权限报错，改用以下命令：
+>
+> ```bash
+> composer install --no-scripts
+> ```
+
 ### 2. 配置环境变量
 
 复制 `.env.example` 为 `.env`，配置数据库连接等信息。
 
-### 3. 访问后台
+### 3. 初始化数据库
+
+```bash
+# 创建数据库表
+php think migrate:run
+```
+
+> 若提示权限不足，先给 runtime 目录授权：
+>
+> ```bash
+> chmod -R 755 runtime
+> chown -R www:www runtime   # 宝塔环境使用 www 用户
+> ```
+
+### 4. 启动插件初始化（如需要）
+
+```bash
+php think xadmin:publish --migrate
+```
+
+### 5. 配置 Web 服务器
+
+- 网站运行目录指向 `public/`
+- 若使用宝塔面板，确保 PHP-FPM 运行用户为 `www`
+- 生产环境给 `runtime/` 和 `public/upload/` 目录设置正确的用户组
+
+### 6. 访问后台
 
 - 后台地址：`/admin`
 - 默认管理员账号：由系统初始化创建
