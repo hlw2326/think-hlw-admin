@@ -5,6 +5,7 @@
 .fleet
 .vscode
 .DS_Store
+package
 
 /vendor
 /runtime
@@ -12,6 +13,8 @@
 /nbproject
 /composer.lock
 !composer.json
+
+/package/
 
 /404.html
 /.user.ini
