@@ -169,10 +169,7 @@
             </tr>
             <tr>
                 <th class="nowrap text-center">{:lang('平台框架')}</th>
-                <td>
-                    <a target="_blank" href="https://www.hlw2326.com">HlwAdmin</a>
-                    <a style="padding-left: 20px;" target="_blank"  href="https://thinkadmin.top/">基于 ThinkAdmin  Version {$thinkadmin.version|default='6.0.0'} 框架开发</a>
-                </td>
+                <td><a target="_blank" href="https://thinkadmin.top">ThinkAdmin Version {$thinkadmin.version|default='6.0.0'}</a></td>
             </tr>
             <tr>
                 <th class="nowrap text-center">{:lang('操作系统')}</th>
@@ -218,9 +215,7 @@
                 <td class="nowrap text-center">{$plugin.name|lang}</td>
                 <td class="nowrap text-left">
                     {if empty($plugin.install.document)}{$plugin.package}
-                    {else}
-                    <span target="_blank" href="{$plugin.install.document}">{$plugin.package}</a>
-                    {/if}
+                    {else}<a target="_blank" href="{$plugin.install.document}">{$plugin.package}</a>{/if}
                 </td>
                 <td class="nowrap text-center">{$plugin.install.version|default='unknow'}</td>
                 <td class="nowrap text-center">

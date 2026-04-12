@@ -1,17 +1,8 @@
 <?php
 
-// +----------------------------------------------------------------------
-// |  HlwAdmin
-// +----------------------------------------------------------------------
-// | 版权所有 2014~2024 hlw2326
-// +----------------------------------------------------------------------
-// | 邮箱: 1608626143@qq.com
-// | 官方网站: https://www.hlw2326.com
-// +----------------------------------------------------------------------
-
 return [
     // 默认使用的数据库连接配置
-    'default'         => 'mysql',
+    'default'         => env('DB_TYPE', 'mysql'),
     // 自定义时间查询规则
     'time_query_rule' => [],
     // 自动写入时间戳字段
@@ -24,15 +15,15 @@ return [
             // 数据库类型
             'type'            => 'mysql',
             // 服务器地址
-            'hostname'        => '127.0.0.1',
+            'hostname'        => env('DB_MYSQL_HOST', '127.0.0.1'),
             // 服务器端口
-            'hostport'        => '3306',
+            'hostport'        => env('DB_MYSQL_PORT', '3306'),
             // 数据库名
-            'database'        => 'hlw-admin',
+            'database'        => env('DB_MYSQL_DATABASE', 'hlw-admin'),
             // 用户名
-            'username'        => 'hlw-admin',
+            'username'        => env('DB_MYSQL_USERNAME', 'hlw-admin'),
             // 密码
-            'password'        =>  'hlw-admin',
+            'password'        => env('DB_MYSQL_PASSWORD', 'hlw-admin'),
             // 数据库连接参数
             'params'          => [],
             // 数据库表前缀

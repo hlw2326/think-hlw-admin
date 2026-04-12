@@ -16,7 +16,7 @@ CREATE TABLE `mini_xxx` (
     `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Xxx表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权重-用户列表';
 ```
 
 ### 字段类型规范
@@ -133,10 +133,45 @@ class InstallMiniMpCate extends Migrator
 
 - `create_at` 和 `update_at` 必须用 `timestamp` 类型，**不能用 datetime**
 - 时间字段的默认值固定为 `'CURRENT_TIMESTAMP'`，`null` 为 `false`
+- **禁止使用 `'update' => true`**：`update_at` 字段不要写 `'update' => true`，Phinx 不支持该选项，会导致迁移失败
+- **禁止 datetime 使用 `default: null`**：`datetime` 类型不要写 `'default' => null`，MySQL 不支持 `DEFAULT NULL` 语法，**直接省略 default 即可**
+- **积分/金额/大数值字段用 `biginteger`**：积分（score）、用户ID、管理员ID 等可能超过 int(11) 范围的字段，统一用 `biginteger`
+- **需要软删除的表添加 `deleted` 字段**：`['deleted', 'integer', ['limit' => 1, 'default' => 0, 'null' => true, 'comment' => '删除状态(0未删,1已删)']]`
 - 状态字段用 `integer` + `limit: 1`，**不用 boolean**
 - `collation` 统一用 `utf8mb4_general_ci`，不用 `utf8mb4_0900_ai_ci`
 - 添加字段时需判断字段是否已存在（`hasColumn`），避免重复执行报错
 - 添加字段用 `PhinxExtend::addcolumn`，添加索引用 `PhinxExtend::addIndex`
+
+#### 插件表命名规范
+
+插件模块的表名统一以 `plugin_` + 插件名 + `_` 为前缀：
+
+| 插件 | 表前缀 | 示例 |
+|------|--------|------|
+| qz | `plugin_qz_` | `plugin_qz_user`、`plugin_qz_card_score`、`plugin_qz_card_vip` |
+
+#### 正确示例
+
+```php
+// ✅ timestamp 类型（create_at / update_at）
+['create_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '创建时间']],
+['update_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']],
+
+// ✅ datetime 类型（可空，无需默认值）
+['login_at', 'datetime', ['null' => true, 'comment' => '登录时间']],
+
+// ✅ biginteger 用于 ID、积分等大数值
+['id', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => false, 'comment' => '主键ID']],
+['score', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '积分']],
+['user_id', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '用户ID']],
+
+// ✅ 软删除字段
+['deleted', 'integer', ['limit' => 1, 'default' => 0, 'null' => true, 'comment' => '删除状态(0未删,1已删)']],
+
+// ❌ 错误示例
+['update_at', 'timestamp', [..., 'update' => true, ...]],  // ❌ update 参数不支持
+['login_at', 'datetime', ['default' => null, ...]],       // ❌ datetime 不支持 DEFAULT NULL
+```
 
 ### 添加字段迁移示例
 
@@ -281,6 +316,7 @@ try {
 | 批次号重复或格式混乱 | 用 `date('YmdHis')` 直接生成 | 改用 `CodeExtend::uniqidDate(16, 'P')` |
 | `findOrEmpty()` 判断失败 | 用 `empty()` 判断对象 | 改用 `->isExists()` |
 | 模型 append 字段在子查询中异常 | append 访问器依赖的字段未 select | 在 index 查询中通过 leftJoin 子查询实现 |
+| `Phinx 迁移 SQL 语法错误` | `timestamp` 写了 `'update' => true` 或 `datetime` 写了 `'default' => null` | 按上文正确示例修正字段配置 |
 
 ---
 

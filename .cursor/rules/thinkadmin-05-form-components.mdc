@@ -117,7 +117,7 @@ alwaysApply: true
 ```php
 public function state(): void
 {
-    MiniXxx::mSave($this->_vali([
+    QzXxx::mSave($this->_vali([
         'status.in:0,1'   => '状态值范围异常！',
         'status.require'  => '状态值不能为空！',
     ]));
@@ -206,7 +206,7 @@ $.mpName = (function () {
 
 ```php
 // 控制器
-$this->platforms = MiniUserQuery::getPlatforms();
+$this->platforms = QzUserQuery::getPlatforms();
 ```
 
 ```html

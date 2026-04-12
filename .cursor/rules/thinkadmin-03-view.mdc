@@ -298,7 +298,7 @@ var langUnlimited = '{:lang("无限制")}';
 </script>
 ```
 
-- `@mini/user/index` 表示跨模块路由
+- `@mini/user/index` 表示跨模块路由（mini → qz 插件也同理）
 - `?id={{d.user_id}}` 传给目标页，目标控制器 QueryHelper 必须有 `$query->equal('id')`
 - **不加 `href`**，只用 `data-open`
 

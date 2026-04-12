@@ -12,7 +12,7 @@ alwaysApply: true
 - **前端**：Layui 2.x（不是 Bootstrap，不是 Element UI）
 - **数据库**：MySQL
 - **PHP 版本**：>= 8.2
-- **参考模块**：`app/admin/`（标准实现参考）、`app/wechat/`（微信业务参考）、`app/mini/`（当前业务模块）
+- **参考模块**：`app/admin/`（标准实现参考）、`app/wechat/`（微信业务参考）、`app/mini/`（小程序模块参考）、`package/think-plugin-qz/`（当前开发插件）
 
 ---
 
@@ -22,7 +22,8 @@ alwaysApply: true
 |------|------|-----------|
 | admin 管理模块 | `app/admin/` | ❌ **禁止修改** |
 | wechat 微信模块 | `app/wechat/` | ❌ **禁止修改** |
-| mini 小程序模块 | `app/mini/` | ✅ 当前业务模块 |
+| mini 小程序模块 | `app/mini/` | ✅ 参考模块（小程序业务） |
+| qz 插件 | `package/think-plugin-qz/` | ✅ 当前开发插件 |
 | 插件目录 | 第三方 Composer 包 | ❌ 禁止本地修改 |
 
 > `app/admin/` 和 `app/wechat/` 是框架固定实现，仅作为**参考范本**，不得改动任何文件。
@@ -41,7 +42,7 @@ app/
 │   ├── controller/ # 微信业务参考
 │   ├── model/
 │   └── service/
-└── mini/           # 小程序模块 ✅
+└── mini/           # 小程序模块（参考）
     ├── controller/
     │   ├── card/    # 卡密子模块
     │   ├── user/    # 用户子模块
@@ -50,6 +51,15 @@ app/
     ├── service/      # 业务服务
     ├── lang/         # 语言文件
     └── view/         # 视图模板
+
+package/
+└── think-plugin-qz/  # QZ 插件（当前开发）
+    ├── stc/
+    │   ├── controller/  # 插件控制器
+    │   ├── model/       # 插件模型
+    │   ├── service/     # 插件服务
+    │   └── view/        # 插件视图
+    └── stc/database/    # 插件数据库迁移
 ```
 
 ---
@@ -59,6 +69,7 @@ app/
 | 模块 | 控制器命名空间 | 模型命名空间 | 视图目录 |
 |------|--------------|------------|---------|
 | mini | `app\mini\controller` | `app\mini\model` | `app/mini/view/` |
+| qz 插件 | `package\think-plugin-qz\controller` | `package\think-plugin-qz\model` | `package/think-plugin-qz/stc/view/` |
 
 ---
 

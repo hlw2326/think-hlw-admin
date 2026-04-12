@@ -3,10 +3,18 @@
 declare(strict_types=1);
 /**
  * +----------------------------------------------------------------------
- * | HlwAdmin
+ * | ThinkAdmin Plugin for ThinkAdmin
  * +----------------------------------------------------------------------
- * | 邮箱: 1608626143@qq.com
- * | 官方网站: https://www.hlw2326.com
+ * | 版权所有 2014~2026 ThinkAdmin [ thinkadmin.top ]
+ * +----------------------------------------------------------------------
+ * | 官方网站: https://thinkadmin.top
+ * +----------------------------------------------------------------------
+ * | 开源协议 ( https://mit-license.org )
+ * | 免责声明 ( https://thinkadmin.top/disclaimer )
+ * | 会员特权 ( https://thinkadmin.top/vip-introduce )
+ * +----------------------------------------------------------------------
+ * | gitee 代码仓库：https://gitee.com/zoujingli/ThinkAdmin
+ * | github 代码仓库：https://github.com/zoujingli/ThinkAdmin
  * +----------------------------------------------------------------------
  */
 use think\admin\Library;

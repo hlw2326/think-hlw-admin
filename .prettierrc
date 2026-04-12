@@ -1,9 +1,9 @@
 {
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": false,
-  "printWidth": 300,
-  "proseWrap": "preserve",
-  "htmlWhitespaceSensitivity": "ignore"
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 2,
+    "useTabs": false,
+    "htmlWhitespaceSensitivity": "strict",
+    "embeddedLanguageFormatting": "off"
 }

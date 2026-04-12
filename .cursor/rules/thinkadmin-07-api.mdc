@@ -7,7 +7,8 @@ alwaysApply: true
 
 ## 一、API 控制器目录
 
-API 控制器统一放在 `app/mini/controller/api/v1/` 目录，命名空间为 `app\mini\controller\api\v1`。
+**mini 模块**：API 控制器统一放在 `app/mini/controller/api/v1/` 目录，命名空间为 `app\mini\controller\api\v1`。
+**qz 插件**：API 控制器放在 `package/think-plugin-qz/stc/controller/api/v1/` 目录，命名空间为 `package\think-plugin-qz\controller\api\v1`，模型使用 `QzAd`、`QzNotice`、`QzMp` 等。
 
 ## 二、接口路由
 
@@ -34,6 +35,7 @@ declare(strict_types=1);
 namespace app\mini\controller\api\v1;
 
 use app\mini\model\MiniAd;
+use package\think-plugin-qz\model\QzAd;
 use think\admin\Controller;
 
 /**
@@ -52,7 +54,7 @@ class Ad extends Controller
             $this->error('appid 不能为空');
         }
 
-        $list = MiniAd::mk()
+        $list = QzAd::mk()
             ->where('appid', $appid)
             ->where('status', 1)
             ->order('sort desc, id asc')
@@ -118,6 +120,7 @@ declare(strict_types=1);
 namespace app\mini\controller\api\v1;
 
 use app\mini\model\MiniNotice;
+use package\think-plugin-qz\model\QzNotice;
 use think\admin\Controller;
 
 /**
@@ -134,7 +137,7 @@ class Notice extends Controller
         $appid = $this->request->get('appid', '');
         $type  = $this->request->get('type', '');
 
-        $query = MiniNotice::mk()->where('status', 1)->where('appid', $appid);
+        $query = QzNotice::mk()->where('status', 1)->where('appid', $appid);
         if ($type !== '') {
             $query->where('type', $type);
         }
@@ -175,6 +178,7 @@ declare(strict_types=1);
 namespace app\mini\controller\api\v1;
 
 use app\mini\model\MiniMp;
+use package\think-plugin-qz\model\QzMp;
 use think\admin\Controller;
 use WeMini\Crypt;
 
@@ -189,7 +193,7 @@ class Login extends Controller
         if ($this->request->isPost()) {
             $code  = $this->request->post('code');
             $appid = $this->request->get('appid');
-            $mp = MiniMp::mk()->where(['appid' => $appid])->findOrEmpty();
+            $mp = QzMp::mk()->where(['appid' => $appid])->findOrEmpty();
             $config = [
                 'appid'          => $mp->appid,
                 'appsecret'      => $mp->appsecret,

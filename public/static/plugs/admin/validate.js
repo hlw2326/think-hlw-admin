@@ -1,16 +1,4 @@
 // +----------------------------------------------------------------------
-// | Static Plugin for ThinkAdmin
-// +----------------------------------------------------------------------
-// | 版权所有 2014~2025 ThinkAdmin [ thinkadmin.top ]
-// +----------------------------------------------------------------------
-// | 官方网站: https://thinkadmin.top
-// +----------------------------------------------------------------------
-// | 开源协议 ( https://mit-license.org )
-// | 免责声明 ( https://thinkadmin.top/disclaimer )
-// +----------------------------------------------------------------------
-// | gitee 代码仓库：https://gitee.com/zoujingli/think-plugs-static
-// | github 代码仓库：https://github.com/zoujingli/think-plugs-static
-// +----------------------------------------------------------------------
 
 define(function () {
 
@@ -22,8 +10,8 @@ define(function () {
         this.form = $(form);
         // 绑定元素事件
         this.evts = 'blur change';
-        // 检测表单元素
-        this.tags = 'input,textarea';
+    // 检测表单元素
+    this.tags = 'input,textarea';
         // 验证成功回调
         this.dones = [];
         // 预设检测规则

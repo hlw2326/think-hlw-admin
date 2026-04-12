@@ -11,9 +11,9 @@ alwaysApply: true
 <?php
 declare(strict_types=1);
 
-namespace app\mini\controller;
+namespace package\think-plugin-qz\controller;
 
-use app\mini\model\MiniXxx;
+use package\think-plugin-qz\model\QzXxx;
 use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 use think\admin\service\AdminService;
@@ -27,7 +27,7 @@ class Xxx extends Controller
      */
     public function index(): void
     {
-        MiniXxx::mQuery()->layTable(function () {
+        QzXxx::mQuery()->layTable(function () {
             $this->title = '列表标题';
         }, function (QueryHelper $query) {
             $query->like('name,keyword');
@@ -43,7 +43,7 @@ class Xxx extends Controller
     public function add(): void
     {
         $this->_applyFormToken();
-        MiniXxx::mForm('form');
+        QzXxx::mForm('form');
     }
 
     /**
@@ -53,7 +53,7 @@ class Xxx extends Controller
     public function edit(): void
     {
         $this->_applyFormToken();
-        MiniXxx::mForm('form');
+        QzXxx::mForm('form');
     }
 
     /**
@@ -62,7 +62,7 @@ class Xxx extends Controller
      */
     public function state(): void
     {
-        MiniXxx::mSave($this->_vali([
+        QzXxx::mSave($this->_vali([
             'status.in:0,1'   => '状态值范围异常！',
             'status.require'  => '状态值不能为空！',
         ]));
@@ -74,7 +74,7 @@ class Xxx extends Controller
      */
     public function remove(): void
     {
-        MiniXxx::mDelete();
+        QzXxx::mDelete();
     }
 
     protected function _form_filter(array &$data): void
@@ -183,7 +183,7 @@ public function apply(): void
             $this->error($result['message']);
         }
     } else {
-        MiniCardScore::mForm('apply');
+        QzCardScore::mForm('apply');
     }
 }
 ```
@@ -199,7 +199,7 @@ public function refund(): void
 
     if ($this->request->isGet()) {
         $id     = intval(input('id', 0));
-        $record = MiniUserQuery::mk()->where(['id' => $id])->findOrEmpty();
+        $record = QzUserQuery::mk()->where(['id' => $id])->findOrEmpty();
         if (!$record->isExists()) {
             $this->error('查询记录不存在！');
         }
@@ -237,7 +237,7 @@ public function refund(): void
 
 ```php
 $query->db()->where('user_limit', '>=', intval($get['user_limit_min']));
-$query->db()->leftJoin($subQuery . ' t2', 't2.log_card_code=mini_card_vip.card_code');
+$query->db()->leftJoin($subQuery . ' t2', 't2.log_card_code=plugin_qz_card_vip.card_code');
 ```
 
 ---
@@ -310,7 +310,7 @@ private function _genCode(): string
 {
     do {
         $code = strtoupper(implode('-', str_split(substr(md5(uniqid((string)mt_rand(), true)), 0, 16), 4)));
-    } while (MiniCardVip::mk()->where(['card_code' => $code])->count() > 0);
+    } while (QzCardVip::mk()->where(['card_code' => $code])->count() > 0);
     return $code;
 }
 ```
