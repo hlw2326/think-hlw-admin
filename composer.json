@@ -1,17 +1,17 @@
 {
   "type": "project",
-  "name": "zoujingli/thinkadmin",
+  "name": "hlw/thinkadmin",
   "license": "MIT",
-  "homepage": "https://thinkadmin.top",
+  "homepage": "https://www.hlw2326.cc",
   "description": "Application Development Framework",
   "keywords": [
-    "ThinkAdmin",
+    "HlwAdmin",
     "ThinkLibrary"
   ],
   "authors": [
     {
-      "name": "Anyon",
-      "email": "zoujingli@qq.com"
+      "name": "HLW",
+      "email": "1608626143@qq.com"
     }
   ],
   "require": {

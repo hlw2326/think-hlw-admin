@@ -26,3 +26,39 @@
 .layui-form-selectup dl {
     top: 0;
 }
+
+
+.layui-layout>.layui-body>.think-page-body>.layui-card>.layui-card-line {
+    border-bottom: 1px solid #dddddd;
+    box-shadow: none;
+}
+
+.layui-layout>.layui-side {
+    box-shadow: none;
+}
+
+.think-box-shadow {
+    box-shadow: none;
+    border: 1px solid #dddddd;
+}
+
+.layui-layout>.layui-body>.think-page-body>.layui-card>.layui-card-body>div>.layui-tab.layui-tab-card {
+    box-shadow: none;
+    border: 1px solid #dddddd;
+}
+
+.layui-layout-theme-white>.layui-layout-admin>.layui-body>.think-page-body>.layui-card:before {
+    box-shadow: none;
+    border-right: 1px solid #dddddd;
+}
+
+
+.layui-table-header .layui-table {
+    background: #f7f7f7;
+}
+
+.layui-table th {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}

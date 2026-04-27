@@ -1,0 +1,8 @@
+# ThinkPHP 模板用 {if} {foreach} {$var} 等非 HTML 标准语法
+# Prettier / VSCode HTML 格式化器会把表达式切到下一行导致解析错误
+# 全面忽略这些视图文件
+**/view/**/*.html
+**/app/**/view/**/*.html
+**/package/**/src/view/**/*.html
+**/runtime/**
+**/vendor/**
