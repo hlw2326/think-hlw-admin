@@ -2,6 +2,7 @@
   "type": "project",
   "name": "hlw/thinkadmin",
   "license": "MIT",
+  "version": "1.0.1",
   "homepage": "https://www.hlw2326.cc",
   "description": "Application Development Framework",
   "keywords": [
