@@ -20,5 +20,5 @@ return [
     'enabled' => true,
 
     // 签名密钥；改动后立即同步到前端 uni/.env.dev / .env.prod 的 VITE_SIG_SECRET
-    'secret'  => 'your-production-secret-key-here',
+    'secret'  => 'hlw2326',
 ];
