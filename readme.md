@@ -155,6 +155,12 @@ php think xadmin:publish --migrate
 - 后台地址：`/admin`
 - 默认管理员账号：由系统初始化创建
 
+## 启动内置服务器
+
+```bash
+php think run --host 127.0.0.1 --port 8000
+```
+
 ## 插件开发
 
 项目支持本地插件开发，插件包放在 `package/` 目录下：

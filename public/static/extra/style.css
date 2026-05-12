@@ -1,3 +1,47 @@
+@import url("/static/plugs/iconify-picker/picker.css");
+
+.color-picker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-picker .layui-input {
+    flex: 1;
+}
+
+.color-trigger,
+[data-color] {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    margin: 0;
+    border-radius: 2px;
+    background: #ffffff;
+    color: #333333;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.color-trigger:hover,
+[data-color]:hover {
+    border-color: #1e9fff;
+    color: #1e9fff;
+}
+
+.color-preview {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #d2d2d2;
+    border-radius: 3px;
+    background: #3176ff;
+    box-sizing: border-box;
+}
+
 
 /* 自定义滚动条 */
 ::-webkit-scrollbar {

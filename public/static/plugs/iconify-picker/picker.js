@@ -10,7 +10,7 @@
 (function () {
     'use strict';
 
-    var COLLECTIONS = ['fa6-solid', 'fa6-brands', 'ri'];
+    var COLLECTIONS = ['ri', 'fa6-solid', 'fa6-brands'];
     var COLLECTION_LABELS = {
         'fa6-solid': 'FontAwesome Solid',
         'fa6-brands': 'FontAwesome Brands',
@@ -22,10 +22,11 @@
     function getI18n($root) {
         return {
             choose: $root.data('i18n-choose') || '选择图标',
-            searchPlaceholder: $root.data('i18n-search') || '搜索图标名，如 rocket',
+            searchPlaceholder: $root.data('i18n-search') || '输入关键词搜索，如 app、video、image',
             empty: $root.data('i18n-empty') || '没有匹配的图标',
             loading: $root.data('i18n-loading') || '加载中...',
-            loadFailed: $root.data('i18n-load-failed') || '加载失败，请检查静态资源路径'
+            loadFailed: $root.data('i18n-load-failed') || '加载失败，请检查静态资源路径',
+            searchFirst: $root.data('i18n-search-first') || '请输入关键词搜索图标'
         };
     }
 
@@ -83,14 +84,14 @@
     }
 
     /** 暴露给外部的预加载函数（列表页 Icon 列用） */
-    window.qzIconifyEnsureAll = function () {
+    window.ensureIconifyAll = function () {
         return loadIconifyScript().then(function () {
             var tasks = COLLECTIONS.map(function (p) { return loadCollection(p); });
             return $.when.apply($, tasks);
         });
     };
 
-    window.qzParseIconClass = parseIconClass;
+    window.parseIconClass = parseIconClass;
 
     function refreshPreview($root) {
         var value = $root.find('.iconify-picker-input').val();
@@ -139,10 +140,14 @@
 
                 function renderGrid() {
                     var keyword = (currentKeyword || '').toLowerCase().trim();
-                    var filtered = keyword
-                        ? currentNames.filter(function (n) { return n.toLowerCase().indexOf(keyword) !== -1; })
-                        : currentNames;
-                    var limited = filtered.slice(0, 1200);
+                    if (!keyword) {
+                        $grid.html('<div class="iconify-dialog-empty">' + I18N.searchFirst + '</div>');
+                        $count.text('—');
+                        return;
+                    }
+
+                    var filtered = currentNames.filter(function (n) { return n.toLowerCase().indexOf(keyword) !== -1; });
+                    var limited = filtered.slice(0, 160);
 
                     if (limited.length === 0) {
                         $grid.html('<div class="iconify-dialog-empty">' + I18N.empty + '</div>');
@@ -157,7 +162,7 @@
                                '</div>';
                     }).join('');
                     $grid.html(parts);
-                    var suffix = filtered.length > 1200 ? '（仅显示前 1200 个）' : '';
+                    var suffix = filtered.length > 160 ? '（仅显示前 160 个）' : '';
                     $count.text(filtered.length + suffix);
                 }
 
@@ -223,5 +228,5 @@
     }
 
     // 暴露 re-init，modal 动态插入 DOM 后可以手动调用
-    window.qzIconifyPickerInit = init;
+    window.iconifyPickerInit = init;
 })();

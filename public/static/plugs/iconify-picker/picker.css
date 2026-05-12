@@ -12,5 +12,6 @@
 .iconify-dialog-item:hover{background:#eff6ff;border-color:#bfdbfe}
 .iconify-dialog-item iconify-icon{font-size:22px;color:#1e293b}
 .iconify-dialog-item-name{font-size:11px;color:#64748b;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.iconify-dialog-empty{padding:60px;text-align:center;color:#94a3b8;font-size:14px}
-.iconify-dialog-loading{padding:60px;text-align:center;color:#3b82f6;font-size:14px}
+.iconify-dialog-empty,.iconify-dialog-loading{grid-column:1/-1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:240px;width:100%;padding:60px;text-align:center;font-size:14px;line-height:1.6;white-space:normal}
+.iconify-dialog-empty{color:#94a3b8}
+.iconify-dialog-loading{color:#3b82f6}
