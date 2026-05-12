@@ -2,7 +2,7 @@
   "type": "project",
   "name": "hlw/thinkadmin",
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "homepage": "https://www.hlw2326.cc",
   "description": "Application Development Framework",
   "keywords": [
@@ -23,8 +23,7 @@
     "zoujingli/think-plugs-admin": "^1.0",
     "zoujingli/think-plugs-center": "^1.0",
     "zoujingli/think-plugs-wechat": "^1.0",
-    "zoujingli/think-plugs-worker": "^1.0",
-    "hlw2326/think-plugin-qz": "*"
+    "zoujingli/think-plugs-worker": "^1.0"
   },
   "repositories": {
     "plugin-qz": {
