@@ -24,6 +24,15 @@
         if (!parsed) return '<span style="color:#cbd5e1">-</span>';
         return '<iconify-icon icon="' + parsed + '" style="font-size:16px;color:#44556c;vertical-align:middle"></iconify-icon>';
     };
+
+    window.colorTpl = function (data, field) {
+        var value = data ? data[field || 'color'] : '';
+        if (!value) return '<span style="color:#cbd5e1">-</span>';
+        return '<span class="table-color-cell">' +
+            '<span class="table-color-dot" style="background:' + value + '"></span>' +
+            '<span class="table-color-text">' + value + '</span>' +
+            '</span>';
+    };
 })(window);
 
 (function (window, document) {

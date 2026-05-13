@@ -16,6 +16,7 @@
         'fa6-brands': 'FontAwesome Brands',
         'ri': 'Remix Icon'
     };
+    var PAGE_SIZE = 200;
     var ASSET_BASE = '/static/plugs/iconify-picker';
 
     /** 从 .iconify-picker-root 的 data-* 属性读取 i18n；找不到用默认值 */
@@ -110,6 +111,7 @@
         var currentPrefix = COLLECTIONS[0];
         var currentKeyword = '';
         var currentNames = [];
+        var currentPage = 1;
 
         var tabsHtml = COLLECTIONS.map(function (p, i) {
             return '<div class="iconify-dialog-tab' + (i === 0 ? ' is-active' : '') +
@@ -123,6 +125,7 @@
                 '<input type="text" class="iconify-dialog-search" placeholder="' + escapeHtml(I18N.searchPlaceholder) + '">' +
                 '<span class="iconify-dialog-count">—</span>' +
               '</div>' +
+              '<div class="iconify-dialog-pages"></div>' +
               '<div class="iconify-dialog-grid"></div>' +
             '</div>';
 
@@ -137,24 +140,45 @@
                 var $count = $container.find('.iconify-dialog-count');
                 var $search = $container.find('.iconify-dialog-search');
                 var $tabs = $container.find('.iconify-dialog-tab');
+                var $pages = $container.find('.iconify-dialog-pages');
 
-                function renderGrid() {
-                    var keyword = (currentKeyword || '').toLowerCase().trim();
-                    if (!keyword) {
-                        $grid.html('<div class="iconify-dialog-empty">' + I18N.searchFirst + '</div>');
-                        $count.text('—');
+                function renderPages(total) {
+                    var totalPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+                    if (currentPage > totalPage) currentPage = totalPage;
+                    if (totalPage <= 1) {
+                        $pages.empty();
                         return;
                     }
 
-                    var filtered = currentNames.filter(function (n) { return n.toLowerCase().indexOf(keyword) !== -1; });
-                    var limited = filtered.slice(0, 160);
+                    var parts = [];
+                    for (var i = 1; i <= totalPage; i++) {
+                        var start = (i - 1) * PAGE_SIZE + 1;
+                        var end = Math.min(i * PAGE_SIZE, total);
+                        parts.push(
+                            '<button type="button" class="iconify-dialog-page' + (i === currentPage ? ' is-active' : '') +
+                            '" data-page="' + i + '">' + start + '-' + end + '</button>'
+                        );
+                    }
+                    $pages.html(parts.join(''));
+                }
 
-                    if (limited.length === 0) {
+                function renderGrid() {
+                    var keyword = (currentKeyword || '').toLowerCase().trim();
+                    var filtered = keyword
+                        ? currentNames.filter(function (n) { return n.toLowerCase().indexOf(keyword) !== -1; })
+                        : currentNames;
+
+                    if (filtered.length === 0) {
+                        $pages.empty();
                         $grid.html('<div class="iconify-dialog-empty">' + I18N.empty + '</div>');
                         $count.text('0');
                         return;
                     }
-                    var parts = limited.map(function (name) {
+                    renderPages(filtered.length);
+                    var start = (currentPage - 1) * PAGE_SIZE;
+                    var end = Math.min(start + PAGE_SIZE, filtered.length);
+                    var pageNames = filtered.slice(start, end);
+                    var parts = pageNames.map(function (name) {
                         var className = formatIconClass(currentPrefix, name);
                         return '<div class="iconify-dialog-item" data-cls="' + className + '" title="' + className + '">' +
                                '<iconify-icon icon="' + currentPrefix + ':' + name + '"></iconify-icon>' +
@@ -162,13 +186,14 @@
                                '</div>';
                     }).join('');
                     $grid.html(parts);
-                    var suffix = filtered.length > 160 ? '（仅显示前 160 个）' : '';
-                    $count.text(filtered.length + suffix);
+                    $count.text((start + 1) + '-' + end + ' / ' + filtered.length);
                 }
 
                 function switchPrefix(prefix) {
                     currentPrefix = prefix;
+                    currentPage = 1;
                     $tabs.removeClass('is-active').filter('[data-prefix="' + prefix + '"]').addClass('is-active');
+                    $pages.empty();
                     $grid.html('<div class="iconify-dialog-loading">' + I18N.loading + '</div>');
                     loadCollection(prefix).done(function (data) {
                         currentNames = data.names;
@@ -181,6 +206,10 @@
                 switchPrefix(currentPrefix);
 
                 $tabs.on('click', function () { switchPrefix($(this).data('prefix')); });
+                $pages.on('click', '.iconify-dialog-page', function () {
+                    currentPage = Number($(this).data('page')) || 1;
+                    renderGrid();
+                });
 
                 var searchTimer;
                 $search.on('input', function () {
@@ -188,6 +217,7 @@
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(function () {
                         currentKeyword = val;
+                        currentPage = 1;
                         renderGrid();
                     }, 150);
                 });
