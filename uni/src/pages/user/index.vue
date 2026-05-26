@@ -1,5 +1,5 @@
 <template>
-    <hlw-page>
+    <hlw-page :is-bar="true" title="我的">
         <view class="container">
             <comp-profile />
 

@@ -1,7 +1,15 @@
 <template>
     <view class="menu-wrapper">
         <view class="menu-list">
-
+            <view class="menu-item" @tap="openTheme">
+                <view class="menu-left">
+                    <view class="menu-icon">
+                        <text class="i-fa6-solid-palette menu-icon-symbol" />
+                    </view>
+                    <text class="menu-text">主题设置</text>
+                </view>
+                <text class="i-fa6-solid-chevron-right menu-arrow" />
+            </view>
 
             <view class="menu-item" @tap="openHelp">
                 <view class="menu-left">
@@ -26,14 +34,7 @@
                 </view>
             </view>
 
-            <button
-                class="menu-item menu-button"
-                open-type="contact"
-                :send-message-title="contact.send_message_title"
-                :send-message-path="contact.send_message_path"
-                :send-message-img="contact.send_message_img"
-                :show-message-card="contact.show_message_card"
-            >
+            <button class="menu-item menu-button" open-type="contact" :send-message-title="contact.send_message_title" :send-message-path="contact.send_message_path" :send-message-img="contact.send_message_img" :show-message-card="contact.show_message_card">
                 <view class="menu-left">
                     <view class="menu-icon">
                         <text class="i-fa6-solid-headset menu-icon-symbol" />
@@ -56,7 +57,11 @@ import OfficialPopup from "./official-popup.vue";
 const { contact } = useConfig();
 const official_visible = ref(false);
 
-
+function openTheme() {
+    uni.navigateTo({
+        url: "/pages/user/theme/index",
+    });
+}
 
 function openHelp() {
     uni.navigateTo({
@@ -107,7 +112,7 @@ function closeOfficial() {
 }
 
 .menu-item:active {
-    background-color: rgba(49, 118, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .menu-button {
@@ -146,7 +151,7 @@ function closeOfficial() {
     width: 48rpx;
     height: 46rpx;
     flex-shrink: 0;
-    color: #3176ff;
+    color: var(--primary-color, #3b82f6);
 }
 
 .menu-icon-symbol {
@@ -178,7 +183,7 @@ function closeOfficial() {
     align-items: center;
     height: 46rpx;
     margin-right: 12rpx;
-    color: #3176ff;
+    color: var(--primary-color, #3b82f6);
     font-size: var(--font-sm);
     line-height: 1;
 }

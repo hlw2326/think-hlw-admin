@@ -62,7 +62,7 @@ async function onChooseAvatar(event: any) {
     padding: var(--card-padding);
     border: 1rpx solid var(--border-color-light);
     border-radius: var(--card-radius);
-    background: linear-gradient(135deg, #3c7efe 0%, #5b93ff 100%);
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.04) 100%), var(--primary-color, #3b82f6);
     backdrop-filter: blur(10rpx);
 }
 
@@ -94,11 +94,11 @@ async function onChooseAvatar(event: any) {
     padding: 0;
     border: 0;
     border-radius: 999rpx;
-    background: #3176ff;
+    background: var(--primary-color, #3176ff);
     color: #ffffff;
     font: inherit;
     line-height: normal;
-    box-shadow: 0 4rpx 12rpx rgba(49, 118, 255, 0.3);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 }
 
 .edit-avatar::after {

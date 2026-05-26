@@ -19,6 +19,12 @@
             }
         },
         {
+            "path": "pages/user/theme/index",
+            "style": {
+                "navigationBarTitleText": "主题设置"
+            }
+        },
+        {
             "path": "pages/tools/index",
             "style": {
                 "navigationBarTitleText": "工具"
@@ -60,8 +66,9 @@
     },
     "globalStyle": {
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "短视频助手",
+        "navigationBarTitleText": "通用",
         "navigationBarBackgroundColor": "#f8f8f8",
+        "navigationStyle": "custom",
         "backgroundColor": "#F8F8F8"
     }
 }

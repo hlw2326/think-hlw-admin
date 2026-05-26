@@ -11,7 +11,7 @@ export default defineConfig(async () => {
     return {
         plugins: [
             uni(),
-            HlwUni({ autoImport: false, themePageMeta: true }),
+            HlwUni({ autoImport: false, themePageMeta: false }),
             // https://github.com/unocss/unocss
             UnoCss(),
         ],

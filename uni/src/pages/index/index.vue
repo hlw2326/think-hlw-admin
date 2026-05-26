@@ -1,5 +1,5 @@
 <template>
-    <hlw-page>
+    <hlw-page :is-bar="true" title="首页">
         <view class="container">
             <hlw-ad type="banner" :unit-id="banner_unit_id" />
         </view>

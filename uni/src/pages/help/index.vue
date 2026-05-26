@@ -1,5 +1,5 @@
 <template>
-    <hlw-page>
+    <hlw-page is-back :is-bar="true" title="帮助中心">
         <view class="container">
             <view class="help-card">
                 <view class="card-title">
@@ -99,7 +99,7 @@ async function getHelpList() {
     height: 28rpx;
     margin-right: 16rpx;
     border-radius: 6rpx;
-    background: #3176ff;
+    background: var(--primary-color, #3b82f6);
 }
 
 .title-text {

@@ -1,5 +1,5 @@
 <template>
-    <hlw-page>
+    <hlw-page :is-bar="true" title="工具">
         <view class="container">
             <view class="tools-grid">
                 <view v-for="item in list" :key="item.id || item.title" class="tools-card" @tap="openTool(item)">
@@ -109,7 +109,8 @@ function getTools() {
     width: 150rpx;
     height: 150rpx;
     border-radius: 999rpx;
-    background: rgba(49, 118, 255, 0.08);
+    background: var(--primary-color, #3b82f6);
+    opacity: 0.08;
 }
 
 .tools-dot {
@@ -119,7 +120,7 @@ function getTools() {
     width: 10rpx;
     height: 10rpx;
     border-radius: 999rpx;
-    background: #3176ff;
+    background: var(--primary-color, #3b82f6);
     opacity: 0.18;
 }
 
@@ -138,10 +139,10 @@ function getTools() {
     justify-content: center;
     width: 88rpx;
     height: 88rpx;
-    border: 1rpx solid rgba(49, 118, 255, 0.12);
+    border: 1rpx solid var(--primary-light, rgba(76, 68, 239, 0.12));
     border-radius: 20rpx;
     overflow: hidden;
-    background: rgba(49, 118, 255, 0.05);
+    background: var(--primary-light, rgba(76, 68, 239, 0.05));
 }
 
 .tools-logo {
@@ -188,8 +189,8 @@ function getTools() {
     flex-shrink: 0;
     margin-left: 12rpx;
     border-radius: 999rpx;
-    background: rgba(49, 118, 255, 0.08);
-    color: #3176ff;
+    background: var(--primary-light, rgba(76, 68, 239, 0.08));
+    color: var(--primary-color, #3b82f6);
 }
 
 .tools-arrow-icon {
@@ -203,7 +204,8 @@ function getTools() {
     width: 42rpx;
     height: 4rpx;
     border-radius: 999rpx;
-    background: rgba(49, 118, 255, 0.28);
+    background: var(--primary-color, #3b82f6);
+    opacity: 0.28;
 }
 
 .empty-card {

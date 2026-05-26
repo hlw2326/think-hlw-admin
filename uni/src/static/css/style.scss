@@ -21,9 +21,16 @@ page {
     height: 100%;
 
     /* 主题色 — 默认值，运行时通过 page-meta :page-style 覆盖 */
-    --primary-color: #3b82f6;
+    --primary-color: #4c44ef;
     --primary-light: rgba(59, 130, 246, 0.12);
     --primary-dark: #2563eb;
+
+    /* 导航栏主题定制变量 */
+    --font-color: #303048;
+    --navbar-font-size: 26rpx;
+    --navbar-border-bottom: 1rpx solid #e7e7e7;
+    --navbar-bg-color: #ffffff;
+    --navbar-title-color: var(--primary-color);
 
     /* 圆角体系 */
     --radius-sm: 8rpx; /* 小元素 */
@@ -125,3 +132,4 @@ page {
  * Typography utility classes（text-title-lg / text-title / text-subtitle / text-body / text-desc / text-caption）
  * 已迁移到 unocss.config.ts 的 rules 里，由 UnoCSS 运行时生成，用法不变。
  */
+
