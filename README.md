@@ -88,6 +88,9 @@ pnpm build     # 生产模式构建，读取 .env.prod
 3. **前端代码质量**
    - 修改前端代码后请在提交前运行 `pnpm type-check` 进行 TypeScript 与 Vue 的类型检查。
    - 提示弹窗推荐统一使用 `hlw.$msg.toast()`。
+4. **AI 辅助开发规范**
+   - 项目内置了针对 AI 辅助开发的提示词约束与规范，请参阅 [AI 辅助开发与编码规范指南](file:///f:/mini/admin/.rules/AI_RULES.md)。
+   - 项目在 `.rules/` 目录下配置了 `.cursorrules` 和 `.clinerules`，使用 Cursor 或 Cline 等工具时可以导入或加载其内容进行辅助开发。
 
 ---
 

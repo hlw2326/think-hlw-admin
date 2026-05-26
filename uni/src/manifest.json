@@ -1,5 +1,5 @@
 {
-    "name": "hlw-uni",
+    "name": "小程序通用",
     "appid": "",
     "description": "",
     "versionName": "1.0.0",
@@ -9,7 +9,7 @@
         "downloadFile": 300000
     },
     "mp-weixin": {
-        "appid": "wxf9a59329864c370d",
+        "appid": "wx0c1972421f064dde",
         "libVersion": "2.32.3",
         "setting": {
             "urlCheck": false,

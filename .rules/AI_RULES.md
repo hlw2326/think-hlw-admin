@@ -1,0 +1,130 @@
+# HlwAdmin AI 辅助开发与编码规范指南
+
+本文件是为 AI 编码助手（如 Cursor、Windsurf、Cline、Copilot 等）以及开发者量身定制的开发规范指南。旨在规范前后端技术栈实践、代码风格、接口设计以及目录结构，确保 AI 生成的代码能直接无缝融入本项目中。
+
+---
+
+## 📂 项目全景与核心架构
+
+本项目是一个基于前后端分离的**全栈管理系统与微信小程序**工程。
+
+```text
+hlw-admin/ (项目根目录)
+├── php/             # 后端项目 (基于 ThinkPHP 8.2 + ThinkLibrary 6.1)
+└── uni/             # 前端项目 (基于 Vue 3 + uni-app + Vite)
+```
+
+---
+
+## 🛠️ 后端开发规范 (`/php`)
+
+### 1. 技术栈与运行环境
+*   **核心框架**：ThinkPHP 8.2 + ThinkLibrary 6.1
+*   **PHP 版本**：`>= 8.2` (优先使用 PHP 8.2+ 强类型和新特性)
+*   **包管理工具**：Composer
+*   **数据库**：MySQL 5.7+ 或 SQLite (使用 SQLite 时注意定期备份 `database/sqlite.db`)
+*   **运行目录**：Nginx/Apache 的站点运行目录必须指向 `public/`
+
+### 2. 核心目录结构与分工
+AI 在新增、修改后端代码时，请严格遵守以下目录职责：
+*   `app/admin/`：后台系统管理模块（权限控制、系统配置等）。
+*   `app/wechat/`：微信开放平台/小程序接口及微信相关逻辑处理模块。
+*   `app/index/`：入口页面与通用公开模块。
+*   `config/`：应用配置文件，新增配置应添加对应的扩展文件或写在现有配置文件中。
+*   `database/`：数据库迁移脚本及本地 SQLite 数据库。
+*   `package/`：本地插件目录。目前常用插件包括：
+    *   `think-plugin-backup`：备份管理
+    *   `think-plugin-collect`：数据采集
+    *   `think-plugin-mp-base`：小程序基础包
+
+> [!IMPORTANT]
+> **绝对禁止提交以下文件与目录到 Git：**
+> *   `/php/.env`（本地环境变量）
+> *   `/php/runtime/`（运行时缓存与日志）
+> *   `/php/vendor/`（Composer 依赖包）
+> *   `/php/public/upload/`（用户上传的文件资源）
+
+### 3. 后端编码与逻辑规范
+*   **严格类型声明**：所有新创建 of PHP 文件必须在顶部声明严格类型：
+    ```php
+    declare(strict_types=1);
+    ```
+*   **数据库迁移**：数据库表结构的变动原则上必须通过 `database/` 下的迁移工具（`php think migrate`）进行，以便团队协作。
+*   **安全防范**：
+    *   禁止拼接 SQL，必须使用 ThinkPHP 的链式操作或参数绑定防范 SQL 注入。
+    *   所有敏感配置（数据库密码、微信 AppID、AppSecret 等）必须从 `.env` 或系统配置中读取，禁止硬编码。
+*   **接口统一格式**：所有给前端调用的接口必须返回统一的 JSON 结构，并遵循规范的数据格式。
+
+---
+
+## 🎨 前端开发规范 (`/uni`)
+
+### 1. 技术栈与运行环境
+*   **核心框架**：Vue 3 + uni-app (通过 Vite 构建)
+*   **开发语言**：TypeScript
+*   **状态管理**：Pinia
+*   **包管理工具**：pnpm
+*   **本地核心依赖**：
+    *   `@hlw-uni/mp-vue` -> 指向本地物理路径（如 `F:/uniapp/hlw-uni/mp-vue`）
+    *   `@hlw-uni/mp-vite-plugin` -> 指向本地物理路径（如 `F:/uniapp/hlw-uni/mp-vite-plugin`）
+
+### 2. 核心目录结构
+*   `src/core/`：存放业务的组合式逻辑（Hooks/Composables），保持组件代码的轻量化。
+*   `src/service/`：API 接口请求模块，统一封装请求与数据解析。
+*   `src/store/`：Pinia 状态管理模块。
+*   `src/pages/`：小程序页面组件，按业务模块划分。
+*   `src/types/`：全局 TypeScript 接口 and 类型定义文件。
+
+### 3. 前端编码与构建规范
+*   **构建模式与环境变量**：
+    *   **开发模式**：执行 `pnpm dev`，读取 `.env.dev` 进行构建。
+    *   **生产模式**：执行 `pnpm build`，读取 `.env.prod` 进行构建。
+    *   > [!WARNING]
+        > 上传微信小程序体验版或线上版本前，**必须**运行 `pnpm build` 构建生产版，然后使用微信开发者工具打开 `dist/build/mp-weixin` 进行上传。切勿上传 `dist/dev/mp-weixin` 开发包，以防请求流向开发接口。
+*   **类型安全**：
+    *   新增或修改前端代码后，必须运行 `pnpm type-check` 进行 TypeScript 严格类型与 Vue 模版类型检查。
+    *   AI 生成代码时，尽量避免使用 `any`，必须合理定义并导出 interfaces/types。
+*   **通用交互约定**：
+    *   页面内弹出 Toast 消息提示时，**统一且唯一**推荐使用底层封装的公共方法：
+        ```typescript
+        hlw.$msg.toast('提示内容');
+        ```
+        禁止直接使用 `uni.showToast()`，以保证交互风格与样式的一致性。
+*   **页面 UI 与样式规范 (纯 Class)**：
+    *   **必须使用纯 CSS/SCSS 样式类（纯 class）**编写页面布局与视觉样式。
+    *   **绝对禁止**直接在模板元素上堆叠使用 UnoCSS 的原子化工具类（例如禁止使用 `<view class="flex justify-between items-center text-slate-800">` 等）。
+    *   应该给组件和视图元素赋予高可读性、符合语义的 Class 名称（例如 `class="user-profile-card"`），并在 `<style scoped lang="scss">` 或对应样式文件中集中编写 CSS/SCSS。
+*   **图标系统开发规范**：
+    *   图标系统采用 `@unocss/preset-icons` 进行静态编译，图标数据源自三个特定的依赖包，必须且仅使用以下前缀的图标：
+        *   `@iconify-json/fa6-solid`：前缀为 `i-fa6-solid-` 或 `i-fa6-solid:`（例如 `i-fa6-solid-gear`、`i-fa6-solid-house`）
+        *   `@iconify-json/fa6-brands`：前缀为 `i-fa6-brands-` 或 `i-fa6-brands:`（例如 `i-fa6-brands-weixin`、`i-fa6-brands-tiktok`）
+        *   `@iconify-json/ri`：前缀为 `i-ri-` 或 `i-ri:`（例如 `i-ri-apps-fill`、`i-ri-live-fill`）
+    *   *使用方法*：在 HTML/Vue 标签中直接将上述前缀与图标名称拼接为 class，例如：`<view class="i-fa6-brands-weixin" />`。
+
+---
+
+## 🤝 前后端协作与接口规范
+
+*   **命名风格一致性**：
+    *   前后端交互的接口字段、数据库表字段、请求体与返回体字段，统一采用 **下划线 (snake_case)** 风格。
+    *   *示例*：
+        *   正例：`video_url`、`source_url`、`user_id`
+        *   反例：`videoUrl`、`sourceUrl`、`userId`
+*   **时间格式**：所有接口返回的时间字段，原则上统一返回秒级时间戳或标准 `YYYY-MM-DD HH:mm:ss` 格式字符串。
+*   **状态码设计**：
+    *   成功响应必须返回统一的状态码（例如 `code: 1` 或 `200`，需结合具体后台库 ThinkLibrary 的返回方法）。
+    *   失败响应需提供友好的错误提示 `msg`。
+
+---
+
+## 🤖 给 AI 助手的黄金准则
+
+当您（AI）在此项目中编写代码或提供设计方案时，请严格遵守以下指令：
+
+1.  **绝不使用占位符**：不要在代码中遗留 `// TODO`、`// 后面省略`、`...` 等占位符。必须提供直接可用、逻辑完整的完整实现。
+2.  **严格遵循现有目录结构**：根据后端 (`php/`) 或前端 (`uni/`) 的既定技术栈设计代码，禁止引入不相符的第三方库或改变既定架构。
+3.  **遵守命名规约**：无论是 API 请求参数、响应参数，还是数据库字段，AI 必须自动遵守 `snake_case` 命名。
+4.  **优雅的异常处理**：
+    *   后端方法应有完备的 try-catch，并记录日志或向前端抛出清晰的错误。
+    *   前端网络请求与异步操作必须有 catch 逻辑，并通过 `hlw.$msg.toast()` 进行全局提示。
+5.  **配合环境配置**：所有可能变动的常量（例如接口 base URL、微信参数等）都必须引导用户通过 `.env`、`.env.dev` 或 `.env.prod` 进行配置，不得硬编码在代码中。
