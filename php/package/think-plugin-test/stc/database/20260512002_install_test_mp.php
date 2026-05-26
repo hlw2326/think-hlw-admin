@@ -56,6 +56,30 @@ class InstallTestMp extends Migrator
         ], [
             'appid', 'status',
         ]);
+
+        if (!$this->fetchRow("SELECT id FROM test_mp LIMIT 1")) {
+            $this->table('test_mp')->insert([
+                [
+                    'name' => '测试',
+                    'appid' => 'wx0c1972421f064dde',
+                    'appsecret' => '',
+                    'pages_config' => null,
+                    'token' => '',
+                    'encodingaeskey' => '',
+                    'logo' => '',
+                    'remark' => '',
+                    'banner_unit_id' => 'adunit-e1e5c49d109d3369',
+                    'grid_unit_id' => 'adunit-2d417a590fafd001',
+                    'custom_unit_id' => 'adunit-5a2662962653420e',
+                    'video_unit_id' => 'adunit-a670c9fb2a3f21ad',
+                    'reward_unit_id' => 'adunit-6428952c915f30d1',
+                    'popup_unit_id' => 'adunit-affe6438027a5c92',
+                    'vip_no_ad' => 0,
+                    'sort' => 0,
+                    'status' => 1,
+                ]
+            ])->saveData();
+        }
     }
 }
 

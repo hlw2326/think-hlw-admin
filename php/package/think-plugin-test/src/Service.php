@@ -33,6 +33,7 @@ class Service extends Plugin
     {
         $code = app(static::class)->appCode;
         return [
+            ['name' => '系统统计', 'icon' => 'layui-icon layui-icon-chart-screen', 'node' => "{$code}/main.index/index"],
             ['name' => '系统参数', 'icon' => 'layui-icon layui-icon-set', 'node' => "{$code}/config.index/index"],
             ['name' => '微信程序', 'icon' => 'layui-icon layui-icon-app', 'node' => "{$code}/mp.index/index"],
             ['name' => '客服回复', 'icon' => 'layui-icon layui-icon-dialogue', 'node' => "{$code}/reply.index/index"],
