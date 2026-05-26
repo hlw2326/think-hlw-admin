@@ -1,11 +1,7 @@
-.env
 .git
 .svn
-.idea
 .fleet
-.vscode
 .DS_Store
-package
 
 /vendor
 /runtime
@@ -13,8 +9,6 @@ package
 /nbproject
 /composer.lock
 !composer.json
-
-/package/
 
 /404.html
 /.user.ini
