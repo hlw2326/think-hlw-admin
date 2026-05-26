@@ -1,5 +1,3 @@
-export { useUserStore } from './user'
-export { useConfigStore } from './config'
-export { useAppStore } from './app'
-export { useThemeStore } from '@hlw-uni/mp-vue'
-export type { FontScale, ThemeColor } from '@hlw-uni/mp-vue'
+export { useUserStore } from "./user";
+export { useConfigStore } from "./config";
+export { useAppStore } from "./app";
