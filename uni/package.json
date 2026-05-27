@@ -5,14 +5,15 @@
     "scripts": {
         "dev": "uni -p mp-weixin --mode dev",
         "build": "uni build -p mp-weixin --mode prod",
-        "type-check": "vue-tsc --noEmit"
+        "type-check": "vue-tsc --noEmit",
+        "commit": "node ../git-push.js"
     },
     "dependencies": {
         "@dcloudio/uni-app": "3.0.0-5000720260410001",
         "@dcloudio/uni-app-plus": "3.0.0-5000720260410001",
         "@dcloudio/uni-components": "3.0.0-5000720260410001",
         "@dcloudio/uni-mp-weixin": "3.0.0-5000720260410001",
-        "@hlw-uni/mp-vue": "^2.1.60",
+        "@hlw-uni/mp-vue": "^2.1.71",
         "@vueuse/core": "^10.11.1",
         "js-md5": "^0.8.3",
         "pinia": "^2.3.1",
@@ -40,7 +41,9 @@
     },
     "pnpm": {
         "overrides": {
-            "unconfig": "^7.5.0"
+            "unconfig": "^7.5.0",
+            "@hlw-uni/mp-vue": "link:../../../uniapp/hlw-uni/mp-vue",
+            "@hlw-uni/mp-vite-plugin": "link:../../../uniapp/hlw-uni/mp-vite-plugin"
         }
     }
 }
