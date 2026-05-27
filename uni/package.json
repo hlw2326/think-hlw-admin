@@ -40,9 +40,7 @@
     },
     "pnpm": {
         "overrides": {
-            "unconfig": "^7.5.0",
-            "@hlw-uni/mp-vue": "link:../../../uniapp/hlw-uni/mp-vue",
-            "@hlw-uni/mp-vite-plugin": "link:../../../uniapp/hlw-uni/mp-vite-plugin"
+            "unconfig": "^7.5.0"
         }
     }
 }
