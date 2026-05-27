@@ -5,8 +5,7 @@
     "scripts": {
         "dev": "uni -p mp-weixin --mode dev",
         "build": "uni build -p mp-weixin --mode prod",
-        "type-check": "vue-tsc --noEmit",
-        "commit": "node ../git-push.js"
+        "type-check": "vue-tsc --noEmit"
     },
     "dependencies": {
         "@dcloudio/uni-app": "3.0.0-5000720260410001",
