@@ -4,7 +4,7 @@
             <view class="avatar-wrapper">
                 <hlw-avatar :src="user?.avatar_url || ''" :name="user?.nickname || `微信用户${user?.id || '--'}`" size="large" :border="3" />
                 <button class="edit-avatar" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-                    <text class="iconfont icon-upload" />
+                    <text class="i-fa6-solid-camera edit-avatar-icon" />
                 </button>
             </view>
             <view class="user-info">
@@ -12,7 +12,7 @@
                 <view class="id-wrapper" v-copy="user?.id">
                     <text class="user-id">ID: {{ user?.id || "--" }}</text>
                     <view class="copy-id">
-                        <text class="iconfont icon-copy" />
+                        <text class="i-fa6-solid-copy copy-id-icon" />
                     </view>
                 </view>
             </view>
@@ -92,20 +92,20 @@ async function onChooseAvatar(event: any) {
     height: 44rpx;
     margin: 0;
     padding: 0;
-    border: 0;
+    border: 1rpx solid #e2e8f0; /* 圆角灰线 */
     border-radius: 999rpx;
-    background: var(--primary-color, #3176ff);
-    color: #ffffff;
+    background: #ffffff; /* 白色背景，外观与 view 一致 */
+    color: #64748b; /* 灰色相机图标 */
     font: inherit;
     line-height: normal;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .edit-avatar::after {
     border: 0;
 }
 
-.edit-avatar .iconfont {
+.edit-avatar .edit-avatar-icon {
     font-size: var(--font-22);
 }
 
@@ -148,7 +148,7 @@ async function onChooseAvatar(event: any) {
     color: rgba(255, 255, 255, 0.8);
 }
 
-.copy-id .iconfont {
+.copy-id .copy-id-icon {
     font-size: var(--font-22);
 }
 

@@ -1,16 +1,6 @@
 <template>
     <view class="menu-wrapper">
         <view class="menu-list">
-            <view class="menu-item" @tap="openTheme">
-                <view class="menu-left">
-                    <view class="menu-icon">
-                        <text class="i-fa6-solid-palette menu-icon-symbol" />
-                    </view>
-                    <text class="menu-text">主题设置</text>
-                </view>
-                <text class="i-fa6-solid-chevron-right menu-arrow" />
-            </view>
-
             <view class="menu-item" @tap="openHelp">
                 <view class="menu-left">
                     <view class="menu-icon">
@@ -32,6 +22,16 @@
                     <text class="menu-reward">领奖励</text>
                     <text class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
+            </view>
+
+            <view class="menu-item" @tap="openTheme">
+                <view class="menu-left">
+                    <view class="menu-icon">
+                        <text class="i-fa6-solid-palette menu-icon-symbol" />
+                    </view>
+                    <text class="menu-text">主题设置</text>
+                </view>
+                <text class="i-fa6-solid-chevron-right menu-arrow" />
             </view>
 
             <button class="menu-item menu-button" open-type="contact" :send-message-title="contact.send_message_title" :send-message-path="contact.send_message_path" :send-message-img="contact.send_message_img" :show-message-card="contact.show_message_card">

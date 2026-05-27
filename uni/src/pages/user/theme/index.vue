@@ -1,13 +1,10 @@
 <template>
-    <hlw-page is-back :is-bar="true" title="主题设置">
+    <hlw-page is-back :is-bar="true" title="个性化设置">
         <view class="container">
+            <!-- 主题设置 -->
+            <view class="section-title">主题选择</view>
             <view class="theme-list">
-                <view 
-                    v-for="item in themePresets" 
-                    :key="item.id" 
-                    class="theme-item" 
-                    @tap="selectTheme(item.id)"
-                >
+                <view v-for="item in themePresets" :key="item.id" class="theme-item" @tap="selectTheme(item.id)">
                     <view class="theme-left">
                         <view class="theme-icon" :style="{ color: getIconColor(item.id) }">
                             <text class="i-fa6-solid-palette theme-icon-symbol" />
@@ -18,27 +15,77 @@
                     <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
+
+            <!-- 字体大小设置 -->
+            <view class="section-title">字体大小</view>
+            <view class="theme-list">
+                <view v-for="item in fontSizePresets" :key="item.id" class="theme-item" @tap="selectFontSize(item.id)">
+                    <view class="theme-left">
+                        <view class="theme-icon" style="color: #6366f1">
+                            <text class="i-fa6-solid-font theme-icon-symbol" />
+                        </view>
+                        <text class="theme-text">{{ item.name }}</text>
+                        <text class="theme-preview" :class="item.class">（样例字体）</text>
+                    </view>
+                    <text v-if="fontSize === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
+                </view>
+            </view>
+
+            <!-- 字体样式设置 -->
+            <view class="section-title">字体样式</view>
+            <view class="theme-list">
+                <view v-for="item in fontFamilyPresets" :key="item.id" class="theme-item" @tap="selectFontFamily(item.id)">
+                    <view class="theme-left">
+                        <view class="theme-icon" style="color: #10b981">
+                            <text class="i-fa6-solid-font theme-icon-symbol" />
+                        </view>
+                        <text class="theme-text">{{ item.name }}</text>
+                        <text class="theme-preview" :class="item.class">（Aa/你好）</text>
+                    </view>
+                    <text v-if="fontFamily === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
+                </view>
+            </view>
         </view>
     </hlw-page>
 </template>
 
 <script setup lang="ts">
-import { useTheme, themePresets } from "@/core";
+import { useTheme, themePresets, fontFamilyPresets, fontSizePresets } from "@/core";
 
-const { theme, store } = useTheme();
+const { theme, fontSize, setFontSize, fontFamily, setFontFamily, store: themeStore } = useTheme();
 
 function getIconColor(id: string) {
     const colors: Record<string, string> = {
-        "white-theme": "#334155",  // 白色主题用深灰色图标，显得干净高级
-        "light-theme": "#3b82f6",  // 简洁主题用蓝色图标，代表简洁现代
-        "mono-theme": "#6366f1",   // 单色主题用靛蓝色图标
-        "color-theme": "#10b981",  // 颜色主题用绿色图标
+        "white-theme": "#334155", // 白色主题用深灰色图标，显得干净高级
+        "light-theme": "#3b82f6", // 简洁主题用蓝色图标，代表简洁现代
+        "mono-theme": "#6366f1", // 单色主题用靛蓝色图标
+        "color-theme": "#10b981", // 颜色主题用绿色图标
     };
     return colors[id] || "#3b82f6";
 }
 
 function selectTheme(themeId: string) {
-    store.theme = themeId;
+    themeStore.theme = themeId;
+    uni.showToast({
+        title: "设置成功",
+        icon: "success",
+        duration: 1000,
+    });
+}
+
+function selectFontSize(sizeId: string) {
+    setFontSize(sizeId);
+    uni.showToast({
+        title: "设置成功",
+        icon: "success",
+        duration: 1000,
+    });
+}
+
+function selectFontFamily(fontId: string) {
+    setFontFamily(fontId);
     uni.showToast({
         title: "设置成功",
         icon: "success",
@@ -48,12 +95,21 @@ function selectTheme(themeId: string) {
 </script>
 
 <style scoped lang="scss">
+.section-title {
+    padding: 0rpx 12rpx 0rpx;
+    color: var(--text-muted, #64748b);
+    font-size: var(--font-sm, 24rpx);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
 .theme-list {
     overflow: hidden;
     padding: 12rpx 0;
     border: 1rpx solid var(--border-color-light);
     border-radius: var(--card-radius);
     background: #ffffff;
+    margin-bottom: 20rpx;
 }
 
 .theme-item {
@@ -105,6 +161,12 @@ function selectTheme(themeId: string) {
     color: #333333;
     font-size: var(--font-base);
     letter-spacing: 0.3px;
+}
+
+.theme-preview {
+    margin-left: 16rpx;
+    color: var(--text-muted, #94a3b8);
+    font-size: var(--font-sm);
 }
 
 .menu-arrow {
