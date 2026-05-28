@@ -46,7 +46,7 @@ function close() {
 
 .official-dialog {
     width: 100%;
-    max-width: 520rpx;
+    max-width: 580rpx;
     padding: 0;
     border: 1rpx solid rgba(255, 255, 255, 0.72);
     border-radius: 28rpx;
@@ -59,7 +59,7 @@ function close() {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 106rpx;
+    height: 110rpx;
     padding: 0 30rpx;
 }
 
@@ -68,7 +68,7 @@ function close() {
     right: 0;
     bottom: 0;
     left: 0;
-    border-bottom: 1rpx dashed var(--border-color-light);
+    border-bottom: 1rpx solid var(--border-color-light, #e2e8f0);
     content: "";
 }
 
@@ -76,10 +76,10 @@ function close() {
     display: block;
     color: #1f2937;
     font-size: var(--font-base);
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.3;
     text-align: center;
-    letter-spacing: 3rpx;
+    letter-spacing: 1rpx;
 }
 
 .official-dialog-close {
