@@ -11,6 +11,10 @@ export async function bootstrap(app: App): Promise<void> {
     globalThis.hlw = hlw;
     Object.assign(app.config.globalProperties, { hlw, service });
 
-    // 第一次打开小程序时，指定初始默认配置的主题
+    // 第一次打开小程序时，指定初始默认配置的主题。可选主题有：
+    //   - "white-theme" : 白色主题
+    //   - "light-theme" : 简洁主题
+    //   - "mono-theme"  : 单色主题
+    //   - "color-theme" : 颜色主题
     initTheme("mono-theme");
 }

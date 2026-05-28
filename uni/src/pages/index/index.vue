@@ -67,7 +67,6 @@ onShareTimeline(share.timeline);
     align-items: center;
     gap: 20rpx;
     text-align: center;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
 }
 
 .demo-title {
