@@ -18,12 +18,11 @@
 
 <script setup lang="ts">
 import { onLoad, onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
-import { useHlwAd } from "@hlw-uni/mp-vue";
+import { setAdPopup, showAdPopup } from "@hlw-uni/mp-vue";
 import { useAppShare, useAd, useConfig, useUser } from "@/core";
 
 const { getUserInfo } = useUser();
 const { banner_unit_id, popup_unit_id, reward_unit_id } = useAd();
-const { setAdPopup, showAdPopup } = useHlwAd();
 const { base, getConfig } = useConfig();
 const share = useAppShare();
 

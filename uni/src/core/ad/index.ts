@@ -1,6 +1,6 @@
 import { computed } from "vue";
 import type { ComputedRef } from "vue";
-import { useHlwAd } from "@hlw-uni/mp-vue";
+import { setAdReward, showAdReward } from "@hlw-uni/mp-vue";
 import { useConfig } from "@/core/config";
 import { useUser } from "@/core/user";
 
@@ -16,7 +16,6 @@ export function useAd(): {
 } {
     const { ad } = useConfig();
     const { getUserInfo } = useUser();
-    const { setAdReward, showAdReward } = useHlwAd();
 
     const banner_unit_id = computed(() => {
         if (ad.value.ad_global_enabled !== 1 || ad.value.ad_enabled_banner !== 1) return "";
