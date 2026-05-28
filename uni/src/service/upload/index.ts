@@ -1,4 +1,4 @@
-import { BaseService, ServiceNamespace, PluginService, useDevice } from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, PluginService, getDevice } from "@hlw-uni/mp-vue";
 import { useUser } from "@/core";
 
 @PluginService
@@ -46,7 +46,7 @@ class Upload extends BaseService {
     }
 
     private header(): Record<string, string> {
-        const { info } = useDevice();
+        const info = getDevice();
         const token = useUser().token.value;
         return {
             "X-Appid": info.appid,

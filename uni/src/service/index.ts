@@ -2,8 +2,9 @@ import { md5 } from "js-md5";
 import {
     BaseService,
     ServiceNamespace,
-    useDevice,
-    useRequest,
+    getDevice,
+    getDeviceQuery,
+    request,
     withQuery,
     toQuery,
     signText,
@@ -50,9 +51,6 @@ export { BaseService, ServiceNamespace };
 
 globalThis.service = service;
 
-const request = useRequest();
-// Utilities are now imported directly from @hlw-uni/mp-vue
-
 request.setBaseURL(import.meta.env.VITE_API_BASE_URL ?? "");
 
 request.onRequest(async (config) => {
@@ -74,7 +72,8 @@ request.onRequest(async (config) => {
         data = undefined;
     }
 
-    const { info, query: device } = useDevice();
+    const info = getDevice();
+    const device = getDeviceQuery();
     url = withQuery(url, device);
 
     const secret = import.meta.env.VITE_SIG_SECRET ?? "";
