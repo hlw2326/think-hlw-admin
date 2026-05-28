@@ -90,6 +90,13 @@ AI 在新增、修改后端代码时，请严格遵守以下目录职责：
         hlw.$msg.toast('提示内容');
         ```
         禁止直接使用 `uni.showToast()`，以保证交互风格与样式的一致性。
+    *   **一键复制功能**：当页面需要提供快捷复制文本或 ID 等功能时，**统一且唯一**强制直接在标签上使用内置的 Vue 自定义复制指令 `v-copy`，例如：
+        ```html
+        <view class="id-wrapper" v-copy="user?.id">
+            <text class="user-id">ID: {{ user?.id }}</text>
+        </view>
+        ```
+        绝对禁止手动绑定点击事件并调用 `uni.setClipboardData` 或底层 API，以保证交互流程的最简化与高复用性。
 *   **页面 UI 与样式规范 (纯 Class)**：
     *   **必须使用纯 CSS/SCSS 样式类（纯 class）**编写页面布局与视觉样式。
     *   **绝对禁止**直接在模板元素上堆叠使用 UnoCSS 的原子化工具类（例如禁止使用 `<view class="flex justify-between items-center text-slate-800">` 等）。
