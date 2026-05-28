@@ -24,7 +24,7 @@
         "@dcloudio/types": "^3.4.31",
         "@dcloudio/uni-cli-shared": "3.0.0-5000720260410001",
         "@dcloudio/vite-plugin-uni": "3.0.0-5000720260410001",
-        "@hlw-uni/mp-vite-plugin": "^1.0.51",
+        "@hlw-uni/mp-vite-plugin": "link:..\\..\\..\\uniapp\\hlw-uni\\mp-vite-plugin",
         "@iconify-json/fa6-brands": "^1.2.6",
         "@iconify-json/fa6-solid": "^1.2.4",
         "@iconify-json/ri": "^1.2.10",
@@ -41,7 +41,8 @@
     "pnpm": {
         "overrides": {
             "unconfig": "^7.5.0",
-            "@hlw-uni/mp-vue": "link:../../../uniapp/hlw-uni/mp-vue"
+            "@hlw-uni/mp-vue": "link:../../../uniapp/hlw-uni/mp-vue",
+            "@hlw-uni/mp-vite-plugin": "link:../../../uniapp/hlw-uni/mp-vite-plugin"
         }
     }
 }
