@@ -44,18 +44,17 @@
                 <text class="i-fa6-solid-chevron-right menu-arrow" />
             </button>
         </view>
-
-        <official-popup v-if="official_visible && contact.official_qrcode" :qrcode="contact.official_qrcode" @close="closeOfficial" />
     </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useConfig } from "@/core";
-import OfficialPopup from "./official-popup.vue";
+
+const emit = defineEmits<{
+    (event: "open-official"): void;
+}>();
 
 const { contact } = useConfig();
-const official_visible = ref(false);
 
 function openTheme() {
     uni.navigateTo({
@@ -70,11 +69,7 @@ function openHelp() {
 }
 
 function openOfficial() {
-    official_visible.value = true;
-}
-
-function closeOfficial() {
-    official_visible.value = false;
+    emit("open-official");
 }
 </script>
 
