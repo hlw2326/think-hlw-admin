@@ -11,7 +11,7 @@
                         </view>
                         <text class="theme-text">{{ item.name }}</text>
                     </view>
-                    <text v-if="theme === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <text v-if="themeStore.theme === item.id" class="i-fa6-solid-circle-check checked-icon" />
                     <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
@@ -27,7 +27,7 @@
                         <text class="theme-text">{{ item.name }}</text>
                         <text class="theme-preview" :class="item.class">（样例字体）</text>
                     </view>
-                    <text v-if="fontSize === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <text v-if="themeStore.fontSize === item.id" class="i-fa6-solid-circle-check checked-icon" />
                     <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
@@ -43,7 +43,7 @@
                         <text class="theme-text">{{ item.name }}</text>
                         <text class="theme-preview" :class="item.class">（Aa/你好）</text>
                     </view>
-                    <text v-if="fontFamily === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <text v-if="themeStore.fontFamily === item.id" class="i-fa6-solid-circle-check checked-icon" />
                     <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
