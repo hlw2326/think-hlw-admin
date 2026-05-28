@@ -36,7 +36,7 @@ page {
     --radius-sm: 8rpx; /* 小元素 */
     --radius-md: 16rpx; /* 按钮 / 标签 */
     --radius-lg: 24rpx; /* 卡片内层 / 子卡片 */
-    --radius-xl: 32rpx; /* 卡片外层 */
+    --radius-xl: 24rpx; /* 卡片外层 */
     --radius-full: 9999rpx; /* 胶囊 / 进度条 / Pill 标签 */
 
     /* ===== 页面 / 卡片标准尺寸（统一规范） =====
@@ -46,7 +46,7 @@ page {
      */
     --page-padding: 26rpx;
     --card-padding: 26rpx;
-    --card-radius: 32rpx;
+    --card-radius: 24rpx;
 
     /* 外观语义变量 — 默认浅色，项目视觉变量由当前文件直接控制 */
     --bg-page: #f8f8f8;
