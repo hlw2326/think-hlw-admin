@@ -140,16 +140,15 @@ function getTools() {
     width: 88rpx;
     height: 88rpx;
     border: 1rpx solid var(--primary-light, rgba(76, 68, 239, 0.12));
-    border-radius: 20rpx;
+    border-radius: 16rpx;
     overflow: hidden;
-    background: var(--primary-light, rgba(76, 68, 239, 0.05));
 }
 
 .tools-logo {
-    width: 76rpx;
-    height: 76rpx;
+    width: 80rpx;
+    height: 80rpx;
     flex-shrink: 0;
-    border-radius: 20rpx;
+    border-radius: 16rpx;
     background: #f3f4f6;
 }
 
@@ -202,7 +201,7 @@ function getTools() {
     left: var(--card-padding);
     bottom: 20rpx;
     width: 42rpx;
-    height: 4rpx;
+    height: 3rpx;
     border-radius: 999rpx;
     background: var(--primary-color, #3b82f6);
     opacity: 0.28;
