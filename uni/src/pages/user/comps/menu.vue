@@ -44,17 +44,21 @@
                 <text class="i-fa6-solid-chevron-right menu-arrow" />
             </button>
         </view>
+
+        <!-- 使用 root-portal 将弹窗挂载到微信小程序页面根节点，以完美覆盖自定义导航栏 -->
+        <root-portal v-if="official_visible && contact.official_qrcode">
+            <official-popup :qrcode="contact.official_qrcode" @close="closeOfficial" />
+        </root-portal>
     </view>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useConfig } from "@/core";
-
-const emit = defineEmits<{
-    (event: "open-official"): void;
-}>();
+import OfficialPopup from "./official-popup.vue";
 
 const { contact } = useConfig();
+const official_visible = ref(false);
 
 function openTheme() {
     uni.navigateTo({
@@ -69,7 +73,11 @@ function openHelp() {
 }
 
 function openOfficial() {
-    emit("open-official");
+    official_visible.value = true;
+}
+
+function closeOfficial() {
+    official_visible.value = false;
 }
 </script>
 
