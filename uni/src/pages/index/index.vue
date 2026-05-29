@@ -1,7 +1,7 @@
 <template>
     <hlw-page is-bar title="首页">
         <view class="container">
-            <hlw-ad type="banner" :unit-id="banner_unit_id" />
+            <hlw-custom-ad type="banner" />
 
             <!-- 演示激励广告 -->
             <view class="demo-card">
@@ -18,28 +18,30 @@
 
 <script setup lang="ts">
 import { onLoad, onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
-import { setAdPopup, showAdPopup } from "@hlw-uni/mp-vue";
+import { setPopupAd, showPopupAd } from "@hlw-uni/mp-vue";
 import { useAppShare, useAd, useConfig, useUser } from "@/core";
 
 const { getUserInfo } = useUser();
-const { banner_unit_id, popup_unit_id, reward_unit_id } = useAd();
-const { base, getConfig } = useConfig();
+const { popup_unit_id, reward_unit_id } = useAd();
+const { getConfig } = useConfig();
 const share = useAppShare();
 
 onLoad(() => {
-    setAdPopup(popup_unit_id.value);
+    setPopupAd(popup_unit_id.value);
 });
 
 onShow(async () => {
     await getConfig();
     getUserInfo();
-    setAdPopup(popup_unit_id.value);
-    showAdPopup();
+    setPopupAd(popup_unit_id.value);
+    showPopupAd();
 });
 
-function handleRewardAd(res: { ok: boolean; isEnded: boolean; err?: any }) {
-    if (res.ok && res.isEnded) {
+async function handleRewardAd(res: { success: boolean; isEnded: boolean; err?: any }) {
+    if (res.success && res.isEnded) {
         hlw.$msg.success("看完广告，奖励已发放");
+    } else if (res.err) {
+        hlw.$msg.toast("广告播放失败，请稍后重试");
     } else {
         hlw.$msg.toast("播放中途退出或拉起失败");
     }

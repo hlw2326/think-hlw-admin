@@ -21,18 +21,17 @@
             <view v-if="!list.length" class="empty-card">
                 <text>暂无可展示的小程序</text>
             </view>
-            <hlw-ad type="custom" :unit-id="banner_unit_id" />
+            <hlw-custom-ad type="custom" />
         </view>
     </hlw-page>
-    <hlw-ad type="grid" :unit-id="grid_unit_id" placement="right-middle" custom-style="right:20rpx;" />
+    <hlw-custom-ad type="grid" placement="right-middle" custom-style="right:20rpx;" />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
-import { useAppShare, useAd, useUser } from "@/core";
+import { useAppShare, useUser } from "@/core";
 const { getUserInfo } = useUser();
-const { banner_unit_id, grid_unit_id } = useAd();
 const list = ref<ITools.Item[]>([]);
 const share = useAppShare();
 

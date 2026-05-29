@@ -1,21 +1,8 @@
 import { md5 } from "js-md5";
-import {
-    BaseService,
-    ServiceNamespace,
-    getDevice,
-    getDeviceQuery,
-    request,
-    withQuery,
-    toQuery,
-    signText,
-    type RequestConfig,
-} from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, getDevice, getDeviceQuery, request, withQuery, toQuery, signText, type RequestConfig } from "@hlw-uni/mp-vue";
 import { useUser } from "@/core";
 
 type ServiceCtor = new () => BaseService;
-
-
-
 
 export interface ServiceMap {
     ad: InstanceType<typeof import("./ad").default>;
@@ -38,12 +25,11 @@ for (const [path, module] of Object.entries(files)) {
             value: import.meta.env.VITE_PLUGIN_NAME || "",
             writable: true,
             enumerable: true,
-            configurable: true
+            configurable: true,
         });
         modules[name] = instance;
     }
 }
-
 
 export const service = modules as unknown as ServiceMap;
 export default service;
@@ -55,7 +41,7 @@ request.setBaseURL(import.meta.env.VITE_API_BASE_URL ?? "");
 
 request.onRequest(async (config) => {
     let url = config.url;
-    
+
     // Automatically prepend the plugin name prefix if VITE_PLUGIN_NAME is configured
     const pluginName = import.meta.env.VITE_PLUGIN_NAME;
     if (pluginName && !/^(https?:)?\/\//.test(url)) {
@@ -98,8 +84,14 @@ request.onRequest(async (config) => {
 
 request.onResponse(async (res) => {
     if (res.code === 401) {
-        useUser().login().catch(() => undefined);
+        useUser()
+            .login()
+            .catch(() => undefined);
         return res;
+    }
+
+    if (res.code === 404 || res.code === 500 || res.code === 502 || res.code === 503) {
+        hlw.$msg.toast(res.info || `请求失败 (${res.code})`);
     }
 
     return res;
@@ -107,6 +99,10 @@ request.onResponse(async (res) => {
 
 request.onError(async (err) => {
     if (err.message.includes("401")) {
-        useUser().login().catch(() => undefined);
+        useUser()
+            .login()
+            .catch(() => undefined);
+    } else {
+        hlw.$msg.toast(err.message || "请求失败");
     }
 });

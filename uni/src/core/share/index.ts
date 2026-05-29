@@ -8,7 +8,7 @@ export function useAppShare(path = "/pages/index/index") {
     function payload() {
         const currentPath = share.value.path || path;
         return {
-            title: share.value.title || "短视频助手",
+            title: share.value.title || "小程序分享",
             path: withUid(currentPath),
             imageUrl: share.value.image_url || "",
         };

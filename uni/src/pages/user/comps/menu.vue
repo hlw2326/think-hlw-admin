@@ -63,12 +63,14 @@ const official_visible = ref(false);
 function openTheme() {
     uni.navigateTo({
         url: "/pages/user/theme/index",
+        animationType: "none",
     });
 }
 
 function openHelp() {
     uni.navigateTo({
         url: "/pages/help/index",
+        animationType: "none",
     });
 }
 
@@ -163,10 +165,10 @@ function closeOfficial() {
 }
 
 .menu-text {
-    margin-left: 24rpx;
+    margin-left: 16rpx;
     color: #333333;
     font-size: var(--font-base);
-    letter-spacing: 0.3px;
+    letter-spacing: 1rpx;
 }
 
 .menu-arrow {

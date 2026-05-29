@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { useConfig, useUser } from "@/core";
+import { useUser } from "@/core";
 
 const { user, setUserInfo } = useUser();
 

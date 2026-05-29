@@ -1,6 +1,6 @@
 {
     "name": "mp-uni-qz",
-    "version": "1.0.48",
+    "version": "1.0.49",
     "private": true,
     "scripts": {
         "dev": "uni -p mp-weixin --mode dev",

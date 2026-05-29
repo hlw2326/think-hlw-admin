@@ -25,7 +25,7 @@
             </view>
             <hlw-custom title="还没解决？" desc="把遇到的问题发给客服" :contact="contact" />
 
-            <hlw-ad type="custom" :unit-id="banner_unit_id" />
+            <hlw-custom-ad type="custom" />
         </view>
     </hlw-page>
 </template>
@@ -34,22 +34,18 @@
 import { computed, ref } from "vue";
 import { onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
 import HlwCustom from "@hlw-uni/mp-vue/src/components/hlw-custom/hlw-custom.vue";
-import { useAppShare, useAd, useConfig } from "@/core";
+import { useAppShare, useConfig } from "@/core";
 
-const { base, contact } = useConfig();
-const { banner_unit_id } = useAd();
+const { contact } = useConfig();
 const share = useAppShare("/pages/help/index");
 
 const steps = ref<string[]>([]);
 const faqList = ref<IHelp.Faq[]>([]);
 
-const day_parse_count = computed(() => base.value.day_parse_count || 10);
-const reward_parse_count = computed(() => base.value.reward_parse_count || 10);
-
 const faqs = computed(() =>
     faqList.value.map((item) => ({
         question: item.question,
-        answer: formatAnswer(item.answer),
+        answer: item.answer,
     })),
 );
 
@@ -59,10 +55,6 @@ onShareTimeline(share.timeline);
 onShow(() => {
     getHelpList();
 });
-
-function formatAnswer(answer: string): string {
-    return answer.replace(/\{day_parse_count\}/g, String(day_parse_count.value)).replace(/\{reward_parse_count\}/g, String(reward_parse_count.value));
-}
 
 async function getHelpList() {
     try {

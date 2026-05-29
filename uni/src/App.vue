@@ -2,14 +2,14 @@
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { useApp } from "@/core/app";
 
-const { applyLaunchOptions } = useApp();
+const { applyLaunch } = useApp();
 
 onLaunch((options: any) => {
-    applyLaunchOptions(options);
+    applyLaunch(options);
     console.log("App Launch", options);
 });
 onShow((options: any) => {
-    applyLaunchOptions(options);
+    applyLaunch(options);
     console.log("App Show", options);
 });
 onHide(() => {

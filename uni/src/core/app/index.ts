@@ -18,7 +18,7 @@ export function useApp() {
         }
     }
 
-    function applyLaunchOptions(options: any): void {
+    function applyLaunch(options: any): void {
         setInviteUid(options?.query?.invite_uid || options?.query?.uid);
     }
 
@@ -26,7 +26,7 @@ export function useApp() {
         clipboard,
         setClipboard,
         setInviteUid,
-        applyLaunchOptions,
+        applyLaunch,
         store,
     };
 }

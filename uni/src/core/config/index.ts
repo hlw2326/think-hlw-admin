@@ -21,17 +21,10 @@ export function useConfig() {
             return;
         }
 
-        const base = res.data.base;
         const share = res.data.share;
         const contact = res.data.contact;
-        const mode = base?.parse_mode;
 
-        store.base = {
-            parse_mode: mode === "ad" || mode === "quota" || mode === "free" ? mode : store.base.parse_mode,
-            day_parse_count: toNumber(base?.day_parse_count, store.base.day_parse_count),
-            reward_parse_count: toNumber(base?.reward_parse_count, store.base.reward_parse_count),
-            download_backup_enabled: toNumber(base?.download_backup_enabled, store.base.download_backup_enabled) === 1 ? 1 : 0,
-        };
+        store.base = res.data.base ?? {};
         store.share = {
             title: share?.title || store.share.title,
             path: share?.path || store.share.path,
