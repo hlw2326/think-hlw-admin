@@ -14,7 +14,7 @@
                 </view>
 
                 <view class="vip-tag">
-                    <span class="i-fa6-solid-gift vip-icon" />
+                    <span class="iconfont icon-gift vip-icon" />
                     <text class="vip-text">永久免费</text>
                 </view>
             </view>
@@ -126,7 +126,7 @@ const { user, updateAvatar, updateNickname } = useUser();
 
 .vip-icon {
     color: var(--primary-color, #3b82f6);
-    font-size: var(--font-xs);
+    font-size: var(--font-base);
     line-height: 1;
     margin-right: 5rpx;
 }
