@@ -8,7 +8,7 @@
                     <view class="id-wrapper" v-copy="user?.id">
                         <text class="user-id">ID: {{ user?.id || "--" }}</text>
                         <view class="copy-id">
-                            <text class="iconfont icon-copy"></text>
+                            <span class="iconfont icon-copy"></span>
                         </view>
                     </view>
                 </view>
