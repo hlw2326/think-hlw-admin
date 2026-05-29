@@ -2,7 +2,6 @@
     <hlw-page :is-bar="true" title="我的">
         <view class="container">
             <comp-profile />
-
             <comp-menu />
             <hlw-custom-ad type="custom" />
         </view>

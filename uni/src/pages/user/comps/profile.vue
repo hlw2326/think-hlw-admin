@@ -8,7 +8,7 @@
                     <view class="id-wrapper" v-copy="user?.id">
                         <text class="user-id">ID: {{ user?.id || "--" }}</text>
                         <view class="copy-id">
-                            <text class="i-fa6-solid-copy copy-id-icon" />
+                            <text class="iconfont icon-copy"></text>
                         </view>
                     </view>
                 </view>
@@ -108,7 +108,7 @@ const { user, updateAvatar, updateNickname } = useUser();
     color: #64748b;
 }
 
-.copy-id .copy-id-icon {
+.copy-id .iconfont {
     font-size: var(--font-22);
 }
 
@@ -172,8 +172,8 @@ const { user, updateAvatar, updateNickname } = useUser();
     max-width: 100%;
     overflow: hidden;
     margin-bottom: 12rpx;
-    color: #64748b;
-    font-size: 36rpx;
+    color: #2b2b2b;
+    font-size: 44rpx;
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
