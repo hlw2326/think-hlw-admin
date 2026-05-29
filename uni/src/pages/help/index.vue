@@ -23,8 +23,7 @@
                     </view>
                 </view>
             </view>
-            <hlw-custom title="还没解决？" desc="把遇到的问题发给客服" :contact="contact" />
-
+            <hlw-custom-service title="还没解决？" desc="把遇到的问题发给客服" :contact="contact" />
             <hlw-custom-ad type="custom" />
         </view>
     </hlw-page>
@@ -33,7 +32,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onShareAppMessage, onShareTimeline, onShow } from "@dcloudio/uni-app";
-import HlwCustom from "@hlw-uni/mp-vue/src/components/hlw-custom/hlw-custom.vue";
+import HlwCustomService from "@hlw-uni/mp-vue/src/components/hlw-custom-service/hlw-custom-service.vue";
 import { useAppShare, useConfig } from "@/core";
 
 const { contact } = useConfig();
