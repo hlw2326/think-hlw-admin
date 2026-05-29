@@ -119,7 +119,7 @@ const { user, updateAvatar, updateNickname } = useUser();
     align-items: center;
     justify-content: center;
     padding: 6rpx 16rpx;
-    border: 1rpx solid #bfdbfe;
+    border: 1rpx solid var(--primary-color, #3b82f6);
     border-radius: 999rpx;
     background: #eff6ff;
 }
@@ -171,9 +171,9 @@ const { user, updateAvatar, updateNickname } = useUser();
 .stat-value {
     max-width: 100%;
     overflow: hidden;
-    margin-bottom: 12rpx;
+    margin-bottom: 8rpx;
     color: #2b2b2b;
-    font-size: 44rpx;
+    font-size: var(--font-lg, 32rpx);
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -181,6 +181,7 @@ const { user, updateAvatar, updateNickname } = useUser();
 
 .stat-label {
     color: #8c8c8c;
-    font-size: var(--font-26, 26rpx);
+    font-size: var(--font-sm, 26rpx);
+    letter-spacing: 1rpx;
 }
 </style>

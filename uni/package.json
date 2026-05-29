@@ -12,7 +12,7 @@
         "@dcloudio/uni-app-plus": "3.0.0-5000720260410001",
         "@dcloudio/uni-components": "3.0.0-5000720260410001",
         "@dcloudio/uni-mp-weixin": "3.0.0-5000720260410001",
-        "@hlw-uni/mp-vue": "link:..\\..\\..\\uniapp\\hlw-uni\\mp-vue",
+        "@hlw-uni/mp-vue": "^2.1.97",
         "@vueuse/core": "^10.11.1",
         "js-md5": "^0.8.3",
         "pinia": "^2.3.1",
@@ -24,7 +24,7 @@
         "@dcloudio/types": "^3.4.31",
         "@dcloudio/uni-cli-shared": "3.0.0-5000720260410001",
         "@dcloudio/vite-plugin-uni": "3.0.0-5000720260410001",
-        "@hlw-uni/mp-vite-plugin": "link:..\\..\\..\\uniapp\\hlw-uni\\mp-vite-plugin",
+        "@hlw-uni/mp-vite-plugin": "^1.0.51",
         "@iconify-json/fa6-brands": "^1.2.6",
         "@iconify-json/fa6-solid": "^1.2.4",
         "@iconify-json/ri": "^1.2.10",
@@ -40,9 +40,7 @@
     },
     "pnpm": {
         "overrides": {
-            "unconfig": "^7.5.0",
-            "@hlw-uni/mp-vue": "link:../../../uniapp/hlw-uni/mp-vue",
-            "@hlw-uni/mp-vite-plugin": "link:../../../uniapp/hlw-uni/mp-vite-plugin"
+            "unconfig": "^7.5.0"
         }
     }
 }

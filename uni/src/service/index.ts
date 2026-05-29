@@ -103,6 +103,9 @@ request.onError(async (err) => {
             .login()
             .catch(() => undefined);
     } else {
-        hlw.$msg.toast(err.message || "请求失败");
+        let msg = err.message || "请求失败";
+        // 过滤/移除 URL 地址及域名信息
+        msg = msg.replace(/https?:\/\/[^\s]+/g, "").replace(/url:\s*/gi, "").trim();
+        hlw.$msg.toast(msg || "请求失败");
     }
 });
