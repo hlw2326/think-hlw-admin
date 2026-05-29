@@ -1,7 +1,7 @@
 <template>
     <hlw-page is-back :is-bar="true" title="帮助中心">
         <view class="container">
-            <view class="help-card">
+            <view v-if="steps && steps.length > 0" class="help-card">
                 <view class="card-title">
                     <view class="title-line" />
                     <text class="title-text">怎么使用</text>
