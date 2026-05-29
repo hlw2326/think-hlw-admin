@@ -4,7 +4,7 @@
             <view class="official-dialog-header">
                 <text class="official-dialog-title">关注公众号</text>
                 <view class="official-dialog-close" @tap="close">
-                    <text class="i-fa6-solid-xmark official-dialog-close-icon" />
+                    <span class="i-fa6-solid-xmark official-dialog-close-icon" />
                 </view>
             </view>
             <view class="official-qrcode-card">

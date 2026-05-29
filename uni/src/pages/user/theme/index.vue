@@ -7,12 +7,12 @@
                 <view v-for="item in themePresets" :key="item.id" class="theme-item" @tap="selectTheme(item.id)">
                     <view class="theme-left">
                         <view class="theme-icon" :style="{ color: getIconColor(item.id) }">
-                            <text class="i-fa6-solid-palette theme-icon-symbol" />
+                            <span class="i-fa6-solid-palette theme-icon-symbol" />
                         </view>
                         <text class="theme-text">{{ item.name }}</text>
                     </view>
-                    <text v-if="themeStore.theme === item.id" class="i-fa6-solid-circle-check checked-icon" />
-                    <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
+                    <span v-if="themeStore.theme === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <span v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
 
@@ -22,13 +22,13 @@
                 <view v-for="item in fontSizePresets" :key="item.id" class="theme-item" @tap="selectFontSize(item.id)">
                     <view class="theme-left">
                         <view class="theme-icon" style="color: #6366f1">
-                            <text class="i-fa6-solid-font theme-icon-symbol" />
+                            <span class="i-fa6-solid-font theme-icon-symbol" />
                         </view>
                         <text class="theme-text">{{ item.name }}</text>
                         <text class="theme-preview" :class="item.class">（样例字体）</text>
                     </view>
-                    <text v-if="themeStore.fontSize === item.id" class="i-fa6-solid-circle-check checked-icon" />
-                    <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
+                    <span v-if="themeStore.fontSize === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <span v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
 
@@ -38,13 +38,13 @@
                 <view v-for="item in fontFamilyPresets" :key="item.id" class="theme-item" @tap="selectFontFamily(item.id)">
                     <view class="theme-left">
                         <view class="theme-icon" style="color: #10b981">
-                            <text class="i-fa6-solid-font theme-icon-symbol" />
+                            <span class="i-fa6-solid-font theme-icon-symbol" />
                         </view>
                         <text class="theme-text">{{ item.name }}</text>
                         <text class="theme-preview" :class="item.class">（Aa/你好）</text>
                     </view>
-                    <text v-if="themeStore.fontFamily === item.id" class="i-fa6-solid-circle-check checked-icon" />
-                    <text v-else class="i-fa6-solid-chevron-right menu-arrow" />
+                    <span v-if="themeStore.fontFamily === item.id" class="i-fa6-solid-circle-check checked-icon" />
+                    <span v-else class="i-fa6-solid-chevron-right menu-arrow" />
                 </view>
             </view>
         </view>

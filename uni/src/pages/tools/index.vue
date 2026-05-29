@@ -10,7 +10,7 @@
                             <image class="tools-logo" mode="aspectFill" :src="item.logo" />
                         </view>
                         <view class="tools-arrow">
-                            <text class="i-fa6-solid-chevron-right tools-arrow-icon" />
+                            <span class="i-fa6-solid-chevron-right tools-arrow-icon" />
                         </view>
                     </view>
                     <text class="tools-title">{{ item.title }}</text>

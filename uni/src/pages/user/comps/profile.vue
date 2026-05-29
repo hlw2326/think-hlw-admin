@@ -14,7 +14,7 @@
                 </view>
 
                 <view class="vip-tag">
-                    <text class="i-fa6-solid-gift vip-icon" />
+                    <span class="i-fa6-solid-gift vip-icon" />
                     <text class="vip-text">永久免费</text>
                 </view>
             </view>
