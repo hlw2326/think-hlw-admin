@@ -16,5 +16,5 @@ export async function bootstrap(app: App): Promise<void> {
     //   - "light-theme" : 简洁主题
     //   - "mono-theme"  : 单色主题
     //   - "color-theme" : 颜色主题
-    initTheme("mono-theme");
+    //initTheme("mono-theme");
 }

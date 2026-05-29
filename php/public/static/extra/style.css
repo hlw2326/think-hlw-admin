@@ -131,3 +131,22 @@
     font-weight: 600;
     letter-spacing: 1px;
 }
+
+/* 广告状态徽章样式 */
+.ad-status-badge {
+    font-size: 10px !important;
+    padding: 0 4px !important;
+    height: 18px !important;
+    line-height: 18px !important;
+}
+
+.ad-status-badge.active {
+    background-color: #16b777 !important;
+    color: #ffffff !important;
+}
+
+.ad-status-badge.inactive {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+}
+

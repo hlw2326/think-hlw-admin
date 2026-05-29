@@ -3,8 +3,6 @@
         <view class="container">
             <comp-profile />
 
-            <comp-stats />
-
             <comp-menu />
             <hlw-custom-ad type="custom" />
         </view>
@@ -19,7 +17,6 @@ import { ref } from "vue";
 import { useAppShare, useUser } from "@/core";
 import CompMenu from "./comps/menu.vue";
 import CompProfile from "./comps/profile.vue";
-import CompStats from "./comps/stats.vue";
 
 const { getUserInfo } = useUser();
 const share = useAppShare();

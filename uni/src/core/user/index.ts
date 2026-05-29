@@ -59,6 +59,53 @@ export function useUser() {
         return null;
     }
 
+    async function updateAvatar(filePath: string): Promise<boolean> {
+        if (!filePath) return false;
+        uni.showLoading({ title: "上传中", mask: true });
+        try {
+            const avatarUrl = await service.upload.file({ biz: "avatar", filePath });
+            const res = await service.user.update({ avatar_url: avatarUrl });
+            if (res.code !== 1 || !res.data) {
+                hlw.$msg.toast(res.info || "头像保存失败");
+                return false;
+            }
+            setUserInfo(res.data);
+            hlw.$msg.toast("头像已更新");
+            return true;
+        } catch (error: any) {
+            console.warn("[user] avatar upload failed", error);
+            hlw.$msg.toast(error?.message || "头像上传失败");
+            return false;
+        } finally {
+            uni.hideLoading();
+        }
+    }
+
+    async function updateNickname(nickname: string): Promise<boolean> {
+        const name = nickname?.trim();
+        if (!name) {
+            hlw.$msg.toast("昵称不能为空");
+            return false;
+        }
+        uni.showLoading({ title: "保存中", mask: true });
+        try {
+            const res = await service.user.update({ nickname: name });
+            if (res.code !== 1 || !res.data) {
+                hlw.$msg.toast(res.info || "昵称保存失败");
+                return false;
+            }
+            setUserInfo(res.data);
+            hlw.$msg.toast("昵称已更新");
+            return true;
+        } catch (error: any) {
+            console.warn("[user] nickname update failed", error);
+            hlw.$msg.toast(error?.message || "昵称更新失败");
+            return false;
+        } finally {
+            uni.hideLoading();
+        }
+    }
+
     return {
         token,
         user,
@@ -68,6 +115,8 @@ export function useUser() {
         logout,
         login,
         getUserInfo,
+        updateAvatar,
+        updateNickname,
         store,
     };
 }

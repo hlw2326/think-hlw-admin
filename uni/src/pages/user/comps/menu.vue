@@ -1,49 +1,6 @@
 <template>
     <view class="menu-wrapper">
-        <view class="menu-list">
-            <view class="menu-item" @tap="openHelp">
-                <view class="menu-left">
-                    <view class="menu-icon">
-                        <text class="i-fa6-solid-circle-question menu-icon-symbol" />
-                    </view>
-                    <text class="menu-text">帮助中心</text>
-                </view>
-                <text class="i-fa6-solid-chevron-right menu-arrow" />
-            </view>
-
-            <view v-if="contact.official_qrcode" class="menu-item" @tap="openOfficial">
-                <view class="menu-left">
-                    <view class="menu-icon">
-                        <text class="i-fa6-brands-weixin menu-icon-symbol" />
-                    </view>
-                    <text class="menu-text">关注公众号</text>
-                </view>
-                <view class="menu-right">
-                    <text class="menu-reward">领奖励</text>
-                    <text class="i-fa6-solid-chevron-right menu-arrow" />
-                </view>
-            </view>
-
-            <view class="menu-item" @tap="openTheme">
-                <view class="menu-left">
-                    <view class="menu-icon">
-                        <text class="i-fa6-solid-palette menu-icon-symbol" />
-                    </view>
-                    <text class="menu-text">主题设置</text>
-                </view>
-                <text class="i-fa6-solid-chevron-right menu-arrow" />
-            </view>
-
-            <button class="menu-item menu-button" open-type="contact" :send-message-title="contact.send_message_title" :send-message-path="contact.send_message_path" :send-message-img="contact.send_message_img" :show-message-card="contact.show_message_card">
-                <view class="menu-left">
-                    <view class="menu-icon">
-                        <text class="i-fa6-solid-headset menu-icon-symbol" />
-                    </view>
-                    <text class="menu-text">联系客服</text>
-                </view>
-                <text class="i-fa6-solid-chevron-right menu-arrow" />
-            </button>
-        </view>
+        <hlw-menu :items="menuItems" :border="true" @click="handleItemClick" />
 
         <!-- 使用 root-portal 将弹窗挂载到微信小程序页面根节点，以完美覆盖自定义导航栏 -->
         <root-portal v-if="official_visible && contact.official_qrcode">
@@ -53,29 +10,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useConfig } from "@/core";
 import OfficialPopup from "./official-popup.vue";
+import type { HlwMenuItem } from "@hlw-uni/mp-vue";
 
 const { contact } = useConfig();
 const official_visible = ref(false);
 
-function openTheme() {
-    uni.navigateTo({
-        url: "/pages/user/theme/index",
-        animationType: "none",
-    });
-}
-
-function openHelp() {
-    uni.navigateTo({
+const menuItems = computed<HlwMenuItem[]>(() => [
+    {
+        icon: "i-fa6-solid-circle-question",
+        iconTheme: "blue",
+        label: "帮助中心",
         url: "/pages/help/index",
-        animationType: "none",
-    });
-}
+    },
+    {
+        icon: "i-fa6-brands-weixin",
+        iconTheme: "emerald",
+        label: "关注公众号",
+        tag: "领奖励",
+        tagTheme: "blue",
+        visible: !!contact.value.official_qrcode,
+        action: "official",
+    },
+    {
+        icon: "i-fa6-solid-palette",
+        iconTheme: "purple",
+        label: "主题设置",
+        url: "/pages/user/theme/index",
+    },
+    {
+        icon: "i-fa6-solid-headset",
+        iconTheme: "cyan",
+        label: "联系客服",
+        openType: "contact",
+        sendMessageTitle: contact.value.send_message_title,
+        sendMessagePath: contact.value.send_message_path,
+        sendMessageImg: contact.value.send_message_img,
+        showMessageCard: contact.value.show_message_card,
+    },
+]);
 
-function openOfficial() {
-    official_visible.value = true;
+function handleItemClick(item: any) {
+    if (item.action === "official") {
+        official_visible.value = true;
+    }
 }
 
 function closeOfficial() {
@@ -83,113 +63,4 @@ function closeOfficial() {
 }
 </script>
 
-<style scoped lang="scss">
-.menu-wrapper {
-    width: 100%;
-}
-
-.menu-list {
-    overflow: hidden;
-    padding: 12rpx 0;
-    border: 1rpx solid var(--border-color-light);
-    border-radius: var(--card-radius);
-    background: #ffffff;
-}
-
-.menu-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32rpx 36rpx;
-    background: transparent;
-    line-height: 46rpx;
-}
-
-.menu-item:not(:last-child)::after {
-    position: absolute;
-    right: 36rpx;
-    bottom: 0;
-    left: 36rpx;
-    height: 2rpx;
-    background: var(--border-color-light);
-    content: "";
-}
-
-.menu-item:active {
-    background-color: rgba(0, 0, 0, 0.03);
-}
-
-.menu-button {
-    width: 100%;
-    margin: 0;
-    border: 0;
-    border-radius: 0;
-    color: inherit;
-    font: inherit;
-    line-height: 46rpx;
-    text-align: left;
-}
-
-.menu-button::after {
-    border: 0;
-}
-
-.menu-left {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-}
-
-.menu-right {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    height: 46rpx;
-    margin-left: 24rpx;
-}
-
-.menu-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48rpx;
-    height: 46rpx;
-    flex-shrink: 0;
-    color: var(--primary-color, #3b82f6);
-}
-
-.menu-icon-symbol {
-    font-size: var(--font-base);
-    line-height: 1;
-}
-
-.menu-text {
-    margin-left: 16rpx;
-    color: #333333;
-    font-size: var(--font-base);
-    letter-spacing: 1rpx;
-}
-
-.menu-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #bebebe;
-    font-size: var(--font-sm);
-}
-
-.menu-right .menu-arrow {
-    transform: translateY(2rpx);
-}
-
-.menu-reward {
-    display: flex;
-    align-items: center;
-    height: 46rpx;
-    margin-right: 12rpx;
-    color: var(--primary-color, #3b82f6);
-    font-size: var(--font-sm);
-    line-height: 1;
-}
-</style>
+<style scoped lang="scss"></style>

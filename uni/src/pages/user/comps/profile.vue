@@ -1,25 +1,35 @@
 <template>
-    <view class="profile-header">
-        <view class="avatar-section">
-            <view class="avatar-wrapper">
-                <hlw-avatar :src="user?.avatar_url || ''" :name="user?.nickname || `微信用户${user?.id || '--'}`" size="large" :border="3" />
-                <button class="edit-avatar" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-                    <text class="i-fa6-solid-camera edit-avatar-icon" />
-                </button>
-            </view>
-            <view class="user-info">
-                <text class="username">{{ user?.nickname || `微信用户${user?.id || "--"}` }}</text>
-                <view class="id-wrapper" v-copy="user?.id">
-                    <text class="user-id">ID: {{ user?.id || "--" }}</text>
-                    <view class="copy-id">
-                        <text class="i-fa6-solid-copy copy-id-icon" />
+    <view class="profile-card">
+        <view class="profile-header">
+            <view class="avatar-section">
+                <hlw-avatar-upload class="avatar-wrapper" :src="user?.avatar_url" :name="user?.nickname" @onAvatar="updateAvatar" />
+                <view class="user-info">
+                    <hlw-nickname class="username" :text="user?.nickname || ''" @onNick="updateNickname" />
+                    <view class="id-wrapper" v-copy="user?.id">
+                        <text class="user-id">ID: {{ user?.id || "--" }}</text>
+                        <view class="copy-id">
+                            <text class="i-fa6-solid-copy copy-id-icon" />
+                        </view>
                     </view>
                 </view>
-            </view>
 
-            <view class="vip-tag">
-                <text class="i-fa6-solid-gift vip-icon" />
-                <text class="vip-text">永久免费</text>
+                <view class="vip-tag">
+                    <text class="i-fa6-solid-gift vip-icon" />
+                    <text class="vip-text">永久免费</text>
+                </view>
+            </view>
+        </view>
+
+        <view class="divider" />
+
+        <view class="stats-section">
+            <view class="stat-item">
+                <text class="stat-value">0</text>
+                <text class="stat-label">会员</text>
+            </view>
+            <view class="stat-item">
+                <text class="stat-value">0</text>
+                <text class="stat-label">积分</text>
             </view>
         </view>
     </view>
@@ -28,31 +38,16 @@
 <script setup lang="ts">
 import { useUser } from "@/core";
 
-const { user, setUserInfo } = useUser();
-
-async function onChooseAvatar(event: any) {
-    const filePath = String(event?.detail?.avatarUrl || "");
-    if (!filePath) return;
-    uni.showLoading({ title: "上传中", mask: true });
-    try {
-        const avatarUrl = await service.upload.file({ biz: "avatar", filePath });
-        const res = await service.user.update({ avatar_url: avatarUrl });
-        if (res.code !== 1 || !res.data) {
-            hlw.$msg.toast(res.info || "头像保存失败");
-            return;
-        }
-        setUserInfo(res.data);
-        hlw.$msg.toast("头像已更新");
-    } catch (error: any) {
-        console.warn("[user] avatar upload failed", error);
-        hlw.$msg.toast(error?.message || "头像上传失败");
-    } finally {
-        uni.hideLoading();
-    }
-}
+const { user, updateAvatar, updateNickname } = useUser();
 </script>
 
 <style scoped lang="scss">
+.profile-card {
+    border: 1rpx solid var(--border-color-light);
+    border-radius: var(--card-radius);
+    background: #ffffff;
+}
+
 .profile-header {
     position: relative;
     overflow: hidden;
@@ -60,10 +55,6 @@ async function onChooseAvatar(event: any) {
     align-items: center;
     justify-content: space-between;
     padding: var(--card-padding);
-    border: 1rpx solid var(--border-color-light);
-    border-radius: var(--card-radius);
-    background: linear-gradient(to left, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.04) 100%), var(--primary-color, #3b82f6);
-    backdrop-filter: blur(10rpx);
 }
 
 .avatar-section {
@@ -75,38 +66,8 @@ async function onChooseAvatar(event: any) {
 }
 
 .avatar-wrapper {
-    position: relative;
     flex-shrink: 0;
     margin-right: 46rpx;
-    box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.1);
-}
-
-.edit-avatar {
-    position: absolute;
-    bottom: -8rpx;
-    left: -8rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44rpx;
-    height: 44rpx;
-    margin: 0;
-    padding: 0;
-    border: 1rpx solid #e2e8f0; /* 圆角灰线 */
-    border-radius: 999rpx;
-    background: #ffffff; /* 白色背景，外观与 view 一致 */
-    color: #64748b; /* 灰色相机图标 */
-    font: inherit;
-    line-height: normal;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
-}
-
-.edit-avatar::after {
-    border: 0;
-}
-
-.edit-avatar .edit-avatar-icon {
-    font-size: var(--font-22);
 }
 
 .user-info {
@@ -119,10 +80,9 @@ async function onChooseAvatar(event: any) {
     overflow: hidden;
     max-width: 320rpx;
     margin-bottom: 12rpx;
-    color: #ffffff;
-    font-size: var(--font-lg);
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    color: #0f172a;
+    font-size: var(--font-md);
+    font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -134,7 +94,7 @@ async function onChooseAvatar(event: any) {
 
 .user-id {
     margin-right: 12rpx;
-    color: rgba(255, 255, 255, 0.8);
+    color: #64748b;
     font-size: var(--font-sm);
 }
 
@@ -144,8 +104,8 @@ async function onChooseAvatar(event: any) {
     justify-content: center;
     padding: 4rpx 8rpx;
     border-radius: 8rpx;
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    background: #f1f5f9;
+    color: #64748b;
 }
 
 .copy-id .copy-id-icon {
@@ -159,15 +119,13 @@ async function onChooseAvatar(event: any) {
     align-items: center;
     justify-content: center;
     padding: 6rpx 16rpx;
-    border: 1rpx solid var(--border-color-light);
+    border: 1rpx solid #bfdbfe;
     border-radius: 999rpx;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8rpx);
+    background: #eff6ff;
 }
 
 .vip-icon {
-    color: #ffffff;
+    color: var(--primary-color, #3b82f6);
     font-size: var(--font-xs);
     line-height: 1;
     margin-right: 5rpx;
@@ -175,8 +133,54 @@ async function onChooseAvatar(event: any) {
 
 .vip-text {
     margin-left: 4rpx;
-    color: #ffffff;
+    color: var(--primary-color, #3b82f6);
     font-size: var(--font-22);
     letter-spacing: 3rpx;
+}
+
+.divider {
+    height: 1rpx;
+    background: var(--border-color-light);
+}
+
+.stats-section {
+    display: flex;
+    justify-content: space-around;
+    padding: var(--card-padding);
+}
+
+.stat-item {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-item + .stat-item::before {
+    position: absolute;
+    top: 10rpx;
+    bottom: 10rpx;
+    left: 0;
+    width: 2rpx;
+    background: var(--border-color-light);
+    content: "";
+}
+
+.stat-value {
+    max-width: 100%;
+    overflow: hidden;
+    margin-bottom: 12rpx;
+    color: #64748b;
+    font-size: 36rpx;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stat-label {
+    color: #8c8c8c;
+    font-size: var(--font-26, 26rpx);
 }
 </style>
