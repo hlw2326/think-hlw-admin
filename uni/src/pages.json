@@ -67,6 +67,7 @@
     "globalStyle": {
         "navigationBarTitleText": "通用",
         "navigationBarBackgroundColor": "#f8f8f8",
+        "navigationBarTextStyle": "black",
         "backgroundColor": "#F8F8F8"
     }
 }
