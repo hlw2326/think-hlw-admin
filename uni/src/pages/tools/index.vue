@@ -3,7 +3,7 @@
         <view class="container">
             <view class="tools-grid">
                 <view v-for="item in list" :key="item.id || item.title" class="tools-card" @tap="openTool(item)">
-                    <view class="tools-glow" />
+                    <!-- <view class="tools-glow" /> -->
                     <view class="tools-dot" />
                     <view class="tools-header">
                         <view class="tools-logo-wrap">
@@ -187,8 +187,7 @@ function getTools() {
     flex-shrink: 0;
     margin-left: 12rpx;
     border-radius: 999rpx;
-    background: var(--primary-light, rgba(76, 68, 239, 0.08));
-    color: var(--primary-color, #3b82f6);
+    color: var(--text-muted, #64748b);
 }
 
 .tools-arrow-icon {
