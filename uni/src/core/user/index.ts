@@ -2,6 +2,9 @@ import { computed } from "vue";
 import type { ComputedRef } from "vue";
 import { useAppStore, useUserStore } from "@/store";
 
+// 全局唯一的微信登录 Promise，用于防止并发接口请求重复触发登录流程
+let loginPromise: Promise<void> | null = null;
+
 export function useUser() {
     const store = useUserStore();
     const app = useAppStore();
@@ -27,10 +30,24 @@ export function useUser() {
     }
 
     async function login(): Promise<void> {
-        const inviteUid = app.invite_uid > 0 ? String(app.invite_uid) : "";
-        const res = await service.login.wx(inviteUid ? { invite_uid: inviteUid } : undefined);
-        store.token = res.token;
-        store.user = res.user as IUser.Info;
+        if (loginPromise) {
+            return loginPromise;
+        }
+
+        loginPromise = (async () => {
+            try {
+                const inviteUid = app.invite_uid > 0 ? String(app.invite_uid) : "";
+                const res = await service.login.wx(inviteUid ? { invite_uid: inviteUid } : undefined);
+                if (res) {
+                    store.token = res.token || "";
+                    store.user = (res.user as IUser.Info) || null;
+                }
+            } finally {
+                loginPromise = null;
+            }
+        })();
+
+        return loginPromise;
     }
 
     async function getUserInfo(): Promise<IUser.Info | null> {

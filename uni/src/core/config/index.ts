@@ -1,6 +1,6 @@
 import { computed } from "vue";
 import type { ComputedRef } from "vue";
-import { toNumber, toBoolean } from "@hlw-uni/mp-vue";
+import { toBoolean } from "@hlw-uni/mp-vue";
 import { useConfigStore } from "@/store";
 
 export function useConfig() {
