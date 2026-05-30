@@ -1,6 +1,6 @@
 {
     "name": "mp-uni-qz",
-    "version": "1.0.57",
+    "version": "1.1.1",
     "private": true,
     "scripts": {
         "dev": "uni -p mp-weixin --mode dev",
@@ -12,7 +12,7 @@
         "@dcloudio/uni-app-plus": "3.0.0-5000720260410001",
         "@dcloudio/uni-components": "3.0.0-5000720260410001",
         "@dcloudio/uni-mp-weixin": "3.0.0-5000720260410001",
-        "@hlw-uni/mp-vue": "^2.2.3",
+        "@hlw-uni/mp-vue": "^2.2.5",
         "@vueuse/core": "^10.11.1",
         "js-md5": "^0.8.3",
         "pinia": "^2.3.1",
