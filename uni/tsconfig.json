@@ -16,7 +16,7 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"],
-            "@hlw-uni/mp-vue": ["../../../uniapp/hlw-uni/mp-vue/dist/index.d.ts"]
+            "@hlw-uni/mp-vue": ["../../../package/hlw-uni/mp-vue/dist/index.d.ts"]
         }
     },
     "include": ["src/types/**/*.d.ts", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

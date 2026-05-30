@@ -15,8 +15,8 @@
 
 ### 🔗 本地基础设施包 Link 依赖
 本项目强依赖于同级物理路径下的两个核心底座组件包。在执行 `pnpm install` 前，请确保以下目录和依赖路径正确建立：
-- **核心组件库**：`@hlw-uni/mp-vue` $\rightarrow$ 指向物理路径 `F:/uniapp/hlw-uni/mp-vue`
-- **构建编译器**：`@hlw-uni/mp-vite-plugin` $\rightarrow$ 指向物理路径 `F:/uniapp/hlw-uni/mp-vite-plugin`
+- **核心组件库**：`@hlw-uni/mp-vue` $\rightarrow$ 指向物理路径 `F:/package/hlw-uni/mp-vue`
+- **构建编译器**：`@hlw-uni/mp-vite-plugin` $\rightarrow$ 指向物理路径 `F:/package/hlw-uni/mp-vite-plugin`
 
 ---
 
