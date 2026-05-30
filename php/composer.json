@@ -24,12 +24,12 @@
     "zoujingli/think-plugs-center": "^1.0",
     "zoujingli/think-plugs-wechat": "^1.0",
     "zoujingli/think-plugs-worker": "^1.0",
-    "hlw2326/think-plugin-test": "*"
+    "hlw2326/think-plugin-base": "*"
   },
   "repositories": {
-    "plugin-test": {
+    "plugin-base": {
       "type": "path",
-      "url": "package/think-plugin-test",
+      "url": "package/think-plugin-base",
       "options": {
         "symlink": true
       }

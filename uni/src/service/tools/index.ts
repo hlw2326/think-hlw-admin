@@ -1,7 +1,7 @@
-import { BaseService, ServiceNamespace, PluginService } from "@hlw-uni/mp-vue";
+﻿import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
 
-@PluginService
-@ServiceNamespace("api/v1.tools")
+@ServicePrefix("api")
+@ServiceNamespace("v1.tools")
 class Tools extends BaseService {
     list(params: Record<string, unknown> = {}) {
         return this.request<ITools.ListResult>({

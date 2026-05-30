@@ -1,7 +1,7 @@
-import { BaseService, ServiceNamespace, PluginService } from "@hlw-uni/mp-vue";
+﻿import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
 
-@PluginService
-@ServiceNamespace("api/v1.ad")
+@ServicePrefix("api")
+@ServiceNamespace("v1.ad")
 class Ad extends BaseService {
     reward(params: Record<string, unknown> = {}) {
         return this.request<IConfig.AdReward>({

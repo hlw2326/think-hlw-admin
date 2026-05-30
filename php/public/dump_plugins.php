@@ -6,6 +6,7 @@ $_SERVER['SCRIPT_FILENAME'] = 'index.php';
 
 use think\admin\service\RuntimeService;
 use think\admin\Plugin;
+use think\admin\service\NodeService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -37,7 +38,7 @@ $_GET = [
 ];
 
 $request = $app->make(Request::class);
-$request->setPathinfo('plugin-test/api.v1.config/index');
+$request->setPathinfo('api/v1.config/index');
 $app->instance('request', $request);
 
 echo "--- Tracing parseMultiApp --- \n";

@@ -21,12 +21,6 @@ for (const [path, module] of Object.entries(files)) {
     const name = path.split("/")[1];
     if (name) {
         const instance = new module.default();
-        Object.defineProperty(instance, "servicePrefix", {
-            value: import.meta.env.VITE_PLUGIN_NAME || "",
-            writable: true,
-            enumerable: true,
-            configurable: true,
-        });
         modules[name] = instance;
     }
 }
@@ -41,15 +35,6 @@ request.setBaseURL(import.meta.env.VITE_API_BASE_URL ?? "");
 
 request.onRequest(async (config) => {
     let url = config.url;
-
-    // Automatically prepend the plugin name prefix if VITE_PLUGIN_NAME is configured
-    const pluginName = import.meta.env.VITE_PLUGIN_NAME;
-    if (pluginName && !/^(https?:)?\/\//.test(url)) {
-        const cleanUrl = url.replace(/^\/+/, "");
-        if (!cleanUrl.startsWith(pluginName)) {
-            url = `/${pluginName}/${cleanUrl}`;
-        }
-    }
 
     let data = config.data;
 
