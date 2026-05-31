@@ -24,8 +24,8 @@ importers:
         specifier: 3.0.0-5000720260410001
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vue':
-        specifier: ^2.2.5
-        version: 2.2.5(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+        specifier: ^2.2.6
+        version: 2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.35(typescript@4.9.5))
@@ -56,7 +56,7 @@ importers:
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vite-plugin':
         specifier: ^1.0.51
-        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.5(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
+        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
       '@iconify-json/fa6-brands':
         specifier: ^1.2.6
         version: 1.2.6
@@ -1570,8 +1570,8 @@ packages:
       '@hlw-uni/mp-vue': '>=2.0.0'
       vite: '>=5.0.0'
 
-  '@hlw-uni/mp-vue@2.2.5':
-    resolution: {integrity: sha512-8uMoswFQau5rz75JjIQ7b1R8zINj/rNDCeRNSTnGzyS6qk9eCVlX/aDDA+wVM7Lidd3GBWGe7FBm3zZPV7K2QQ==}
+  '@hlw-uni/mp-vue@2.2.6':
+    resolution: {integrity: sha512-PH271JR539My+Gqod7iWeDmyfUG0Qv909GEPYk3828TIHhQGPnuD6jEMf29EEnf0dnPS9+onC84kn9B+Ey8wIw==}
     peerDependencies:
       pinia: '>=2.0.0'
       vue: '>=3.4.0'
@@ -3051,8 +3051,8 @@ packages:
     resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
     engines: {node: '>=6.0.0'}
 
-  baseline-browser-mapping@2.10.32:
-    resolution: {integrity: sha512-wbPvpyjJPC0zdfdKXxqEL3Ea+bOMD/87X4lftiJkkaBiuG6ALQy1SLmEd7BSmVCuwCQsBrCamgBoLyfFDD1EPg==}
+  baseline-browser-mapping@2.10.33:
+    resolution: {integrity: sha512-bA6+tcSLpz2tIEdDXZPpPTIuxBcC4+w6SieaYyfigIa4h8GlFxbA17v22Vx3JUtuZQj9SgOsnbK+aTBzyDyEuw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -5953,8 +5953,8 @@ packages:
     resolution: {integrity: sha512-g62dB+w1/OEFnPvmX0yd/HnetYITOL+1nJW7kitOycOeAvmbWC/nu0fwmmQ/kupNojqExzyC/T++pST/jRJ2mQ==}
     engines: {node: '>=18'}
 
-  tinyglobby@0.2.16:
-    resolution: {integrity: sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==}
+  tinyglobby@0.2.17:
+    resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
 
   tmp@0.0.28:
@@ -8441,11 +8441,11 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.5(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
+  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
     dependencies:
       '@antfu/utils': 0.7.10
       '@dcloudio/vite-plugin-uni': 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
-      '@hlw-uni/mp-vue': 2.2.5(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+      '@hlw-uni/mp-vue': 2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       unplugin-auto-import: 0.17.8(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)
       vite: 5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0)
     transitivePeerDependencies:
@@ -8453,7 +8453,7 @@ snapshots:
       - '@vueuse/core'
       - rollup
 
-  '@hlw-uni/mp-vue@2.2.5(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
+  '@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
     dependencies:
       md5: 2.3.0
       pinia: 2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5))
@@ -9397,7 +9397,7 @@ snapshots:
       magic-string: 0.30.21
       pathe: 2.0.3
       perfect-debounce: 1.0.0
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
       unplugin-utils: 0.2.5
 
   '@unocss/config@65.5.0':
@@ -9437,7 +9437,7 @@ snapshots:
       '@unocss/rule-utils': 65.5.0
       css-tree: 3.2.1
       postcss: 8.5.15
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
 
   '@unocss/preset-attributify@65.5.0':
     dependencies:
@@ -9529,7 +9529,7 @@ snapshots:
       '@unocss/inspector': 65.5.0(vue@3.5.35(typescript@4.9.5))
       chokidar: 3.6.0
       magic-string: 0.30.21
-      tinyglobby: 0.2.16
+      tinyglobby: 0.2.17
       unplugin-utils: 0.2.5
       vite: 5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0)
     transitivePeerDependencies:
@@ -10476,7 +10476,7 @@ snapshots:
 
   base64url@3.0.1: {}
 
-  baseline-browser-mapping@2.10.32: {}
+  baseline-browser-mapping@2.10.33: {}
 
   bcrypt-pbkdf@1.0.2:
     dependencies:
@@ -10554,7 +10554,7 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.32
+      baseline-browser-mapping: 2.10.33
       caniuse-lite: 1.0.30001793
       electron-to-chromium: 1.5.364
       node-releases: 2.0.46
@@ -13687,7 +13687,7 @@ snapshots:
 
   tinyexec@1.2.3: {}
 
-  tinyglobby@0.2.16:
+  tinyglobby@0.2.17:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
