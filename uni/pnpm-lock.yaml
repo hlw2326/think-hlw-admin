@@ -24,8 +24,8 @@ importers:
         specifier: 3.0.0-5000720260410001
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vue':
-        specifier: ^2.2.6
-        version: 2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+        specifier: ^2.2.7
+        version: 2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.35(typescript@4.9.5))
@@ -56,7 +56,7 @@ importers:
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vite-plugin':
         specifier: ^1.0.51
-        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
+        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
       '@iconify-json/fa6-brands':
         specifier: ^1.2.6
         version: 1.2.6
@@ -1570,8 +1570,8 @@ packages:
       '@hlw-uni/mp-vue': '>=2.0.0'
       vite: '>=5.0.0'
 
-  '@hlw-uni/mp-vue@2.2.6':
-    resolution: {integrity: sha512-PH271JR539My+Gqod7iWeDmyfUG0Qv909GEPYk3828TIHhQGPnuD6jEMf29EEnf0dnPS9+onC84kn9B+Ey8wIw==}
+  '@hlw-uni/mp-vue@2.2.7':
+    resolution: {integrity: sha512-c6XqvPpH9h4V/JrlyL9GZwZwtsQ2yA4b3X91SV/rcZiC2YUxjkEooJSi7QdFvmSvm3t5mmsWN2XTy0X7DDVtsQ==}
     peerDependencies:
       pinia: '>=2.0.0'
       vue: '>=3.4.0'
@@ -8441,11 +8441,11 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
+  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
     dependencies:
       '@antfu/utils': 0.7.10
       '@dcloudio/vite-plugin-uni': 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.60.4)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
-      '@hlw-uni/mp-vue': 2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+      '@hlw-uni/mp-vue': 2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       unplugin-auto-import: 0.17.8(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.60.4)
       vite: 5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0)
     transitivePeerDependencies:
@@ -8453,7 +8453,7 @@ snapshots:
       - '@vueuse/core'
       - rollup
 
-  '@hlw-uni/mp-vue@2.2.6(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
+  '@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
     dependencies:
       md5: 2.3.0
       pinia: 2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5))
