@@ -23,6 +23,7 @@
     "zoujingli/think-plugs-admin": "^1.0",
     "zoujingli/think-plugs-center": "^1.0",
     "zoujingli/think-plugs-worker": "^1.0",
+    "zoujingli/wechat-developer": "^1.2",
     "hlw2326/think-plugin-base": "*"
   },
   "repositories": {
