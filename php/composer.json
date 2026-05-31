@@ -24,6 +24,8 @@
     "zoujingli/think-plugs-center": "^1.0",
     "zoujingli/think-plugs-worker": "^1.0",
     "zoujingli/wechat-developer": "^1.2",
+    "openai-php/client": "^0.10.1",
+    "guzzlehttp/guzzle": "^7.10",
     "hlw2326/think-plugin-base": "*"
   },
   "repositories": {

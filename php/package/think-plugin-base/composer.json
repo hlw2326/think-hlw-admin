@@ -13,7 +13,9 @@
   ],
   "require": {
     "php": ">=8.2",
-    "ext-json": "*"
+    "ext-json": "*",
+    "openai-php/client": "^0.10.1",
+    "guzzlehttp/guzzle": "^7.10"
   },
   "autoload": {
     "files": [
