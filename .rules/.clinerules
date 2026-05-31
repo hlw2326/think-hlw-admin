@@ -103,6 +103,7 @@ AI 在新增、修改后端代码时，请严格遵守以下目录职责：
     *   应该给组件和视图元素赋予高可读性、符合语义的 Class 名称（例如 `class="user-profile-card"`），并在 `<style scoped lang="scss">` 或对应样式文件中集中编写 CSS/SCSS。
     *   **优先且在有必要的情况下使用 `uni/unocss.config.ts` 自带的内置快捷 Class 属性**：如果项目中已内置了现成的快捷样式类（如 `flex-center`、`col-center`、`flex-between`、`flex-items-center`、`text-ellipsis`、`abs-center`、`btn`、`btn-*`、`tag-*`、`soft-shadow` 等），在有必要的情况下，**必须优先直接使用这些内置的 Class**，避免在 SCSS 中重复书写相同的通用 CSS 样式逻辑，从而保持前端代码和样式的精炼和高效。
     *   **必须统一使用 `rpx` 作为尺寸单位**：在编写各类 CSS/SCSS 样式属性（包括宽高、内边距 `padding`、外边距 `margin`、定位、字体大小等）时，**除极少数需要精确的极细边框外，一律统一且强制使用 `rpx` 响应式像素单位**（严禁随意使用 `px`），以确保小程序在不同宽度的移动端屏幕上能够完美按比例自适应缩放。
+*   **能用 CSS 变量的一定要用 CSS 变量**：在开发 `/uni` 小程序时，**凡是能使用 CSS 变量的场景，必须且强制使用 CSS 变量**（如主题色、背景色、文字颜色、字体大小、圆角、内距外距等）。严禁随意硬编码颜色值或尺寸，确保全局设计系统的一致性与易维护性。
 *   **CSS 字体大小与字重规范**：
     *   **必须使用字体大小变量**：在编写 CSS/SCSS 的 `font-size` 时，**严禁硬编码字号值**（如 `font-size: 28rpx;` 或 `font-size: 14px;`）。必须使用本项目定义的 CSS/SCSS 变量：
         *   **主题档**（与系统字体偏好联动）：`var(--font-xs)`、`var(--font-sm)`、`var(--font-base)`、`var(--font-md)`、`var(--font-lg)`、`var(--font-xl)`。
