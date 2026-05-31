@@ -9,11 +9,11 @@ use think\admin\Plugin;
 use think\exception\Handle;
 
 /**
- * 测试通用插件
+ * 通用插件
  */
 class Service extends Plugin
 {
-    protected $appName = '测试插件';
+    protected $appName = '通用插件';
 
     protected $package = 'hlw2326/think-plugin-base';
 

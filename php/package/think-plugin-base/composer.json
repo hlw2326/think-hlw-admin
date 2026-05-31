@@ -36,7 +36,7 @@
     },
     "config": {
       "type": "module",
-      "name": "测试插件",
+      "name": "通用插件",
       "document": "https://www.hlw2326.com",
       "description": "通用小程序管理插件",
       "license": []
