@@ -16,7 +16,7 @@ composer install
 cp .env.example .env
 php think migrate:run
 php think xadmin:publish --migrate
-php think run --host 192.168.5.12 --port 8000
+php think run --host 127.0.0.1 --port 8000
 ```
 
 如果安装依赖时遇到 `runtime/cache` 写入权限问题，可先执行：

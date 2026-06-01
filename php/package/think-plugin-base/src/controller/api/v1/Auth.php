@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\model\BaseUser;
 
 /**
  * 登录验证 API
  * @class Auth
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Auth extends Base
 {
@@ -37,4 +37,3 @@ class Auth extends Base
         $this->user = $user;
     }
 }
-

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\model\BaseUser;
 use plugin\base\service\AdService;
@@ -9,7 +9,7 @@ use plugin\base\service\AdService;
 /**
  * 广告相关 API
  * @class Ad
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Ad extends Base
 {
@@ -49,4 +49,3 @@ class Ad extends Base
         return $user;
     }
 }
-

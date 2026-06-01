@@ -1,7 +1,7 @@
-﻿import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
 
-@ServicePrefix("api")
-@ServiceNamespace("v1.login")
+@ServicePrefix("plugin-base")
+@ServiceNamespace("api.v1.login")
 class Login extends BaseService {
     in(params: ILogin.Params) {
         return this.request<ILogin.Result>({

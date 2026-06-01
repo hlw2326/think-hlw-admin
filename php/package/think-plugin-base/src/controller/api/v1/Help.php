@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\model\BaseHelp;
 
 /**
  * 帮助列表 API
  * @class Help
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Help extends Base
 {
@@ -54,4 +54,3 @@ class Help extends Base
         $this->success('操作成功');
     }
 }
-

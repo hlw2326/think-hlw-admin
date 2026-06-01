@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\service\AdService;
 
 /**
  * 系统配置 API
  * @class Config
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Config extends Base
 {

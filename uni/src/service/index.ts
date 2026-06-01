@@ -1,27 +1,39 @@
 import { md5 } from "js-md5";
 import { BaseService, ServiceNamespace, getDevice, getDeviceQuery, request, withQuery, toQuery, signText, type RequestConfig } from "@hlw-uni/mp-vue";
 import { useUser } from "@/core";
+import Ad from "./v1/ad";
+import Config from "./v1/config";
+import Help from "./v1/help";
+import Login from "./v1/login";
+import Tools from "./v1/tools";
+import Upload from "./v1/upload";
+import User from "./v1/user";
 
 type ServiceCtor = new () => BaseService;
 
 export interface ServiceMap {
-    ad: InstanceType<typeof import("./ad").default>;
-    config: InstanceType<typeof import("./config").default>;
-    help: InstanceType<typeof import("./help").default>;
-    login: InstanceType<typeof import("./login").default>;
-    tools: InstanceType<typeof import("./tools").default>;
-    upload: InstanceType<typeof import("./upload").default>;
-    user: InstanceType<typeof import("./user").default>;
+    v1: {
+        ad: Ad;
+        config: Config;
+        help: Help;
+        login: Login;
+        tools: Tools;
+        upload: Upload;
+        user: User;
+    };
 }
 
-const modules: Record<string, BaseService> = {};
-const files = import.meta.glob<{ default: ServiceCtor }>("./*/index.ts", { eager: true });
+const modules: Record<string, Record<string, BaseService>> = {};
+const files = import.meta.glob<{ default: ServiceCtor }>("./*/*.ts", { eager: true });
 
 for (const [path, module] of Object.entries(files)) {
-    const name = path.split("/")[1];
-    if (name) {
-        const instance = new module.default();
-        modules[name] = instance;
+    const parts = path.split("/");
+    const version = parts[1];
+    const filename = parts[2];
+    if (version && filename) {
+        const name = filename.replace(/\.ts$/, "");
+        modules[version] = modules[version] || {};
+        modules[version][name] = new module.default();
     }
 }
 

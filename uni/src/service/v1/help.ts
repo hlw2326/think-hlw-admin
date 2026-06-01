@@ -1,7 +1,7 @@
-﻿import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
 
-@ServicePrefix("api")
-@ServiceNamespace("v1.help")
+@ServicePrefix("plugin-base")
+@ServiceNamespace("api.v1.help")
 class Help extends BaseService {
     list(params: { cate_id?: number } = {}) {
         return this.request<IHelp.ListResult>({

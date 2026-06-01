@@ -1,7 +1,7 @@
-﻿import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, ServicePrefix } from "@hlw-uni/mp-vue";
 
-@ServicePrefix("api")
-@ServiceNamespace("v1.config")
+@ServicePrefix("plugin-base")
+@ServiceNamespace("api.v1.config")
 class Config extends BaseService {
     index(params: Record<string, unknown> = {}) {
         return this.request<{

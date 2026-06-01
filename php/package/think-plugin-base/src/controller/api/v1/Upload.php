@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use think\admin\Storage;
 use think\admin\storage\AliossStorage;
@@ -13,7 +13,7 @@ use think\Request;
 /**
  * 文件上传 API
  * @class Upload
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Upload extends Auth
 {
@@ -78,7 +78,7 @@ class Upload extends Auth
                     'token' => $qiniu->token($key, 3600),
                 ]);
             } else {
-                $this->error("暂未接入 {$type} 存储的直传");
+                $this->error("暂未接入 {$type} 存储 of 直传");
             }
         } catch (HttpResponseException $exception) {
             throw $exception;
@@ -206,4 +206,3 @@ class Upload extends Auth
         return $result === false || $result > 0;
     }
 }
-

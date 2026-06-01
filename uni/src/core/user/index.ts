@@ -37,7 +37,7 @@ export function useUser() {
         loginPromise = (async () => {
             try {
                 const inviteUid = app.invite_uid > 0 ? String(app.invite_uid) : "";
-                const res = await service.login.wx(inviteUid ? { invite_uid: inviteUid } : undefined);
+                const res = await service.v1.login.wx(inviteUid ? { invite_uid: inviteUid } : undefined);
                 if (res) {
                     store.token = res.token || "";
                     store.user = (res.user as IUser.Info) || null;
@@ -61,7 +61,7 @@ export function useUser() {
         }
 
         try {
-            const res = await service.user.info();
+            const res = await service.v1.user.info();
             if (res.code === 1 && res.data) {
                 store.user = res.data as IUser.Info;
                 return res.data as IUser.Info;
@@ -80,8 +80,8 @@ export function useUser() {
         if (!filePath) return false;
         uni.showLoading({ title: "上传中", mask: true });
         try {
-            const avatarUrl = await service.upload.file({ biz: "avatar", filePath });
-            const res = await service.user.update({ avatar_url: avatarUrl });
+            const avatarUrl = await service.v1.upload.file({ biz: "avatar", filePath });
+            const res = await service.v1.user.update({ avatar_url: avatarUrl });
             if (res.code !== 1 || !res.data) {
                 hlw.$msg.toast(res.info || "头像保存失败");
                 return false;
@@ -106,7 +106,7 @@ export function useUser() {
         }
         uni.showLoading({ title: "保存中", mask: true });
         try {
-            const res = await service.user.update({ nickname: name });
+            const res = await service.v1.user.update({ nickname: name });
             if (res.code !== 1 || !res.data) {
                 hlw.$msg.toast(res.info || "昵称保存失败");
                 return false;

@@ -15,7 +15,7 @@ export function useConfig() {
     const ad: ComputedRef<IConfig.Ad> = computed(() => store.ad);
 
     async function getConfig(): Promise<void> {
-        const res = await service.config.index();
+        const res = await service.v1.config.index();
         if (res.code !== 1 || !res.data) {
             hlw.$msg.toast(res.info || "配置加载失败");
             return;

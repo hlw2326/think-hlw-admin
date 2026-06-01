@@ -1,8 +1,8 @@
-﻿import { BaseService, ServiceNamespace, ServicePrefix, PluginService, getDevice } from "@hlw-uni/mp-vue";
+import { BaseService, ServiceNamespace, ServicePrefix, PluginService, getDevice } from "@hlw-uni/mp-vue";
 import { useUser } from "@/core";
 
-@ServicePrefix("api")
-@ServiceNamespace("v1.upload")
+@ServicePrefix("plugin-base")
+@ServiceNamespace("api.v1.upload")
 class Upload extends BaseService {
     sign(params: { biz: string; ext: string; size?: number }) {
         return this.request<IUpload.Sign>({

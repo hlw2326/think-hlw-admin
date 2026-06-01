@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\service\UserService;
 use WeMini\Crypt;
@@ -9,7 +9,7 @@ use WeMini\Crypt;
 /**
  * 登录服务 API
  * @class Login
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Login extends Base
 {
@@ -68,4 +68,3 @@ class Login extends Base
         ]);
     }
 }
-

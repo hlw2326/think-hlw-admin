@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\service\AiService;
 use Throwable;
@@ -9,7 +9,7 @@ use Throwable;
 /**
  * AI 服务 API
  * @class Ai
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Ai extends Auth
 {

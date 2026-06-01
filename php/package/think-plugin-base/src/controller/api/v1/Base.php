@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\api\controller\v1;
+namespace plugin\base\controller\api\v1;
 
 use plugin\base\model\BaseMp;
 use think\admin\Controller;
@@ -9,7 +9,7 @@ use think\admin\Controller;
 /**
  * 接口基础 API
  * @class Base
- * @package app\api\controller\v1
+ * @package plugin\base\controller\api\v1
  */
 class Base extends Controller
 {
@@ -67,5 +67,3 @@ class Base extends Controller
         ];
     }
 }
-
-

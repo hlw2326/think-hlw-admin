@@ -57,7 +57,7 @@ onShow(() => {
 
 async function getHelpList() {
     try {
-        const res = await service.help.list();
+        const res = await service.v1.help.list();
         if (res.code !== 1 || !res.data) {
             hlw.$msg.toast(res.info || "帮助内容加载失败");
             return;

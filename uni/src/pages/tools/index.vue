@@ -49,7 +49,7 @@ function openTool(item: ITools.Item) {
         return;
     }
 
-    service.tools.click({ id: item.id }).catch((error) => {
+    service.v1.tools.click({ id: item.id }).catch((error) => {
         console.warn("[tools] click failed", error);
     });
 
@@ -61,7 +61,7 @@ function openTool(item: ITools.Item) {
 }
 
 function getTools() {
-    service.tools
+    service.v1.tools
         .list()
         .then((res) => {
             if (res.code === 1 && res.data?.list) {
