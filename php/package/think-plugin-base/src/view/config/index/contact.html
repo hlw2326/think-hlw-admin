@@ -16,6 +16,27 @@
                     <fieldset class="layui-bg-gray">
                         <legend><b class="layui-badge think-bg-violet">{:lang('消息卡片')}</b></legend>
 
+                        <div class="layui-form-item">
+                            <span class="help-label label-required-prev"><b>{:lang('显示消息卡片')}</b>ShowMessageCard</span>
+                            <div class="layui-input help-checks" style="height:auto">
+                                <label class="think-radio">
+                                    {if $contact.show_message_card eq 1}
+                                    <input type="radio" name="show_message_card" value="1" lay-ignore checked> {:lang('显示')}
+                                    {else}
+                                    <input type="radio" name="show_message_card" value="1" lay-ignore> {:lang('显示')}
+                                    {/if}
+                                </label>
+                                <label class="think-radio">
+                                    {if $contact.show_message_card eq 0}
+                                    <input type="radio" name="show_message_card" value="0" lay-ignore checked> {:lang('隐藏')}
+                                    {else}
+                                    <input type="radio" name="show_message_card" value="0" lay-ignore> {:lang('隐藏')}
+                                    {/if}
+                                </label>
+                            </div>
+                            <span class="help-block">{:lang('控制客服进入会话时是否显示消息卡片。')}</span>
+                        </div>
+
                         <label class="layui-form-item">
                             <span class="help-label"><b>{:lang('消息卡片标题')}</b>SendMessageTitle</span>
                             <input class="layui-input" name="send_message_title" maxlength="30"
@@ -54,31 +75,6 @@
                                     data-type="png,jpg,jpeg" data-field="official_qrcode"></a>
                             </div>
                             <span class="help-block">{:lang('用于用户中心关注公众号弹窗，建议使用清晰的正方形二维码图片。')}</span>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="layui-bg-gray">
-                        <legend><b class="layui-badge think-bg-red">{:lang('显示开关')}</b></legend>
-
-                        <div class="layui-form-item">
-                            <span class="help-label label-required-prev"><b>{:lang('显示消息卡片')}</b>ShowMessageCard</span>
-                            <div class="layui-input help-checks" style="height:auto">
-                                <label class="think-radio">
-                                    {if $contact.show_message_card eq 1}
-                                    <input type="radio" name="show_message_card" value="1" lay-ignore checked> {:lang('显示')}
-                                    {else}
-                                    <input type="radio" name="show_message_card" value="1" lay-ignore> {:lang('显示')}
-                                    {/if}
-                                </label>
-                                <label class="think-radio">
-                                    {if $contact.show_message_card eq 0}
-                                    <input type="radio" name="show_message_card" value="0" lay-ignore checked> {:lang('隐藏')}
-                                    {else}
-                                    <input type="radio" name="show_message_card" value="0" lay-ignore> {:lang('隐藏')}
-                                    {/if}
-                                </label>
-                            </div>
-                            <span class="help-block">{:lang('控制客服进入会话时是否显示消息卡片。')}</span>
                         </div>
                     </fieldset>
 
