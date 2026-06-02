@@ -59,6 +59,9 @@ request.onRequest(async (config) => {
     const device = getDeviceQuery();
     url = withQuery(url, device);
 
+    // 附加当前时间戳参数 t（单位：秒）以配合后端做防重放校验
+    url = withQuery(url, `t=${Math.floor(Date.now() / 1000)}`);
+
     const secret = import.meta.env.VITE_SIG_SECRET ?? "";
     if (secret) {
         url = withQuery(url, `sig=${md5(signText(url) + secret)}`);

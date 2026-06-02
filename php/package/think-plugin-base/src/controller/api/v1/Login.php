@@ -58,8 +58,13 @@ class Login extends Base
             $this->error($exception->getMessage());
         }
 
+        $oldToken = (string)($user->token ?? '');
         $token = bin2hex(random_bytes(32));
-        $user->save(['token' => $token]);
+        $user->save([
+            'token' => $token,
+            'old_token' => $oldToken,
+            'old_token_time' => time(),
+        ]);
         $user->refresh();
 
         $this->success('登录成功', [

@@ -52,6 +52,20 @@ if (!function_exists('verify_sig')) {
             return [false, '缺少签名', []];
         }
 
-        return hash_equals($expected, $sig) ? [true, '', []] : [false, '签名校验失败', []];
+        if (!hash_equals($expected, $sig)) {
+            return [false, '签名校验失败', []];
+        }
+
+        // 校验时间戳防重放（允许 5 分钟时钟偏差）
+        $time = intval($request->get('t', 0));
+        if ($time <= 0) {
+            return [false, '请求缺少时间戳', []];
+        }
+
+        if (abs(time() - $time) > 300) {
+            return [false, '请求链接已过期', []];
+        }
+
+        return [true, '', []];
     }
 }
