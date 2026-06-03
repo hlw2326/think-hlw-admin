@@ -27,7 +27,7 @@
                 {field: 'logo', title: 'Logo', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.logo)}}</div>'},
                 {field: 'title', title: '标题', minWidth: 140},
                 {field: 'desc', title: '描述', minWidth: 220},
-                {field: 'appid', title: '跳转 AppID', minWidth: 180},
+                {field: 'appid', title: '跳转 AppID', minWidth: 180, templet: '#AppIdTpl'},
                 {field: 'path', title: '路径', minWidth: 180},
                 {field: 'click_count', title: '点击次数', width: 120, align: 'center', sort: true},
                 {field: 'status', title: '状态', width: 120, align: 'center', templet: '#StatusSwitchTpl'},
@@ -46,6 +46,16 @@
             }, false);
         });
     });
+</script>
+
+<script type="text/html" id="AppIdTpl">
+    {{# if (d.appid) { }}
+    <span class="pointer" data-copy="{{d.appid}}" data-tips-text="点击复制 AppID">
+        {{d.appid}} <span class="layui-icon layui-icon-file color-desc margin-left-5" style="font-size:12px"></span>
+    </span>
+    {{# } else { }}
+    <span class="color-desc">-</span>
+    {{# } }}
 </script>
 
 <script type="text/html" id="SortInputTpl">

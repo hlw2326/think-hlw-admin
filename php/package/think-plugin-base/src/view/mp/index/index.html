@@ -25,7 +25,7 @@
                 {field: 'sort', title: '排序', width: 100, align: 'center', sort: true, templet: '#SortInputTpl'},
                 {field: 'logo', title: 'Logo', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.logo)}}</div>'},
                 {field: 'name', title: '名称', minWidth: 150},
-                {field: 'appid', title: 'AppID', minWidth: 180},
+                {field: 'appid', title: 'AppID', minWidth: 180, templet: '#AppIdTpl'},
                 {field: 'appsecret', title: 'AppSecret', minWidth: 220, templet: '#AppSecretTpl'},
                 {field: 'vip_no_ad', title: 'VIP去广告', width: 110, align: 'center', templet: '#VipNoAdTpl'},
                 {title: '广告状态', minWidth: 200, align: 'center', templet: '#AdStatusTpl'},
@@ -73,6 +73,16 @@
     {{# } else { }}
     <span>{{ d.appsecret }}</span>
     {{# } }}
+    {{# } else { }}
+    <span class="color-desc">-</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="AppIdTpl">
+    {{# if (d.appid) { }}
+    <span class="pointer" data-copy="{{d.appid}}" data-tips-text="点击复制 AppID">
+        {{d.appid}} <span class="layui-icon layui-icon-file color-desc margin-left-5" style="font-size:12px"></span>
+    </span>
     {{# } else { }}
     <span class="color-desc">-</span>
     {{# } }}
