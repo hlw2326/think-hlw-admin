@@ -36,7 +36,31 @@ php think xadmin:worker
 ```
 
 > [!TIP]
-> 生产或宝塔环境下，建议在宝塔 **应用商店** 安装 **进程守护管理器** 来添加并管理该后台守护进程（启动命令为 `php think xadmin:worker`），以确保服务稳定运行及异常自动重启。
+> 生产或宝塔环境下，建议在宝塔 **应用商店** 安装 **进程守护管理器3.0.6** 来添加并管理该后台守护进程（启动命令为 `php think xadmin:worker`），以确保服务稳定运行及异常自动重启。
+
+### Nginx 反向代理配置
+
+由于 Workerman 默认运行在本地端口（默认监听 `127.0.0.1:2346`，可在 [config/worker.php](file:///f:/mini/admin/php/config/worker.php#L7) 中修改 `port` 参数），在生产环境下需要配置 Nginx 反向代理以对外提供服务（支持 80/443 端口及 SSL）。
+
+**宝塔反向代理配置步骤：**
+1. 打开宝塔面板对应的站点设置。
+2. 选择 **反向代理** -> **添加反向代理**。
+3. **代理名称** 填入如 `workerman`。
+4. **目标URL** 填入 `http://127.0.0.1:2346`（若在 [worker.php](file:///f:/mini/admin/php/config/worker.php) 中修改了端口，此处请同步修改）。
+5. 开启 **启用反向代理**。
+
+**Nginx 配置文件规则参考：**
+```nginx
+location / {
+    proxy_pass http://127.0.0.1:2346;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded-for;
+    proxy_set_header Host $host;
+}
+```
 
 ## 常用目录
 
