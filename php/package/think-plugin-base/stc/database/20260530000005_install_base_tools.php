@@ -37,31 +37,11 @@ class InstallBaseTools extends Migrator
             ['create_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '创建时间']],
             ['update_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']],
         ], [
-            'appid', 'status', 'sort', 'click_count',
+            'appid',
+            'status',
+            'sort',
+            'click_count',
         ]);
-
-        if (!$this->fetchRow("SELECT id FROM base_tools LIMIT 1")) {
-            $this->table('base_tools')->insert([
-                [
-                    'title' => '图片处理工具',
-                    'desc' => '更多图片压缩、裁剪和格式转换工具',
-                    'logo' => '',
-                    'appid' => '',
-                    'path' => 'pages/index/index',
-                    'sort' => 100,
-                    'status' => 1,
-                ],
-                [
-                    'title' => '视频工具箱',
-                    'desc' => '常用视频处理能力集合',
-                    'logo' => '',
-                    'appid' => '',
-                    'path' => 'pages/index/index',
-                    'sort' => 90,
-                    'status' => 1,
-                ],
-            ])->saveData();
-        }
     }
 }
 

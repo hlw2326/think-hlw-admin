@@ -43,6 +43,7 @@ php think xadmin:worker
 由于 Workerman 默认运行在本地端口（默认监听 `127.0.0.1:2346`，可在 [config/worker.php](file:///f:/mini/admin/php/config/worker.php#L7) 中修改 `port` 参数），在生产环境下需要配置 Nginx 反向代理以对外提供服务（支持 80/443 端口及 SSL）。
 
 **宝塔反向代理配置步骤：**
+
 1. 打开宝塔面板对应的站点设置。
 2. 选择 **反向代理** -> **添加反向代理**。
 3. **代理名称** 填入如 `workerman`。
@@ -50,6 +51,7 @@ php think xadmin:worker
 5. 开启 **启用反向代理**。
 
 **Nginx 配置文件规则参考：**
+
 ```nginx
 location / {
     proxy_pass http://127.0.0.1:2346;
@@ -66,7 +68,6 @@ location / {
 
 ```text
 app/admin/       后台管理模块
-app/wechat/      微信开发模块
 app/index/       入口页面模块
 config/          应用配置
 database/        数据迁移与本地数据库
