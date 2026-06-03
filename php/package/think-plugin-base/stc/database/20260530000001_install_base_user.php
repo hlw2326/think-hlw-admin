@@ -27,6 +27,8 @@ class InstallBaseUser extends Migrator
         ]);
         PhinxExtend::upgrade($table, [
             ['token', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '登录Token']],
+            ['old_token', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '临时Token']],
+            ['old_token_time', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '临时Token时间']],
             ['openid', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '微信OpenID']],
             ['appid', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '小程序AppID']],
             ['pid', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '推荐人用户表ID']],
@@ -51,8 +53,8 @@ class InstallBaseUser extends Migrator
             ['screen_width', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '屏幕宽度']],
             ['screen_height', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '屏幕高度']],
             ['sdk_version', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '微信基础库版本']],
-            ['app_version', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '小程序版本号']],
-            ['app_channel', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '小程序来源渠道']],
+            ['version', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '小程序版本号']],
+            ['channel', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '小程序来源渠道']],
             ['create_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '创建时间']],
             ['update_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']],
         ], [

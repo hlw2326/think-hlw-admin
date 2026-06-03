@@ -24,8 +24,8 @@ importers:
         specifier: 3.0.0-5000720260410001
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vue':
-        specifier: ^2.2.7
-        version: 2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+        specifier: ^2.2.8
+        version: 2.2.8(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.35(typescript@4.9.5))
@@ -56,7 +56,7 @@ importers:
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
       '@hlw-uni/mp-vite-plugin':
         specifier: ^1.0.51
-        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
+        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.8(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))
       '@iconify-json/fa6-brands':
         specifier: ^1.2.6
         version: 1.2.6
@@ -1570,8 +1570,8 @@ packages:
       '@hlw-uni/mp-vue': '>=2.0.0'
       vite: '>=5.0.0'
 
-  '@hlw-uni/mp-vue@2.2.7':
-    resolution: {integrity: sha512-c6XqvPpH9h4V/JrlyL9GZwZwtsQ2yA4b3X91SV/rcZiC2YUxjkEooJSi7QdFvmSvm3t5mmsWN2XTy0X7DDVtsQ==}
+  '@hlw-uni/mp-vue@2.2.8':
+    resolution: {integrity: sha512-MLrJJ/66SNsWC+xKTd5pTFlH6LzA+gKxBwCF+g18XCX7E0d0cPCYCTvOQ3Ao8MLR39+PHwVHm5IqO5zHFr2Feg==}
     peerDependencies:
       pinia: '>=2.0.0'
       vue: '>=3.4.0'
@@ -3623,8 +3623,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  electron-to-chromium@1.5.364:
-    resolution: {integrity: sha512-G/dYE3+AYhyHwzTwg8UbnXf7zqMERYh7l2jJ3QujhFsH8agSYwtnGAR2aZ7f0AakIKJXd5En/Hre4igIUrdlYw==}
+  electron-to-chromium@1.5.366:
+    resolution: {integrity: sha512-OlRuhb688YTCzzU3gXPLn6nGyd+F+53INE1qaKKlu6kETErE8FYsyDh0XqXEU+uBRn0MpCzz2vfNwORhkap8qg==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -4846,8 +4846,8 @@ packages:
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
 
-  node-releases@2.0.46:
-    resolution: {integrity: sha512-GYVXHE2KnrzAfsAjl4uP++evGFCrAU1jta4ubEjIG7YWt/64Gqv66a30yKwWczVjA6j3bM4nBwH7Pk1JmDHaxQ==}
+  node-releases@2.0.47:
+    resolution: {integrity: sha512-Uzmd6LXpouKo8EUK68IjH4+E01w/hXyV3R3g/geCJo+rXLNfh1xucB+LOzYEOQPSiUK3h/xZf0cQGcSsmyL2Og==}
     engines: {node: '>=18'}
 
   normalize-package-data@2.5.0:
@@ -8438,11 +8438,11 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
+  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5)))(@hlw-uni/mp-vue@2.2.8(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))':
     dependencies:
       '@antfu/utils': 0.7.10
       '@dcloudio/vite-plugin-uni': 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.61.0)(vite@5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0))(vue@3.5.35(typescript@4.9.5))
-      '@hlw-uni/mp-vue': 2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
+      '@hlw-uni/mp-vue': 2.2.8(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))
       unplugin-auto-import: 0.17.8(@vueuse/core@10.11.1(vue@3.5.35(typescript@4.9.5)))(rollup@4.61.0)
       vite: 5.2.8(@types/node@25.9.1)(less@4.5.1)(sass@1.100.0)(terser@5.48.0)
     transitivePeerDependencies:
@@ -8450,7 +8450,7 @@ snapshots:
       - '@vueuse/core'
       - rollup
 
-  '@hlw-uni/mp-vue@2.2.7(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
+  '@hlw-uni/mp-vue@2.2.8(pinia@2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5)))(vue@3.5.35(typescript@4.9.5))':
     dependencies:
       md5: 2.3.0
       pinia: 2.3.1(typescript@4.9.5)(vue@3.5.35(typescript@4.9.5))
@@ -10551,8 +10551,8 @@ snapshots:
     dependencies:
       baseline-browser-mapping: 2.10.33
       caniuse-lite: 1.0.30001793
-      electron-to-chromium: 1.5.364
-      node-releases: 2.0.46
+      electron-to-chromium: 1.5.366
+      node-releases: 2.0.47
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
   buffer-alloc-unsafe@1.1.0: {}
@@ -11097,7 +11097,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.5.364: {}
+  electron-to-chromium@1.5.366: {}
 
   emoji-regex@8.0.0: {}
 
@@ -12506,7 +12506,7 @@ snapshots:
 
   node-fetch-native@1.6.7: {}
 
-  node-releases@2.0.46: {}
+  node-releases@2.0.47: {}
 
   normalize-package-data@2.5.0:
     dependencies:

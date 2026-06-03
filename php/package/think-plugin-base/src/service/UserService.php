@@ -74,8 +74,8 @@ class UserService
             'screen_width' => intval($device['screen_width'] ?? 0),
             'screen_height' => intval($device['screen_height'] ?? 0),
             'sdk_version' => $device['sdk_version'] ?? '',
-            'app_version' => $device['app_version'] ?? '',
-            'app_channel' => $device['app_channel'] ?? '',
+            'version' => $device['version'] ?? '',
+            'channel' => $device['channel'] ?? '',
             'login_ip' => $ip,
             'login_at' => date('Y-m-d H:i:s'),
             'status' => 1,
@@ -100,8 +100,8 @@ class UserService
             'screen_width' => intval($device['screen_width'] ?? 0),
             'screen_height' => intval($device['screen_height'] ?? 0),
             'sdk_version' => $device['sdk_version'] ?? '',
-            'app_version' => $device['app_version'] ?? '',
-            'app_channel' => $device['app_channel'] ?? '',
+            'version' => $device['version'] ?? '',
+            'channel' => $device['channel'] ?? '',
         ];
 
         if ($unionid !== '' && empty($user->unionid)) {

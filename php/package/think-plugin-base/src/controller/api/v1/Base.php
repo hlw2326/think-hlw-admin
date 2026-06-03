@@ -41,9 +41,9 @@ class Base extends Controller
 
         $this->device = [
             'app_name' => $this->request->get('app_name', ''),
-            'app_version' => $this->request->get('app_version', ''),
-            'app_version_code' => $this->request->get('app_version_code', ''),
-            'app_channel' => $this->request->get('app_channel', ''),
+            'version' => $this->request->get('version', ''),
+            'version_code' => $this->request->get('version_code', ''),
+            'channel' => $this->request->get('channel', ''),
             'device_brand' => $this->request->get('device_brand', ''),
             'device_model' => $this->request->get('device_model', ''),
             'device_id' => $this->request->get('device_id', ''),
