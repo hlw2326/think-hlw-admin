@@ -27,6 +27,17 @@ composer install --no-scripts
 
 生产或宝塔环境请确认 `runtime/`、`public/upload/` 可写，必要时调整目录权限和 PHP-FPM 运行用户。
 
+## 启动 Workerman 服务
+
+通过 Workerman 方式，启动默认 Http 服务：
+
+```bash
+php think xadmin:worker
+```
+
+> [!TIP]
+> 生产或宝塔环境下，建议在宝塔 **应用商店** 安装 **进程守护管理器** 来添加并管理该后台守护进程（启动命令为 `php think xadmin:worker`），以确保服务稳定运行及异常自动重启。
+
 ## 常用目录
 
 ```text
