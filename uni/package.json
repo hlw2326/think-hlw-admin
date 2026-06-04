@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "uni -p mp-weixin --mode dev",
+        "dev:prod": "uni -p mp-weixin --mode prod",
         "build": "uni build -p mp-weixin --mode prod",
         "type-check": "vue-tsc --noEmit"
     },
