@@ -267,18 +267,20 @@
             $copy.attr('data-copy', url);
         }
 
-        function updatePreview() {
+        function updatePreview(triggerAnimation) {
             var replyType = $('input[name="reply_type"]:checked').val();
             var $textSpan = $('#preview-text-content');
             var $img = $('#preview-image-content');
             var $msg = $('.chat-msg');
 
-            // Trigger reflow to restart slide animation
-            $msg.removeClass('chat-msg-animated');
-            if ($msg.length > 0) {
-                void $msg[0].offsetWidth; 
+            if (triggerAnimation) {
+                // Trigger reflow to restart slide animation
+                $msg.removeClass('chat-msg-animated');
+                if ($msg.length > 0) {
+                    void $msg[0].offsetWidth; 
+                }
+                $msg.addClass('chat-msg-animated');
             }
-            $msg.addClass('chat-msg-animated');
             
             if (replyType === 'text') {
                 $img.hide();
@@ -298,16 +300,16 @@
         });
 
         $('body').off('input change', '[name="content"]').on('input change', '[name="content"]', function () {
-            updatePreview();
+            updatePreview(false);
         }).off('change', '[name="image_url"]').on('change', '[name="image_url"]', function () {
-            updatePreview();
+            updatePreview(true);
         });
 
         $('body').off('click', 'input[name=reply_type]').on('click', 'input[name=reply_type]', function () {
             var value = $(this).val(), $form = $(this).parents('form');
             var $current = $form.find('[data-keys-type="' + value + '"]').removeClass('layui-hide');
             $form.find('[data-keys-type]').not($current).addClass('layui-hide');
-            updatePreview();
+            updatePreview(true);
         });
 
         $('body').off('click', 'input[name=match_type]').on('click', 'input[name=match_type]', function () {
@@ -317,6 +319,6 @@
         $('input[name=reply_type]:checked').trigger('click');
         $('input[name=match_type]:checked').trigger('click');
         syncCustomerUrl();
-        updatePreview();
+        updatePreview(true);
     });
 </script>
