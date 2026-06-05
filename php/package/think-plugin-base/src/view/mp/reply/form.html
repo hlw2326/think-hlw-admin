@@ -47,29 +47,11 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .mobile-header {
-        height: 44px;
-        line-height: 44px;
-        text-align: center;
-        background: #ededed;
-        color: #191919;
-        font-size: 15px;
-        font-weight: 500;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
     .mobile-body {
-        height: 526px;
+        height: 568px;
         padding: 15px;
         overflow-y: auto;
         box-sizing: border-box;
-    }
-
-    .chat-time {
-        text-align: center;
-        color: #b2b2b2;
-        font-size: 12px;
-        margin-bottom: 15px;
     }
 
     .chat-msg {
@@ -125,9 +107,7 @@
 
 <div class="nowrap padding-10 base-reply-form">
     <div class="mobile-preview inline-block">
-        <div class="mobile-header">小程序客服</div>
         <div class="mobile-body">
-            <div class="chat-time" id="chat-time-display">18:24</div>
             <div class="chat-msg">
                 <div class="chat-avatar">KF</div>
                 <div class="chat-bubble">
@@ -229,12 +209,6 @@
 
 <script>
     $(function () {
-        // Mock current time
-        var now = new Date();
-        var hh = String(now.getHours()).padStart(2, '0');
-        var mm = String(now.getMinutes()).padStart(2, '0');
-        $('#chat-time-display').text(hh + ':' + mm);
-
         function syncCustomerUrl(appid) {
             var $form = $('.base-reply-form form');
             appid = appid === undefined ? $form.find('[name="appid"]').val() : appid;
