@@ -12,6 +12,7 @@
             even: true, height: 'full',
             sort: {field: 'id', type: 'desc'},
             cols: [[
+                {checkbox: true},
                 {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
                 {field: 'avatar_url', title: '头像', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.avatar_url)}}</div>'},
                 {field: 'nickname', title: '昵称', width: 140},

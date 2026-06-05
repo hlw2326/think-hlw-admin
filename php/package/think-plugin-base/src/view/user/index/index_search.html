@@ -50,6 +50,56 @@
 
         <div class="layui-form-item layui-inline">
             <button class="layui-btn layui-btn-primary" data-form-search type="submit"><i class="layui-icon">&#xe615;</i> 搜索</button>
+            <button type="button" data-form-export="{:url('index')}?type={$type|default=''}" class="layui-btn layui-btn-primary">
+                <i class="layui-icon layui-icon-export"></i> {:lang('导 出')}
+            </button>
         </div>
     </fieldset>
 </form>
+
+<script>
+    require(['excel'], function (excel) {
+        excel.bind(function (data) {
+            // 设置表格内容
+            data.forEach(function (item, index) {
+                var vipTime = item.vip_time > 0 ? layui.util.toDateString(item.vip_time * 1000, 'yyyy-MM-dd HH:mm') : '未开通';
+                var resolution = (item.screen_width && item.screen_height) ? (item.screen_width + 'x' + item.screen_height) : '--';
+                var statusText = item.status > 0 ? '正常' : '禁用';
+                
+                data[index] = [
+                    item.id,
+                    item.avatar_url || '',
+                    item.nickname || '',
+                    item.pid || 0,
+                    item.appid || '',
+                    vipTime,
+                    item.login_at || '',
+                    item.login_ip || '',
+                    item.last_login_at || '',
+                    item.last_login_ip || '',
+                    item.device_model || '',
+                    item.device_system || '',
+                    resolution,
+                    item.sdk_version || '',
+                    statusText,
+                    item.create_at || ''
+                ];
+            });
+
+            // 设置表头内容
+            data.unshift([
+                'ID', '头像', '昵称', '推荐人ID', 'AppID', '会员到期', 
+                '最近登录时间', '最近登录IP', '上次登录时间', '上次登录IP', 
+                '设备型号', '系统版本', '分辨率', 'SDK版本', '状态', '注册时间'
+            ]);
+
+            // 应用表格样式
+            return this.withStyle(data, {
+                A: 60, B: 100, C: 120, D: 80, E: 150, F: 130, 
+                G: 150, H: 110, I: 150, J: 110, K: 120, L: 100, 
+                M: 100, N: 80, O: 60, P: 150
+            });
+
+        }, '用户列表_' + layui.util.toDateString(Date.now(), '_yyyyMMdd_HHmmss'));
+    });
+</script>

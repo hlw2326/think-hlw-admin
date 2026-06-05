@@ -4,6 +4,12 @@
 <!--{if auth("add")}-->
 <button data-modal='{:url("add")}' data-title="添加帮助" class="layui-btn layui-btn-sm layui-btn-primary">添加帮助</button>
 <!--{/if}-->
+<!--{if auth("import")}-->
+<button data-modal='{:url("import")}' data-title="导入帮助数据" class="layui-btn layui-btn-sm layui-btn-primary">导入数据</button>
+<!--{/if}-->
+<!--{if auth("export")}-->
+<a class="layui-btn layui-btn-sm layui-btn-primary" href='{:url("export")}' target="_blank">导出数据</a>
+<!--{/if}-->
 <!--{if auth("remove")}-->
 <a data-confirm="确定要删除这些帮助内容吗？" data-table-id="HelpTable" data-action='{:url("remove")}' data-rule="id#{id}" class="layui-btn layui-btn-sm layui-btn-danger">批量删除</a>
 <!--{/if}-->

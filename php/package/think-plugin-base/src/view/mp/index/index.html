@@ -7,6 +7,9 @@
 <!--{if auth("import")}-->
 <button data-modal='{:url("import")}' data-title="导入小程序JSON数据" class="layui-btn layui-btn-sm layui-btn-primary">导入JSON数据</button>
 <!--{/if}-->
+<!--{if auth("export")}-->
+<a class="layui-btn layui-btn-sm layui-btn-primary" href='{:url("export")}' target="_blank">导出数据</a>
+<!--{/if}-->
 <!--{if auth("remove")}-->
 <a data-confirm="确定要删除这些小程序吗？" data-table-id="AppTable" data-action='{:url("remove")}' data-rule="id#{id}" class="layui-btn layui-btn-sm layui-btn-danger">批量删除</a>
 <!--{/if}-->
@@ -28,7 +31,7 @@
                 {field: 'sort', title: '排序', width: 100, align: 'center', sort: true, templet: '#SortInputTpl'},
                 {field: 'logo', title: 'Logo', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.logo)}}</div>'},
                 {field: 'name', title: '名称', width: 150},
-                {field: 'appid', title: 'AppID', width: 150, templet: '#AppIdTpl'},
+                {field: 'appid', title: 'AppID', width: 180, templet: '#AppIdTpl'},
                 {field: 'appsecret', title: 'AppSecret', width: 200, templet: '#AppSecretTpl'},
                 {field: 'vip_no_ad', title: 'VIP去广告', width: 110, align: 'center', templet: '#VipNoAdTpl'},
                 {title: '广告状态', width: 260, align: 'center', templet: '#AdStatusTpl'},

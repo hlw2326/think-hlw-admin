@@ -198,5 +198,30 @@ class Index extends Controller
         }
         $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
     }
+
+    /**
+     * 导出数据
+     * @auth true
+     */
+    public function export(): void
+    {
+        $query = BaseMp::mQuery();
+        $query->like('name')->like('appid')->equal('status');
+        
+        $fields = [
+            'name', 'appid', 'appsecret', 'pages_config', 'token', 'encodingaeskey', 
+            'custom_reply_enabled', 'logo', 'remark', 'banner_unit_id', 'grid_unit_id', 
+            'custom_unit_id', 'video_unit_id', 'reward_unit_id', 'popup_unit_id', 
+            'ad_global_enabled', 'ad_enabled_banner', 'ad_enabled_grid', 
+            'ad_enabled_custom', 'ad_enabled_video', 'ad_enabled_reward', 
+            'ad_enabled_popup', 'vip_no_ad', 'sort', 'status'
+        ];
+        $list = $query->db()->field($fields)->order('sort desc,id asc')->select()->toArray();
+        $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Disposition: attachment; filename="mp_' . date('YmdHis') . '.json"');
+        echo $data;
+        exit;
+    }
 }
 

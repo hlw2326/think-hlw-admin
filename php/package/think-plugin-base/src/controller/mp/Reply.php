@@ -215,5 +215,107 @@ class Reply extends Controller
     {
         BaseMpReply::mDelete();
     }
+
+    /**
+     * 导出数据
+     * @auth true
+     */
+    public function export(): void
+    {
+        $appid = (string)($this->request->get('appid', ''));
+        $query = BaseMpReply::mQuery();
+        $query->like('keyword|content#keys')->equal('reply_type#mtype,match_type,status')->dateBetween('create_at');
+        
+        $fields = ['msg_type', 'match_type', 'keyword', 'reply_type', 'content', 'image_url', 'sort', 'status'];
+        $list = $query->db()->where(['appid' => $appid])->order('sort desc,id asc')->field($fields)->select()->toArray();
+        $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        
+        $filename = 'reply_' . ($appid ? $appid : 'common') . '_' . date('YmdHis') . '.json';
+        header('Content-Type: application/json; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        echo $data;
+        exit;
+    }
+
+    /**
+     * 导入数据
+     * @auth true
+     */
+    public function import(): void
+    {
+        $appid = (string)($this->request->get('appid', ''));
+        if ($this->request->isGet()) {
+            $this->appid = $appid;
+            $this->fetch();
+            return;
+        }
+
+        $jsonData = $this->request->post('json_data', '');
+        if (empty($jsonData)) {
+            $this->error('JSON数据不能为空！');
+        }
+
+        $data = json_decode($jsonData, true);
+        if ($data === null) {
+            $this->error('JSON解析失败，请检查格式是否正确！');
+        }
+
+        // 支持导入单条或多条数组
+        $list = (isset($data['match_type']) || isset($data['reply_type'])) ? [$data] : $data;
+        if (!is_array($list)) {
+            $this->error('无效的JSON格式，必须是单个对象或数组！');
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+
+        // 允许导入的字段列表
+        $allowedFields = [
+            'msg_type', 'match_type', 'keyword', 'reply_type', 'content', 'image_url', 'sort', 'status'
+        ];
+
+        try {
+            foreach ($list as $item) {
+                $matchType = trim((string)($item['match_type'] ?? 'exact'));
+                $keyword = trim((string)($item['keyword'] ?? ''));
+
+                $updateData = [];
+                foreach ($allowedFields as $field) {
+                    if (isset($item[$field])) {
+                        $updateData[$field] = $item[$field];
+                    }
+                }
+                $updateData['appid'] = $appid;
+
+                // 匹配规则：
+                // 如果是默认回复，只按 appid 和 match_type = 'default' 匹配
+                // 如果是其他回复，按 appid、match_type 和 keyword 匹配
+                if ($matchType === 'default') {
+                    $reply = BaseMpReply::mk()->where(['appid' => $appid, 'match_type' => 'default'])->findOrEmpty();
+                } else {
+                    if (empty($keyword)) {
+                        $failCount++;
+                        continue;
+                    }
+                    $reply = BaseMpReply::mk()->where(['appid' => $appid, 'match_type' => $matchType, 'keyword' => $keyword])->findOrEmpty();
+                }
+
+                if ($reply->isEmpty()) {
+                    // 添加新记录
+                    BaseMpReply::mk($updateData)->save();
+                } else {
+                    // 更新已存在记录
+                    $reply->save($updateData);
+                }
+                $successCount++;
+            }
+        } catch (\think\exception\HttpResponseException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->error('导入失败：' . $e->getMessage());
+        }
+        $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
+    }
 }
+
 
