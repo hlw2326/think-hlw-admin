@@ -1,147 +1,175 @@
 <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="AppTable">
-    <div class="layui-card-body">
+    <div class="layui-card-body padding-left-40 padding-right-40">
 
         <fieldset class="layui-bg-gray">
-            <legend><b class="layui-badge think-bg-violet">{:lang('广告配置')}</b></legend>
+            <legend><b class="layui-badge think-bg-violet">{:lang('全局广告控制')}</b></legend>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label">全局广告</label>
-                <div class="layui-input-block">
-                    <div class="radio-line">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_global_enabled" value="1" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio">
-                            <input type="radio" name="ad_global_enabled" value="0" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">全局广告</label>
+                        <div class="layui-input-block">
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_global_enabled" value="1" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_global_enabled" value="0" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
+                            <p class="help-block"><b>必选</b>，控制所有广告的整体显示状态</p>
+                        </div>
                     </div>
-                    <p class="help-block"><b>必选</b>，控制所有广告的整体显示状态</p>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">VIP 去广告</label>
+                        <div class="layui-input-block">
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="vip_no_ad" value="1" lay-ignore {if !empty($vo.vip_no_ad)}checked{/if}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="vip_no_ad" value="0" lay-ignore {if empty($vo.vip_no_ad)}checked{/if}> 关闭
+                                </label>
+                            </div>
+                            <p class="help-block"><b>必选</b>，设置 VIP 会员用户是否屏蔽所有广告</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </fieldset>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label">VIP 去广告</label>
-                <div class="layui-input-block">
-                    <div class="radio-line">
-                        <label class="think-radio">
-                            <input type="radio" name="vip_no_ad" value="1" lay-ignore {if !empty($vo.vip_no_ad)}checked{/if}> 开启
-                        </label>
-                        <label class="think-radio">
-                            <input type="radio" name="vip_no_ad" value="0" lay-ignore {if empty($vo.vip_no_ad)}checked{/if}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>必选</b>，设置 VIP 会员用户是否屏蔽所有小程序展示广告</p>
-                </div>
+        <fieldset class="layui-bg-gray margin-top-15">
+            <legend><b class="layui-badge think-bg-violet">{:lang('广告单元明细')}</b></legend>
+            <div class="layui-card-body" style="padding: 10px 0;">
+                <table class="layui-table" lay-skin="line" style="margin: 0; background: transparent;">
+                    <thead>
+                        <tr>
+                            <th style="width: 140px; font-weight: bold; background: transparent;">广告类型</th>
+                            <th style="width: 380px; font-weight: bold; background: transparent;">广告 Unit ID</th>
+                            <th style="width: 140px; font-weight: bold; background: transparent;">启用状态</th>
+                            <th style="font-weight: bold; background: transparent;">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>横幅广告</b></td>
+                            <td>
+                                <input name="banner_unit_id" value="{$vo.banner_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_banner" value="1" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_banner" value="0" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序横幅广告单元 ID (banner_unit_id)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>格子广告</b></td>
+                            <td>
+                                <input name="grid_unit_id" value="{$vo.grid_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_grid" value="1" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_grid" value="0" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序格子广告单元 ID (grid_unit_id)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>原生模板广告</b></td>
+                            <td>
+                                <input name="custom_unit_id" value="{$vo.custom_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_custom" value="1" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_custom" value="0" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序自定义/原生模板广告单元 ID (custom_unit_id)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>视频贴片广告</b></td>
+                            <td>
+                                <input name="video_unit_id" value="{$vo.video_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_video" value="1" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_video" value="0" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序前贴片/视频广告单元 ID (video_unit_id)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>激励视频广告</b></td>
+                            <td>
+                                <input name="reward_unit_id" value="{$vo.reward_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_reward" value="1" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_reward" value="0" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序激励视频广告单元 ID (reward_unit_id)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>插屏广告</b></td>
+                            <td>
+                                <input name="popup_unit_id" value="{$vo.popup_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
+                            </td>
+                            <td>
+                                <div class="radio-line" style="min-height: auto;">
+                                    <label class="think-radio">
+                                        <input type="radio" name="ad_enabled_popup" value="1" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='1'}checked{/eq}> 开启
+                                    </label>
+                                    <label class="think-radio" style="margin-left: 10px;">
+                                        <input type="radio" name="ad_enabled_popup" value="0" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='0'}checked{/eq}> 关闭
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="color-desc" style="font-size: 12px; color: #666;">
+                                微信小程序插屏广告单元 ID (popup_unit_id)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">横幅广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="banner_unit_id" value="{$vo.banner_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_banner" value="1" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_banner" value="0" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序横幅广告单元 ID (banner_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">格子广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="grid_unit_id" value="{$vo.grid_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_grid" value="1" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_grid" value="0" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序格子广告单元 ID (grid_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">原生模板广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="custom_unit_id" value="{$vo.custom_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_custom" value="1" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_custom" value="0" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序自定义/原生模板广告单元 ID (custom_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">视频贴片广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="video_unit_id" value="{$vo.video_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_video" value="1" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_video" value="0" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序前贴片/视频广告单元 ID (video_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">激励视频广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="reward_unit_id" value="{$vo.reward_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_reward" value="1" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_reward" value="0" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序激励视频广告单元 ID (reward_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">插屏广告</label>
-                <div class="layui-input-block">
-                    <div class="layui-input-inline" style="width: 350px;">
-                        <input name="popup_unit_id" value="{$vo.popup_unit_id|default=''}" placeholder="请输入广告 Unit ID" class="layui-input">
-                    </div>
-                    <div class="layui-input-inline" style="width: auto; padding-top: 5px;">
-                        <label class="think-radio">
-                            <input type="radio" name="ad_enabled_popup" value="1" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='1'}checked{/eq}> 开启
-                        </label>
-                        <label class="think-radio" style="margin-left: 10px;">
-                            <input type="radio" name="ad_enabled_popup" value="0" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='0'}checked{/eq}> 关闭
-                        </label>
-                    </div>
-                    <p class="help-block"><b>可选</b>，微信小程序插屏广告单元 ID (popup_unit_id)，以及其是否启用</p>
-                </div>
-            </div>
-
         </fieldset>
 
     </div>
