@@ -39,77 +39,114 @@
     .mobile-preview {
         width: 320px;
         height: 570px;
-        border: 1px solid #e2e2e2;
-        border-radius: 20px;
-        background: #f5f5f5;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 28px;
+        background: #f3f4f6;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
         overflow: hidden;
+        position: relative;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
+    .status-bar {
+        height: 24px;
+        padding: 0 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #9ca3af;
+        font-size: 11px;
+        background: transparent;
+        z-index: 10;
+        position: relative;
+    }
+
     .mobile-body {
-        height: 568px;
-        padding: 15px;
+        height: 546px;
+        padding: 16px;
         overflow-y: auto;
         box-sizing: border-box;
+        position: relative;
     }
 
     .chat-msg {
         display: flex;
         align-items: flex-start;
-        margin-bottom: 15px;
+        margin-top: 10px;
+        opacity: 0;
+    }
+
+    .chat-msg-animated {
+        animation: bubble-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes bubble-appear {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .chat-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 4px;
-        background: #57be6a;
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: #fff;
-        text-align: center;
-        line-height: 40px;
-        font-size: 18px;
-        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
         flex-shrink: 0;
+    }
+
+    .chat-avatar svg {
+        width: 20px;
+        height: 20px;
+        fill: #fff;
     }
 
     .chat-bubble {
         margin-left: 12px;
         position: relative;
-        max-width: 200px;
-        padding: 10px 12px;
-        border-radius: 4px;
+        max-width: 210px;
+        padding: 10px 14px;
+        border-radius: 2px 14px 14px 14px;
         background: #fff;
-        color: #191919;
+        color: #1f2937;
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.45;
         word-break: break-all;
-    }
-
-    .chat-bubble::before {
-        content: "";
-        position: absolute;
-        left: -10px;
-        top: 14px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 5px 5px 5px 5px;
-        border-color: transparent #fff transparent transparent;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0,0,0,0.04);
     }
 
     .chat-bubble img {
         max-width: 100%;
-        border-radius: 4px;
+        border-radius: 6px;
         display: block;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 </style>
 
 <div class="nowrap padding-10 base-reply-form">
     <div class="mobile-preview inline-block">
+        <div class="status-bar">
+            <span>12:00</span>
+            <span style="font-weight: 500;">PREVIEW</span>
+            <div>
+                <i class="layui-icon layui-icon-wifi" style="font-size:12px"></i>
+            </div>
+        </div>
         <div class="mobile-body">
-            <div class="chat-msg">
-                <div class="chat-avatar">KF</div>
+            <div class="chat-msg chat-msg-animated">
+                <div class="chat-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+                </div>
                 <div class="chat-bubble">
                     <span id="preview-text-content">欢迎咨询，请留下你的问题。</span>
                     <img id="preview-image-content" src="" style="display:none" alt="img">
@@ -225,6 +262,14 @@
             var replyType = $('input[name="reply_type"]:checked').val();
             var $textSpan = $('#preview-text-content');
             var $img = $('#preview-image-content');
+            var $msg = $('.chat-msg');
+
+            // Trigger reflow to restart slide animation
+            $msg.removeClass('chat-msg-animated');
+            if ($msg.length > 0) {
+                void $msg[0].offsetWidth; 
+            }
+            $msg.addClass('chat-msg-animated');
             
             if (replyType === 'text') {
                 $img.hide();
