@@ -66,6 +66,7 @@
                 {field: 'match_name', title: '匹配方式', align: 'center', width: 120},
                 {field: 'keys', title: '匹配内容', minWidth: 140},
                 {field: 'type', title: '回复类型', align: 'center', minWidth: 100},
+                {field: 'code', title: '在线预览', align: 'center', minWidth: 100, templet: '#PreViewTpl'},
                 {field: 'reply_count', title: '回复次数', align: 'center', width: 120, sort: true},
                 {field: 'status', title: '使用状态', align: 'center', minWidth: 110, templet: '#StatusSwitchTpl'},
                 {field: 'create_at', title: '添加时间', align: 'center', minWidth: 170},
@@ -84,9 +85,52 @@
                 return false;
             }, false);
         });
+
+        // Frontend message preview popup
+        $('body').off('click', '[data-preview-reply]').on('click', '[data-preview-reply]', function() {
+            var type = $(this).attr('data-preview-reply');
+            var content = $(this).attr('data-preview-content');
+            
+            var now = new Date();
+            var hh = String(now.getHours()).padStart(2, '0');
+            var mm = String(now.getMinutes()).padStart(2, '0');
+            var timeStr = hh + ':' + mm;
+
+            var bubbleHtml = '';
+            if (type === 'image') {
+                bubbleHtml = '<img src="' + content + '" style="max-width:100%; border-radius:4px; display:block;">';
+            } else {
+                bubbleHtml = '<span>' + (content || '').replace(/\n/g, '<br>') + '</span>';
+            }
+
+            var html = 
+                '<div style="padding:20px; background:#f5f5f5; font-family:-apple-system,BlinkMacSystemFont,sans-serif;">' +
+                    '<div style="text-align:center; color:#b2b2b2; font-size:12px; margin-bottom:15px;">' + timeStr + '</div>' +
+                    '<div style="display:flex; align-items:flex-start;">' +
+                        '<div style="width:40px; height:40px; border-radius:4px; background:#57be6a; color:#fff; text-align:center; line-height:40px; font-size:18px; font-weight:bold; flex-shrink:0;">KF</div>' +
+                        '<div style="margin-left:12px; position:relative; max-width:200px; padding:10px 12px; border-radius:4px; background:#fff; color:#191919; font-size:14px; line-height:1.4; word-break:break-all; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">' +
+                            '<div style="position:absolute; left:-10px; top:14px; width:0; height:0; border-style:solid; border-width:5px 5px 5px 5px; border-color:transparent #fff transparent transparent;"></div>' +
+                            bubbleHtml +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+
+            layui.layer.open({
+                type: 1,
+                title: '客服回复预览',
+                area: ['320px', 'auto'],
+                shadeClose: true,
+                content: html
+            });
+        });
     });
 </script>
 
+
+
+<script type="text/html" id="PreViewTpl">
+    <a class="layui-btn layui-btn-xs layui-btn-primary" data-preview-reply="{{d.reply_type}}" data-preview-content="{{d.reply_type==='image'?d.image_url:d.content}}">预览</a>
+</script>
 
 
 <script type="text/html" id="AppIdTpl">
