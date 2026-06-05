@@ -1,37 +1,44 @@
 <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="AppTable">
     <div class="layui-card-body padding-left-40 padding-right-40">
 
-        <!-- Global controls -->
+        <!-- Global Control Row -->
         <div class="layui-row layui-col-space15">
+            <!-- Global Ad -->
             <div class="layui-col-md6">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">全局广告</label>
-                    <div class="layui-input-block">
-                        <select name="ad_global_enabled" class="layui-select">
-                            <option value="1" {eq name='$vo.ad_global_enabled|default="1"' value='1'}selected{/eq}>开启</option>
-                            <option value="0" {eq name='$vo.ad_global_enabled|default="1"' value='0'}selected{/eq}>关闭</option>
-                        </select>
-                        <p class="help-block">控制小程序所有广告的整体显示状态</p>
+                <div class="ad-unit-card">
+                    <div class="ad-unit-title">全局广告</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否开启</label>
+                        <div class="layui-input-block">
+                            <select name="ad_global_enabled" class="layui-select">
+                                <option value="1" {eq name='$vo.ad_global_enabled|default="1"' value='1'}selected{/eq}>开启</option>
+                                <option value="0" {eq name='$vo.ad_global_enabled|default="1"' value='0'}selected{/eq}>关闭</option>
+                            </select>
+                            <p class="help-block">控制小程序所有广告的整体显示状态</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- VIP No Ad -->
             <div class="layui-col-md6">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">VIP 去广告</label>
-                    <div class="layui-input-block">
-                        <select name="vip_no_ad" class="layui-select">
-                            <option value="1" {if !empty($vo.vip_no_ad)}selected{/if}>开启</option>
-                            <option value="0" {if empty($vo.vip_no_ad)}selected{/if}>关闭</option>
-                        </select>
-                        <p class="help-block">开启后，VIP 会员用户将不会看到任何广告</p>
+                <div class="ad-unit-card">
+                    <div class="ad-unit-title">VIP 免广告</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否开启</label>
+                        <div class="layui-input-block">
+                            <select name="vip_no_ad" class="layui-select">
+                                <option value="1" {if !empty($vo.vip_no_ad)}selected{/if}>开启</option>
+                                <option value="0" {if empty($vo.vip_no_ad)}selected{/if}>关闭</option>
+                            </select>
+                            <p class="help-block">开启后，VIP 会员用户将不会看到任何广告</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hr-line-dashed" style="margin: 15px 0 25px 0;"></div>
-
-        <!-- Ad units grid -->
+        <!-- Ad Units Row 1 -->
         <div class="layui-row layui-col-space15">
             <!-- Banner Ad -->
             <div class="layui-col-md6">
@@ -80,6 +87,7 @@
             </div>
         </div>
 
+        <!-- Ad Units Row 2 -->
         <div class="layui-row layui-col-space15">
             <!-- Custom Ad -->
             <div class="layui-col-md6">
@@ -128,6 +136,7 @@
             </div>
         </div>
 
+        <!-- Ad Units Row 3 -->
         <div class="layui-row layui-col-space15">
             <!-- Reward Ad -->
             <div class="layui-col-md6">
