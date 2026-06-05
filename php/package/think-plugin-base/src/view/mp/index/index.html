@@ -4,6 +4,9 @@
 <!--{if auth("add")}-->
 <button data-modal='{:url("add")}' data-title="{:lang('添加小程序')}" class="layui-btn layui-btn-sm layui-btn-primary">添加小程序</button>
 <!--{/if}-->
+<!--{if auth("import")}-->
+<button data-modal='{:url("import")}' data-title="导入小程序JSON数据" class="layui-btn layui-btn-sm layui-btn-primary">导入JSON数据</button>
+<!--{/if}-->
 <!--{if auth("remove")}-->
 <a data-confirm="确定要删除这些小程序吗？" data-table-id="AppTable" data-action='{:url("remove")}' data-rule="id#{id}" class="layui-btn layui-btn-sm layui-btn-danger">批量删除</a>
 <!--{/if}-->
@@ -24,11 +27,11 @@
                 {checkbox: true, fixed: true},
                 {field: 'sort', title: '排序', width: 100, align: 'center', sort: true, templet: '#SortInputTpl'},
                 {field: 'logo', title: 'Logo', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.logo)}}</div>'},
-                {field: 'name', title: '名称', minWidth: 150},
-                {field: 'appid', title: 'AppID', minWidth: 180, templet: '#AppIdTpl'},
-                {field: 'appsecret', title: 'AppSecret', minWidth: 220, templet: '#AppSecretTpl'},
+                {field: 'name', title: '名称', width: 150},
+                {field: 'appid', title: 'AppID', width: 150, templet: '#AppIdTpl'},
+                {field: 'appsecret', title: 'AppSecret', width: 200, templet: '#AppSecretTpl'},
                 {field: 'vip_no_ad', title: 'VIP去广告', width: 110, align: 'center', templet: '#VipNoAdTpl'},
-                {title: '广告状态', minWidth: 200, align: 'center', templet: '#AdStatusTpl'},
+                {title: '广告状态', width: 260, align: 'center', templet: '#AdStatusTpl'},
                 {field: 'custom_reply_enabled', title: '客服消息', width: 120, align: 'center', templet: '#CustomSwitchTpl'},
                 {field: 'status', title: '状态', width: 120, align: 'center', templet: '#StatusSwitchTpl'},
                 {field: 'create_at', title: '创建时间', width: 170, align: 'center', sort: true},
@@ -54,6 +57,29 @@
                 }); else $('#AppTable').trigger('reload');
                 return false;
             }, false);
+        });
+
+        $('#AppTable').trigger('tool', function (obj) {
+            if (obj.event === 'copy-json') {
+                var copyData = Object.assign({}, obj.data);
+                delete copyData.id;
+                delete copyData.create_at;
+                delete copyData.update_at;
+                for (var key in copyData) {
+                    if (key.indexOf('LAY_') === 0) {
+                        delete copyData[key];
+                    }
+                }
+                layui.lay.clipboard.writeText({
+                    text: JSON.stringify(copyData, null, 4),
+                    done: function () {
+                        $.msg.tips('JSON数据已复制到剪贴板！');
+                    },
+                    error: function () {
+                        $.msg.tips('复制失败，请手动复制！');
+                    }
+                });
+            }
         });
     });
 </script>
@@ -122,6 +148,7 @@
 <script type="text/html" id="toolbar">
     <!--{if auth("edit")}-->
     <a class="layui-btn layui-btn-sm" data-modal='{:url("edit")}?id={{d.id}}' data-title="编辑小程序">编辑</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="copy-json">复制JSON</a>
     <!--{/if}-->
     <!--{if auth("pages")}-->
     <a class="layui-btn layui-btn-sm" data-modal='{:url("pages")}?id={{d.id}}' data-title="配置页面">页面配置</a>

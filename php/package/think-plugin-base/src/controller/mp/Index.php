@@ -124,5 +124,79 @@ class Index extends Controller
         $this->_applyFormToken();
         BaseMp::mForm();
     }
+
+    /**
+     * 导入小程序
+     * @auth true
+     */
+    public function import(): void
+    {
+        if ($this->request->isGet()) {
+            $this->fetch();
+            return;
+        }
+
+        $jsonData = $this->request->post('json_data', '');
+        if (empty($jsonData)) {
+            $this->error('JSON数据不能为空！');
+        }
+
+        $data = json_decode($jsonData, true);
+        if ($data === null) {
+            $this->error('JSON解析失败，请检查格式是否正确！');
+        }
+
+        // 支持导入单条或多条数组
+        $list = isset($data['appid']) ? [$data] : $data;
+        if (!is_array($list)) {
+            $this->error('无效的JSON格式，必须是单个对象或数组！');
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+
+        // 允许导入的字段列表
+        $allowedFields = [
+            'name', 'appsecret', 'pages_config', 'token', 'encodingaeskey', 
+            'custom_reply_enabled', 'logo', 'remark', 'banner_unit_id', 'grid_unit_id', 
+            'custom_unit_id', 'video_unit_id', 'reward_unit_id', 'popup_unit_id', 
+            'ad_global_enabled', 'ad_enabled_banner', 'ad_enabled_grid', 
+            'ad_enabled_custom', 'ad_enabled_video', 'ad_enabled_reward', 
+            'ad_enabled_popup', 'vip_no_ad', 'sort', 'status'
+        ];
+
+        try {
+            foreach ($list as $item) {
+                if (empty($item['appid'])) {
+                    $failCount++;
+                    continue;
+                }
+
+                $appid = trim((string)$item['appid']);
+                $updateData = [];
+                foreach ($allowedFields as $field) {
+                    if (isset($item[$field])) {
+                        $updateData[$field] = $item[$field];
+                    }
+                }
+
+                $mp = BaseMp::mk()->where(['appid' => $appid])->findOrEmpty();
+                if ($mp->isEmpty()) {
+                    // 添加新记录
+                    $updateData['appid'] = $appid;
+                    BaseMp::mk($updateData)->save();
+                } else {
+                    // 更新已存在记录
+                    $mp->save($updateData);
+                }
+                $successCount++;
+            }
+        } catch (\think\exception\HttpResponseException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->error('导入失败：' . $e->getMessage());
+        }
+        $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
+    }
 }
 
