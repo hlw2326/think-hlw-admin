@@ -51,7 +51,34 @@ AI 在新增、修改后端代码时，请严格遵守以下目录职责：
     *   禁止拼接 SQL，必须使用 ThinkPHP 的链式操作或参数绑定防范 SQL 注入。
     *   所有敏感配置（数据库密码、微信 AppID、AppSecret 等）必须从 `.env` 或系统配置中读取，禁止硬编码。
 *   **接口统一格式**：所有给前端调用的接口必须返回统一的 JSON 结构，并遵循规范的数据格式。
-*   **后台视图与 Layui 表格规范**：在后台视图模板（如 `index.html` 中的 `layTable` 配置）中，操作列属性必须统一且强制写为 `{toolbar: '#toolbar', title: '操作'}`。绝对禁止携带其他多余字段（如 `width`、`align`、`fixed` 等），以保证表格操作列的自适应与风格统一。
+*   **后台视图与 Layui 表格规范**：在后台视图模板（如 `index.html` 中的 `layTable` 配置）中，操作列属性必须统一且强制写为 `{toolbar: '#toolbar', title: '操作'}`。绝对禁止携带其他多余字段（如 `width` , `align`, `fixed` 等），以保证表格操作列的自适应与风格统一。
+
+### 4. 后台视图与 Layui 表单规范
+*   **表单基础结构规范**：所有表单编辑页面（如 `form.html`）应遵循标准的 Layui 卡片表单结构（匹配 `php/app/admin/view/menu/form.html`）：
+    ```html
+    <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="...">
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label [label-required-next]">{:lang('字段名称')}</label>
+                <div class="layui-input-block">
+                    <!-- 输入控件 -->
+                    <p class="help-block"><b>[必填|必选|可选]</b>，说明备注</p>
+                </div>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        {notempty name='vo.id'}<input type="hidden" value="{$vo.id}" name="id">{/notempty}
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" type="submit">保存数据</button>
+            <button class="layui-btn layui-btn-danger" type="button" data-close>取消操作</button>
+        </div>
+    </form>
+    ```
+*   **结构约束**：
+    *   **禁止使用 legacy 栅格**：除极少数需要特殊横向排布的参数或配置场景（可用 `.layui-input-inline` 实现，例如 `ai.html` 与 `ad.html` 的复杂行）外，常规编辑表单绝对禁止混入栅格列（如 `layui-row`、`layui-col-md*`）或 legacy 辅助类（如 `<span class="help-label">`），必须统一采用上述垂直排布的表单行。
+    *   **灰色 Fieldset 分组规则**：常规编辑表单（如添加或修改记录页面）原则上禁止使用灰色 fieldset（即 `<fieldset class="layui-bg-gray">` 和 `<legend>`）分组；**但应用或模块配置表单（如 `php/package/think-plugin-base/src/view/config` 目录下的所有系统及模块配置页面）必须强制使用 `<fieldset class="layui-bg-gray">` 与 `<legend>` 对相关功能项进行功能和视觉隔离**。
+    *   **帮助文本统一**：表单提示内容必须放置在 `<p class="help-block">` 标签内，且以 `<b>必填</b>，`、`<b>必选</b>，` 或 `<b>可选</b>，` 等作为统一开头前缀。
+*   **插件镜像同步要求**：当修改基础插件 `think-plugin-base` 中的视图（或表单）文件时，**必须且强制**将相同的改动同步镜像修改到 CCM 插件 `think-plugin-ccm` 的对应视图（或表单）文件中，以保持两套插件的页面结构和逻辑始终处于最新、一致的状态。
 
 ---
 
