@@ -2,50 +2,45 @@
     <div class="layui-card-body padding-left-40 padding-right-40">
 
         <!-- Global controls -->
-        <fieldset class="layui-bg-gray">
-            <legend><b class="layui-badge think-bg-violet">{:lang('全局广告控制')}</b></legend>
-
-            <div class="layui-row layui-col-space15">
-                <div class="layui-col-md6">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">全局广告</label>
-                        <div class="layui-input-block">
-                            <div class="radio-line">
-                                <label class="think-radio">
-                                    <input type="radio" name="ad_global_enabled" value="1" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='1'}checked{/eq}> 开启
-                                </label>
-                                <label class="think-radio">
-                                    <input type="radio" name="ad_global_enabled" value="0" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='0'}checked{/eq}> 关闭
-                                </label>
-                            </div>
-                            <p class="help-block">控制小程序所有广告的整体显示状态</p>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">全局广告</label>
+                    <div class="layui-input-block">
+                        <div class="radio-line">
+                            <label class="think-radio">
+                                <input type="radio" name="ad_global_enabled" value="1" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='1'}checked{/eq}> 开启
+                            </label>
+                            <label class="think-radio">
+                                <input type="radio" name="ad_global_enabled" value="0" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='0'}checked{/eq}> 关闭
+                            </label>
                         </div>
-                    </div>
-                </div>
-                <div class="layui-col-md6">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">VIP 去广告</label>
-                        <div class="layui-input-block">
-                            <div class="radio-line">
-                                <label class="think-radio">
-                                    <input type="radio" name="vip_no_ad" value="1" lay-ignore {if !empty($vo.vip_no_ad)}checked{/if}> 开启
-                                </label>
-                                <label class="think-radio">
-                                    <input type="radio" name="vip_no_ad" value="0" lay-ignore {if empty($vo.vip_no_ad)}checked{/if}> 关闭
-                                </label>
-                            </div>
-                            <p class="help-block">开启后，VIP 会员用户将不会看到任何广告</p>
-                        </div>
+                        <p class="help-block">控制小程序所有广告的整体显示状态</p>
                     </div>
                 </div>
             </div>
-        </fieldset>
+            <div class="layui-col-md6">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">VIP 去广告</label>
+                    <div class="layui-input-block">
+                        <div class="radio-line">
+                            <label class="think-radio">
+                                <input type="radio" name="vip_no_ad" value="1" lay-ignore {if !empty($vo.vip_no_ad)}checked{/if}> 开启
+                            </label>
+                            <label class="think-radio">
+                                <input type="radio" name="vip_no_ad" value="0" lay-ignore {if empty($vo.vip_no_ad)}checked{/if}> 关闭
+                            </label>
+                        </div>
+                        <p class="help-block">开启后，VIP 会员用户将不会看到任何广告</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hr-line-dashed" style="margin: 15px 0 25px 0;"></div>
 
         <!-- Ad units grid -->
-        <fieldset class="layui-bg-gray margin-top-15">
-            <legend><b class="layui-badge think-bg-blue">{:lang('广告单元配置')}</b></legend>
-            
-            <div class="layui-row layui-col-space15 margin-top-10">
+        <div class="layui-row layui-col-space15">
                 <!-- Banner Ad -->
                 <div class="layui-col-md6">
                     <div class="ad-unit-card">
@@ -212,7 +207,6 @@
                     </div>
                 </div>
             </div>
-        </fieldset>
 
     </div>
     <div class="hr-line-dashed"></div>
