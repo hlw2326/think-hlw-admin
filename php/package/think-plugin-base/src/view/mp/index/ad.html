@@ -10,10 +10,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否开启</label>
                         <div class="layui-input-block">
-                            <select name="ad_global_enabled" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_global_enabled|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_global_enabled|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_global_enabled" value="1" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_global_enabled" value="0" lay-ignore {eq name='$vo.ad_global_enabled|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                             <p class="help-block">控制小程序所有广告的整体显示状态</p>
                         </div>
                     </div>
@@ -27,10 +31,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否开启</label>
                         <div class="layui-input-block">
-                            <select name="vip_no_ad" class="layui-select">
-                                <option value="1" {if !empty($vo.vip_no_ad)}selected{/if}>开启</option>
-                                <option value="0" {if empty($vo.vip_no_ad)}selected{/if}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="vip_no_ad" value="1" lay-ignore {if !empty($vo.vip_no_ad)}checked{/if}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="vip_no_ad" value="0" lay-ignore {if empty($vo.vip_no_ad)}checked{/if}> 关闭
+                                </label>
+                            </div>
                             <p class="help-block">开启后，VIP 会员用户将不会看到任何广告</p>
                         </div>
                     </div>
@@ -47,10 +55,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_banner" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_banner|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_banner|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_banner" value="1" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_banner" value="0" lay-ignore {eq name='$vo.ad_enabled_banner|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -70,10 +82,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_grid" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_grid|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_grid|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_grid" value="1" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_grid" value="0" lay-ignore {eq name='$vo.ad_enabled_grid|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -96,10 +112,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_custom" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_custom|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_custom|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_custom" value="1" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_custom" value="0" lay-ignore {eq name='$vo.ad_enabled_custom|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -119,10 +139,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_video" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_video|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_video|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_video" value="1" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_video" value="0" lay-ignore {eq name='$vo.ad_enabled_video|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -145,10 +169,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_reward" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_reward|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_reward|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_reward" value="1" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_reward" value="0" lay-ignore {eq name='$vo.ad_enabled_reward|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -168,10 +196,14 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否启用</label>
                         <div class="layui-input-block">
-                            <select name="ad_enabled_popup" class="layui-select">
-                                <option value="1" {eq name='$vo.ad_enabled_popup|default="1"' value='1'}selected{/eq}>开启</option>
-                                <option value="0" {eq name='$vo.ad_enabled_popup|default="1"' value='0'}selected{/eq}>关闭</option>
-                            </select>
+                            <div class="radio-line">
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_popup" value="1" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='1'}checked{/eq}> 开启
+                                </label>
+                                <label class="think-radio">
+                                    <input type="radio" name="ad_enabled_popup" value="0" lay-ignore {eq name='$vo.ad_enabled_popup|default="1"' value='0'}checked{/eq}> 关闭
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -195,6 +227,13 @@
 </form>
 
 <style>
+    .radio-line {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        min-height: 38px;
+    }
+
     .ad-unit-card {
         background: #fff;
         border: 1px solid #e2e8f0;
