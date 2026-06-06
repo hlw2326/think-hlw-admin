@@ -1,18 +1,17 @@
 <form action="{:sysuri('import')}?appid={$appid|default=''}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="RuleTable">
     <div class="layui-card-body padding-left-40 padding-right-40">
-        
-        <div class="layui-form-item margin-top-15">
-            <span class="help-label"><b>选择JSON文件</b></span>
+        <label class="layui-form-item relative block">
+            <span class="color-green font-w7">选择JSON文件</span>
             <div class="relative">
                 <input id="json_file_name" readonly class="layui-input padding-right-30" placeholder="请选择导出的 .json 数据文件" style="cursor: pointer;">
                 <a class="input-right-icon" onclick="$('#json_file').click()"><i class="layui-icon layui-icon-upload"></i></a>
                 <input type="file" id="json_file" accept=".json" style="display: none;">
             </div>
             <span class="help-block">选择导出的 <code>.json</code> 数据文件，系统会自动读取内容填入下方输入框。</span>
-        </div>
+        </label>
 
-        <div class="layui-form-item">
-            <span class="help-label"><b>JSON 数据内容</b>（可以手动修改或直接粘贴 JSON 数据，支持单条对象或数组）</span>
+        <label class="layui-form-item relative block">
+            <span class="color-green font-w7">JSON 数据内容</span>
             <textarea name="json_data" required vali-name="JSON数据" placeholder='例如：
 [
     {
@@ -24,7 +23,8 @@
         "status": 1
     }
 ]' class="layui-textarea" style="height: 250px; font-family: monospace; font-size: 13px; line-height: 1.5;"></textarea>
-        </div>
+            <span class="help-block">可以手动修改或直接粘贴 JSON 数据，支持单条对象或数组</span>
+        </label>
 
     </div>
     <div class="hr-line-dashed"></div>

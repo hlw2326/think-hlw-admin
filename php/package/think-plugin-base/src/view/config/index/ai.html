@@ -53,106 +53,91 @@
                     <fieldset class="layui-bg-gray">
                         <legend><b class="layui-badge think-bg-violet">{:lang('AI模型配置')}</b></legend>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">{:lang('启用AI')}</label>
-                            <div class="layui-input-block">
-                                <select name="enabled" class="layui-select">
-                                    <option value="1" {if !empty($ai.enabled)}selected{/if}>{:lang('启用')}</option>
-                                    <option value="0" {if empty($ai.enabled)}selected{/if}>{:lang('关闭')}</option>
-                                </select>
-                                <p class="help-block"><b>必选</b>，{:lang('启用后，后续可在小程序及后台调用大模型生成AI建议。')}</p>
-                            </div>
-                        </div>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">{:lang('启用AI')}</span>
+                            <select name="enabled" class="layui-select">
+                                <option value="1" {if !empty($ai.enabled)}selected{/if}>{:lang('启用')}</option>
+                                <option value="0" {if empty($ai.enabled)}selected{/if}>{:lang('关闭')}</option>
+                            </select>
+                            <p class="help-block"><b>必选</b>，{:lang('启用后，后续可在小程序及后台调用大模型生成AI建议。')}</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">{:lang('模型供应商')}</label>
-                            <div class="layui-input-block">
-                                <select name="provider" class="layui-select" lay-filter="provider">
-                                    {foreach $providers as $code => $provider}
-                                    <option value="{$code}" {if $ai.provider eq $code}selected{/if}>{$provider.label}</option>
-                                    {/foreach}
-                                </select>
-                                <p class="help-block" id="ProviderNote">{$ai.note|default=''}</p>
-                            </div>
-                        </div>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">{:lang('模型供应商')}</span>
+                            <select name="provider" class="layui-select" lay-filter="provider">
+                                {foreach $providers as $code => $provider}
+                                <option value="{$code}" {if $ai.provider eq $code}selected{/if}>{$provider.label}</option>
+                                {/foreach}
+                            </select>
+                            <p class="help-block" id="ProviderNote">{$ai.note|default=''}</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">API Key</label>
-                            <div class="layui-input-block">
-                                <input name="api_key" type="password" autocomplete="new-password" class="layui-input"
-                                    placeholder="{if !empty($ai.api_key_mask)}{:lang('已配置：')}{$ai.api_key_mask}{else}{:lang('请输入模型平台 API Key')}{/if}">
-                                <p class="help-block"><b>可选</b>，{:lang('留空不会覆盖原有密钥；如需更换，请输入新的 API Key 后保存。')}</p>
-                            </div>
-                        </div>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">API Key</span>
+                            <input name="api_key" type="password" autocomplete="new-password" class="layui-input"
+                                placeholder="{if !empty($ai.api_key_mask)}{:lang('已配置：')}{$ai.api_key_mask}{else}{:lang('请输入模型平台 API Key')}{/if}">
+                            <p class="help-block"><b>可选</b>，{:lang('留空不会覆盖原有密钥；如需更换，请输入新的 API Key 后保存。')}</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">Base URL</label>
-                            <div class="layui-input-block">
-                                <input name="base_url" class="layui-input" value="{$ai.base_url|default=''}"
-                                    placeholder="{:lang('例如：https://dashscope.aliyuncs.com/compatible-mode/v1')}">
-                                <p class="help-block"><b>可选</b>，{:lang('选择供应商时会自动填入预设地址；部分平台需要按控制台实际地址填写。')}</p>
-                            </div>
-                        </div>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">Base URL</span>
+                            <input name="base_url" class="layui-input" value="{$ai.base_url|default=''}"
+                                placeholder="{:lang('例如：https://dashscope.aliyuncs.com/compatible-mode/v1')}">
+                            <p class="help-block"><b>可选</b>，{:lang('选择供应商时会自动填入预设地址；部分平台需要按控制台实际地址填写。')}</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">{:lang('模型名称')}</label>
-                            <div class="layui-input-block">
-                                <div class="layui-input-inline" style="width: 350px;">
-                                    <label class="relative block">
-                                        <input name="model" class="layui-input" value="{$ai.model|default=''}"
-                                            placeholder="{:lang('例如：qwen-plus、deepseek-chat、glm-4-plus')}">
-                                        <a href="javascript:;" class="input-right-icon layui-icon layui-icon-refresh" id="FetchAiModels" title="{:lang('获取模型')}"></a>
-                                    </label>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">{:lang('模型名称')}</span>
+                            <div class="ai-model-control margin-bottom-10">
+                                <div class="ai-model-input relative block">
+                                    <input name="model" class="layui-input" value="{$ai.model|default=''}"
+                                        placeholder="{:lang('例如：qwen-plus、deepseek-chat、glm-4-plus')}">
+                                    <a href="javascript:;" class="input-right-icon layui-icon layui-icon-refresh" id="FetchAiModels" title="{:lang('获取模型')}"></a>
                                 </div>
-                                <div class="layui-input-inline" style="width: auto;">
-                                    <button type="button" id="TestAiModelConnection" class="layui-btn layui-btn-normal" style="height: 38px; line-height: 38px;">
-                                        <i class="layui-icon layui-icon-ok"></i> {:lang('测试连接')}
-                                    </button>
-                                </div>
-                                <div class="layui-input-inline" style="width: 250px;">
+                                <button type="button" id="TestAiModelConnection" class="layui-btn layui-btn-normal" style="height: 38px; line-height: 38px;">
+                                    <i class="layui-icon layui-icon-ok"></i> {:lang('测试连接')}
+                                </button>
+                                <div class="ai-model-input">
                                     <select id="AiModelSelect" class="layui-select" lay-filter="modelSelect" lay-search>
                                         <option value="">{:lang('请选择模型')}</option>
                                     </select>
                                 </div>
-                                <div class="clear-both"></div>
-                                <p class="help-block ai-model-help" id="ModelHelp">{:lang('点击输入框右侧刷新图标获取模型；也可手动填写模型名或从推荐列表中选择。')}</p>
                             </div>
-                        </div>
+                            <p class="help-block ai-model-help" id="ModelHelp">{:lang('点击输入框右侧刷新图标获取模型；也可手动填写模型名或从推荐列表中选择。')}</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">生成随机性</label>
-                            <div class="layui-input-block">
-                                <div class="layui-input-inline" style="width: 200px;">
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">生成随机性</span>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 200px;">
                                     <input name="temperature" type="number" min="0" max="2" step="0.1" class="layui-input" value="{$ai.temperature|default='0.3'}">
                                 </div>
-                                <div class="layui-input-inline" style="width: 120px; line-height: 38px; color: #666;">
+                                <div style="line-height: 38px; color: #666; margin-left: 10px;">
                                     (Temperature)
                                 </div>
-                                <p class="help-block"><b>可选</b>，值越大生成结果越具随机性和创造性，默认 0.3</p>
                             </div>
-                        </div>
+                            <p class="help-block"><b>可选</b>，值越大生成结果越具随机性和创造性，默认 0.3</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">最大输出</label>
-                            <div class="layui-input-block">
-                                <div class="layui-input-inline" style="width: 200px;">
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">最大输出</span>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 200px;">
                                     <input name="max_tokens" type="number" min="1" max="128000" class="layui-input" value="{$ai.max_tokens|default='1200'}">
                                 </div>
-                                <div class="layui-input-inline" style="width: 120px; line-height: 38px; color: #666;">
+                                <div style="line-height: 38px; color: #666; margin-left: 10px;">
                                     (Max Tokens)
                                 </div>
-                                <p class="help-block"><b>可选</b>，控制大模型单次回复的最大 Token 长度限制，默认 1200</p>
                             </div>
-                        </div>
+                            <p class="help-block"><b>可选</b>，控制大模型单次回复的最大 Token 长度限制，默认 1200</p>
+                        </label>
 
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">{:lang('系统提示词')}</label>
-                            <div class="layui-input-block">
-                                <textarea name="system_prompt" class="layui-textarea" style="min-height:120px"
-                                    placeholder="{:lang('用于约束 AI 输出风格和分析重点')}">{$ai.system_prompt|default=''}</textarea>
-                                <p class="help-block"><b>可选</b>，用于设定大模型的角色定位、回答风格以及分析规则等。</p>
-                            </div>
-                        </div>
+                        <label class="layui-form-item relative block">
+                            <span class="color-green font-w7">{:lang('系统提示词')}</span>
+                            <textarea name="system_prompt" class="layui-textarea" style="min-height:120px"
+                                placeholder="{:lang('用于约束 AI 输出风格和分析重点')}">{$ai.system_prompt|default=''}</textarea>
+                            <p class="help-block"><b>可选</b>，用于设定大模型的角色定位、回答风格以及分析规则等。</p>
+                        </label>
 
                     </fieldset>
                 </div>

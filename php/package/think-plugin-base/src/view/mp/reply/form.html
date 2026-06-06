@@ -1,14 +1,23 @@
 <style>
     .base-reply-form {
-        width: 930px;
+        display: flex;
+        width: 100%;
         height: 660px;
         overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .keys-container {
+        flex: 1;
+        margin-left: 20px;
+        height: 650px;
     }
 
     .keys-container .layui-card {
-        width: 580px;
+        width: 100%;
         height: 650px;
         overflow: hidden;
+        position: relative;
     }
 
     .keys-container .layui-card .layui-card-body {
@@ -37,6 +46,7 @@
 
     /* WeChat Mock Preview Styles (Resetting ThinkAdmin overrides) */
     .base-reply-form .mobile-preview {
+        flex: 0 0 320px;
         width: 320px !important;
         height: 570px !important;
         border: 1px solid rgba(0,0,0,0.08) !important;
@@ -140,7 +150,7 @@
     }
 </style>
 
-<div class="nowrap padding-10 base-reply-form">
+<div class="nowrap padding-20 base-reply-form">
     <div class="mobile-preview inline-block">
         <div class="status-bar">
             <span>12:00</span>
@@ -161,7 +171,7 @@
             </div>
         </div>
     </div>
-    <div class="keys-container inline-block absolute margin-left-10 margin-right-15">
+    <div class="keys-container">
         <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="RuleTable">
             <div class="layui-card relative shadow-none">
                 <div class="layui-card-header layui-bg-gray text-center">编辑客服回复规则</div>
