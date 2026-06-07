@@ -38,6 +38,13 @@
         </div>
 
         <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">设备型号</label>
+            <div class="layui-input-inline">
+                <input name="device_model" value="{$get.device_model|default=''}" placeholder="请输入设备型号" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-inline">
                 <select class="layui-select" name="status" lay-append-to>

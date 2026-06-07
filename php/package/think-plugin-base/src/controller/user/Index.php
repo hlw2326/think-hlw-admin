@@ -25,7 +25,7 @@ class Index extends Controller
             $this->title = '用户列表';
         }, function (QueryHelper $query) {
             $query->equal('id');
-            $query->like('nickname')->like('phone')->like('openid');
+            $query->like('nickname')->like('phone')->like('openid')->like('device_model');
             $query->equal('status,appid');
             $query->dateBetween('create_at');
             $query->where(['deleted' => 0]);

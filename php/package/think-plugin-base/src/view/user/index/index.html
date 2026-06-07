@@ -27,7 +27,7 @@
                 {field: 'login_ip', title: '最近登录IP', width: 130, align: 'center'},
                 {field: 'last_login_at', title: '上次登录时间', width: 150, align: 'center', sort: true},
                 {field: 'last_login_ip', title: '上次登录IP', width: 140, align: 'center'},
-                {field: 'device_model', title: '设备型号', width: 140},
+                {field: 'device_model', title: '设备型号', width: 140, templet: '#DeviceModelTpl'},
                 {field: 'device_system', title: '系统版本', width: 120},
                 {title: '分辨率', width: 100, align: 'center', templet: '<div>{{d.screen_width && d.screen_height ? d.screen_width + "x" + d.screen_height : "--"}}</div>'},
                 {field: 'sdk_version', title: 'SDK版本', width: 100, align: 'center'},
@@ -47,6 +47,14 @@
             }, false);
         });
     });
+</script>
+
+<script type="text/html" id="DeviceModelTpl">
+    {{# if (d.device_model && d.device_model.toLowerCase() === 'microsoft') { }}
+    <span class="color-red">{{d.device_model}}</span>
+    {{# } else { }}
+    <span>{{d.device_model || ''}}</span>
+    {{# } }}
 </script>
 
 <script type="text/html" id="AppIdTpl">
