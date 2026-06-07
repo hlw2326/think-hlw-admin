@@ -57,7 +57,15 @@ class CustomService
             $matchType = strtolower((string)$rule->match_type);
             $keyword = trim((string)$rule->keyword);
             if ($matchType === 'default') {
-                $default ??= $rule;
+                if ($msgType !== 'event' || $target !== 'user_enter_tempsession') {
+                    $default ??= $rule;
+                }
+                continue;
+            }
+            if ($matchType === 'enter') {
+                if ($msgType === 'event' && $target === 'user_enter_tempsession') {
+                    return $rule;
+                }
                 continue;
             }
             if ($target === '' || $keyword === '') {
@@ -119,6 +127,159 @@ class CustomService
     }
 
     /**
+     * 发送图文链接客服消息
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param string $title
+     * @param string $description
+     * @param string $url
+     * @param string $thumbUrl
+     * @return array
+     */
+    public static function sendLink(BaseMp $mp, string $openid, string $title, string $description, string $url, string $thumbUrl): array
+    {
+        if ($openid === '' || trim($title) === '' || trim($url) === '') {
+            return ['errcode' => -1, 'errmsg' => 'missing link parameters'];
+        }
+
+        return self::send($mp, [
+            'touser' => $openid,
+            'msgtype' => 'link',
+            'link' => [
+                'title' => $title,
+                'description' => $description,
+                'url' => $url,
+                'thumb_url' => $thumbUrl,
+            ],
+        ]);
+    }
+
+    /**
+     * 发送小程序卡片客服消息
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param string $title
+     * @param string $pagepath
+     * @param string $imageUrl
+     * @param string $targetAppid
+     * @return array
+     */
+    public static function sendMiniprogrampage(BaseMp $mp, string $openid, string $title, string $pagepath, string $imageUrl, string $targetAppid = ''): array
+    {
+        if ($openid === '' || trim($title) === '' || trim($pagepath) === '' || trim($imageUrl) === '') {
+            return ['errcode' => -1, 'errmsg' => 'missing miniprogrampage parameters'];
+        }
+
+        $upload = Media::instance(self::config($mp))->upload(self::localFile($imageUrl));
+        if (empty($upload['media_id'])) {
+            return ['errcode' => -1, 'errmsg' => $upload['errmsg'] ?? 'upload image failed'];
+        }
+
+        return self::send($mp, [
+            'touser' => $openid,
+            'msgtype' => 'miniprogrampage',
+            'miniprogrampage' => [
+                'title' => $title,
+                'appid' => $targetAppid ?: $mp->appid,
+                'pagepath' => $pagepath,
+                'thumb_media_id' => $upload['media_id'],
+            ],
+        ]);
+    }
+
+    /**
+     * 发送语音客服消息
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param string $voiceUrl
+     * @return array
+     */
+    public static function sendVoice(BaseMp $mp, string $openid, string $voiceUrl): array
+    {
+        if ($openid === '' || trim($voiceUrl) === '') {
+            return ['errcode' => 0, 'errmsg' => 'empty voice'];
+        }
+
+        $upload = Media::instance(self::config($mp))->upload(self::localFile($voiceUrl), 'voice');
+        if (empty($upload['media_id'])) {
+            return ['errcode' => -1, 'errmsg' => $upload['errmsg'] ?? 'upload voice failed'];
+        }
+
+        return self::send($mp, [
+            'touser' => $openid,
+            'msgtype' => 'voice',
+            'voice' => ['media_id' => $upload['media_id']],
+        ]);
+    }
+
+    /**
+     * 发送视频客服消息
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param string $title
+     * @param string $description
+     * @param string $videoUrl
+     * @return array
+     */
+    public static function sendVideo(BaseMp $mp, string $openid, string $title, string $description, string $videoUrl): array
+    {
+        if ($openid === '' || trim($videoUrl) === '') {
+            return ['errcode' => 0, 'errmsg' => 'empty video'];
+        }
+
+        $upload = Media::instance(self::config($mp))->upload(self::localFile($videoUrl), 'video');
+        if (empty($upload['media_id'])) {
+            return ['errcode' => -1, 'errmsg' => $upload['errmsg'] ?? 'upload video failed'];
+        }
+
+        return self::send($mp, [
+            'touser' => $openid,
+            'msgtype' => 'video',
+            'video' => [
+                'media_id' => $upload['media_id'],
+                'title' => $title,
+                'description' => $description,
+            ],
+        ]);
+    }
+
+    /**
+     * 发送音乐客服消息
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param string $title
+     * @param string $description
+     * @param string $musicUrl
+     * @param string $hqMusicUrl
+     * @param string $imageUrl
+     * @return array
+     */
+    public static function sendMusic(BaseMp $mp, string $openid, string $title, string $description, string $musicUrl, string $hqMusicUrl, string $imageUrl): array
+    {
+        if ($openid === '' || trim($musicUrl) === '') {
+            return ['errcode' => 0, 'errmsg' => 'empty music url'];
+        }
+
+        $mediaId = '';
+        if ($imageUrl !== '') {
+            $upload = Media::instance(self::config($mp))->upload(self::localFile($imageUrl));
+            $mediaId = $upload['media_id'] ?? '';
+        }
+
+        return self::send($mp, [
+            'touser' => $openid,
+            'msgtype' => 'music',
+            'music' => [
+                'title' => $title,
+                'description' => $description,
+                'musicurl' => $musicUrl,
+                'hqmusicurl' => $hqMusicUrl,
+                'thumb_media_id' => $mediaId,
+            ],
+        ]);
+    }
+
+    /**
      * 按规则发送客服消息
      * @param BaseMp $mp
      * @param string $openid
@@ -128,8 +289,13 @@ class CustomService
     public static function sendRule(BaseMp $mp, string $openid, BaseMpReply $rule): array
     {
         $res = match (strtolower((string)$rule->reply_type)) {
-            'image' => self::sendImage($mp, $openid, (string)$rule->image_url),
-            default => self::sendText($mp, $openid, (string)$rule->content),
+            'image'            => self::sendImage($mp, $openid, (string)($rule->image_image_url ?: $rule->image_url)),
+            'link'             => self::sendLink($mp, $openid, (string)($rule->link_title ?: $rule->title), (string)($rule->link_content ?: $rule->content), (string)($rule->link_url ?: $rule->url), (string)($rule->link_image_url ?: $rule->image_url)),
+            'miniprogrampage'  => self::sendMiniprogrampage($mp, $openid, (string)($rule->page_title ?: $rule->title), (string)($rule->page_pagepath ?: $rule->pagepath), (string)($rule->page_image_url ?: $rule->image_url), (string)($rule->page_appid ?: $rule->url)),
+            'voice'            => self::sendVoice($mp, $openid, (string)($rule->voice_voice_url ?: $rule->image_url)),
+            'video'            => self::sendVideo($mp, $openid, (string)($rule->video_title ?: $rule->title), (string)($rule->video_content ?: $rule->content), (string)($rule->video_video_url ?: $rule->image_url)),
+            'music'            => self::sendMusic($mp, $openid, (string)($rule->music_title ?: $rule->title), (string)($rule->music_content ?: $rule->content), (string)($rule->music_url ?: $rule->url), (string)($rule->music_hqurl ?: $rule->pagepath), (string)($rule->music_image_url ?: $rule->image_url)),
+            default            => self::sendText($mp, $openid, (string)($rule->text_content ?: $rule->content)),
         };
         if (isset($res['errcode']) && $res['errcode'] === 0) {
             $rule->inc('reply_count')->save();

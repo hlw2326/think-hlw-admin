@@ -36,12 +36,44 @@ class Custom extends Controller
             $message = $this->receive($mp);
             $openid = (string)($message['FromUserName'] ?? $message['fromusername'] ?? '');
             if ($openid !== '' && ($rule = CustomService::match($mp, $message))) {
+                if (strtolower((string)$rule->reply_type) === 'transfer') {
+                    return $this->transferResponse($message);
+                }
                 CustomService::sendRule($mp, $openid, $rule);
             }
         } catch (\Throwable $exception) {
             $this->app->log->error("BASE mini custom reply failed: {$exception->getMessage()}");
         }
         return $this->request->isGet() ? '' : 'success';
+    }
+
+    /**
+     * 构建转接人工客服报文
+     * @param array $message
+     * @return string
+     */
+    private function transferResponse(array $message): string
+    {
+        $toUser = $message['FromUserName'] ?? $message['fromusername'] ?? '';
+        $fromUser = $message['ToUserName'] ?? $message['touser'] ?? '';
+        $time = time();
+        $raw = trim(Tools::getRawInput());
+        if (str_starts_with($raw, '{')) {
+            return (string)json_encode([
+                'ToUserName' => $toUser,
+                'FromUserName' => $fromUser,
+                'CreateTime' => $time,
+                'MsgType' => 'transfer_customer_service'
+            ]);
+        }
+        return <<<XML
+<xml>
+  <ToUserName><![CDATA[{$toUser}]]></ToUserName>
+  <FromUserName><![CDATA[{$fromUser}]]></FromUserName>
+  <CreateTime>{$time}</CreateTime>
+  <MsgType><![CDATA[transfer_customer_service]]></MsgType>
+</xml>
+XML;
     }
 
     /**
