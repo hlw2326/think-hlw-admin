@@ -10,4 +10,10 @@ class Index extends Controller
     {
         echo "hlw2326";
     }
+
+    public function sapi()
+    {
+        echo php_sapi_name();
+    }
+
 }
