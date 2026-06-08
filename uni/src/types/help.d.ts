@@ -1,8 +1,8 @@
 declare namespace IHelp {
     interface Faq {
         id: number;
-        question: string;
-        answer: string;
+        title: string;
+        content: string;
     }
 
     interface ListResult {

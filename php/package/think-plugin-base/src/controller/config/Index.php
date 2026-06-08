@@ -9,7 +9,7 @@ use think\exception\HttpResponseException;
 use Throwable;
 
 /**
- * 系统参数配置
+ * 出配置
  * @class Index
  */
 class Index extends Controller

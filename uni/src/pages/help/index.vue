@@ -17,9 +17,9 @@
                     <text class="title-text">常见问题</text>
                 </view>
                 <view class="faq-list">
-                    <view v-for="item in faqs" :key="item.question" class="faq-item">
-                        <text class="faq-question">{{ item.question }}</text>
-                        <text class="faq-answer">{{ item.answer }}</text>
+                    <view v-for="item in faqs" :key="item.title" class="faq-item">
+                        <text class="faq-title">{{ item.title }}</text>
+                        <text class="faq-content">{{ item.content }}</text>
                     </view>
                 </view>
             </view>
@@ -43,8 +43,8 @@ const faqList = ref<IHelp.Faq[]>([]);
 
 const faqs = computed(() =>
     faqList.value.map((item) => ({
-        question: item.question,
-        answer: item.answer,
+        title: item.title,
+        content: item.content,
     })),
 );
 
@@ -131,7 +131,7 @@ async function getHelpList() {
     padding-bottom: 0;
 }
 
-.faq-question {
+.faq-title {
     display: block;
     margin-bottom: 10rpx;
     color: #334155;
@@ -139,7 +139,7 @@ async function getHelpList() {
     line-height: 1.35;
 }
 
-.faq-answer {
+.faq-content {
     display: block;
     color: #94a3b8;
     font-size: var(--font-sm);

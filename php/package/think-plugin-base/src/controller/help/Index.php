@@ -23,7 +23,7 @@ class Index extends Controller
         BaseHelp::mQuery()->layTable(function () {
             $this->title = '帮助列表';
         }, function (QueryHelper $query) {
-            $query->like('question')->like('answer');
+            $query->like('title')->like('content');
             $query->where(['type' => 'faq'])->equal('status');
         });
     }
@@ -76,8 +76,8 @@ class Index extends Controller
     public function export(): void
     {
         $query = BaseHelp::mQuery();
-        $query->like('question')->like('answer')->equal('status');
-        $fields = ['type', 'question', 'answer', 'sort', 'status'];
+        $query->like('title')->like('content')->equal('status');
+        $fields = ['type', 'title', 'content', 'sort', 'status'];
         $list = $query->db()->where(['type' => 'faq'])->field($fields)->order('sort desc,id asc')->select()->toArray();
         $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         header('Content-Type: application/json; charset=utf-8');
@@ -108,7 +108,7 @@ class Index extends Controller
         }
 
         // 支持导入单条或多条数组
-        $list = isset($data['question']) ? [$data] : $data;
+        $list = isset($data['title']) ? [$data] : $data;
         if (!is_array($list)) {
             $this->error('无效的JSON格式，必须是单个对象或数组！');
         }
@@ -118,20 +118,20 @@ class Index extends Controller
 
         // 允许导入的字段列表
         $allowedFields = [
-            'question',
-            'answer',
+            'title',
+            'content',
             'sort',
             'status'
         ];
 
         try {
             foreach ($list as $item) {
-                if (empty($item['question'])) {
+                if (empty($item['title'])) {
                     $failCount++;
                     continue;
                 }
 
-                $question = trim((string) $item['question']);
+                $title = trim((string) $item['title']);
 
                 $updateData = [];
                 foreach ($allowedFields as $field) {
@@ -141,8 +141,8 @@ class Index extends Controller
                 }
                 $updateData['type'] = 'faq';
 
-                // 匹配规则：通过 question 和 type 查找
-                $help = BaseHelp::mk()->where(['type' => 'faq', 'question' => $question])->findOrEmpty();
+                // 匹配规则：通过 title 和 type 查找
+                $help = BaseHelp::mk()->where(['type' => 'faq', 'title' => $title])->findOrEmpty();
 
                 if ($help->isEmpty()) {
                     // 添加新记录

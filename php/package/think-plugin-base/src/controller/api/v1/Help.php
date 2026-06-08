@@ -17,7 +17,7 @@ class Help extends Base
         $steps = array_values(array_filter(array_map(static fn(string $step): string => trim($step), $steps ?: [])));
 
         $rows = BaseHelp::mk()
-            ->field('id,type,question,answer,sort,status')
+            ->field('id,type,title,content,sort,status')
             ->where('status', 1)
             ->where('type', 'faq')
             ->order('sort desc, id asc')
@@ -29,8 +29,8 @@ class Help extends Base
         foreach ($rows as $row) {
             $faqs[] = [
                 'id' => (int) ($row['id'] ?? 0),
-                'question' => (string) ($row['question'] ?? ''),
-                'answer' => (string) ($row['answer'] ?? ''),
+                'title' => (string) ($row['title'] ?? ''),
+                'content' => (string) ($row['content'] ?? ''),
             ];
         }
 

@@ -27,37 +27,39 @@ class InstallBaseHelp extends Migrator
         ]);
         PhinxExtend::upgrade($table, [
             ['type', 'string', ['limit' => 20, 'default' => 'faq', 'null' => false, 'comment' => '类型：step/faq']],
-            ['question', 'string', ['limit' => 255, 'default' => '', 'null' => true, 'comment' => '问题或步骤文案']],
-            ['answer', 'text', ['default' => null, 'null' => true, 'comment' => '答案内容']],
+            ['title', 'string', ['limit' => 255, 'default' => '', 'null' => true, 'comment' => '标题或步骤文案']],
+            ['content', 'text', ['default' => null, 'null' => true, 'comment' => '内容']],
             ['sort', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '排序权重']],
             ['click_count', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '点击次数']],
             ['status', 'integer', ['limit' => 1, 'default' => 1, 'null' => true, 'comment' => '状态']],
             ['create_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '创建时间']],
             ['update_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']],
         ], [
-            'type', 'status', 'sort',
+            'type',
+            'status',
+            'sort',
         ]);
 
         if (!$this->fetchRow("SELECT id FROM base_help LIMIT 1")) {
             $this->table('base_help')->insert([
                 [
                     'type' => 'faq',
-                    'question' => '使用时遇到问题怎么办？',
-                    'answer' => '可以在客服聊天窗口联系客服处理。',
+                    'title' => '使用时遇到问题怎么办？',
+                    'content' => '可以在客服聊天窗口联系客服处理。',
                     'sort' => 200,
                     'status' => 1,
                 ],
                 [
                     'type' => 'faq',
-                    'question' => '为什么建议开启剪贴板？',
-                    'answer' => '开启后进入首页会自动读取剪贴板内容，使用更加便捷。',
+                    'title' => '为什么建议开启剪贴板？',
+                    'content' => '开启后进入首页会自动读取剪贴板内容，使用更加便捷。',
                     'sort' => 180,
                     'status' => 1,
                 ],
                 [
                     'type' => 'faq',
-                    'question' => '保存失败怎么办？',
-                    'answer' => '请检查相册权限和网络状态，权限关闭时需要在微信设置里重新打开。',
+                    'title' => '保存失败怎么办？',
+                    'content' => '请检查相册权限和网络状态，权限关闭时需要在微信设置里重新打开。',
                     'sort' => 170,
                     'status' => 1,
                 ],
