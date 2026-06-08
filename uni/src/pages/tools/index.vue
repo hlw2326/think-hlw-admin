@@ -171,7 +171,7 @@ function getTools() {
     display: block;
     overflow: hidden;
     color: #94a3b8;
-    font-size: var(--font-22);
+    font-size: var(--font-xs);
     letter-spacing: 3rpx;
     line-height: 1.4;
     text-overflow: ellipsis;
@@ -191,7 +191,7 @@ function getTools() {
 }
 
 .tools-arrow-icon {
-    font-size: var(--font-22);
+    font-size: var(--font-xs);
 }
 
 .tools-line {

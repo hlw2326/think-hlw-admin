@@ -35,18 +35,6 @@ export default {
             md: ["var(--font-md)", { "line-height": "1.5" }],
             lg: ["var(--font-lg)", { "line-height": "1.5" }],
             xl: ["var(--font-xl)", { "line-height": "1.5" }],
-            // 原子档：text-20/22/.../40，绝对值不跟主题切换
-            20: ["var(--font-20)", { "line-height": "1.5" }],
-            22: ["var(--font-22)", { "line-height": "1.5" }],
-            24: ["var(--font-24)", { "line-height": "1.5" }],
-            26: ["var(--font-26)", { "line-height": "1.5" }],
-            28: ["var(--font-28)", { "line-height": "1.5" }],
-            30: ["var(--font-30)", { "line-height": "1.5" }],
-            32: ["var(--font-32)", { "line-height": "1.5" }],
-            34: ["var(--font-34)", { "line-height": "1.5" }],
-            36: ["var(--font-36)", { "line-height": "1.5" }],
-            38: ["var(--font-38)", { "line-height": "1.5" }],
-            40: ["var(--font-40)", { "line-height": "1.5" }],
         },
         extend: {
             colors: {

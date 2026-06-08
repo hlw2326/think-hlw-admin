@@ -109,7 +109,7 @@ const { user, updateAvatar, updateNickname } = useUser();
 }
 
 .copy-id .iconfont {
-    font-size: var(--font-22);
+    font-size: var(--font-xs);
 }
 
 .vip-tag {
@@ -134,7 +134,7 @@ const { user, updateAvatar, updateNickname } = useUser();
 .vip-text {
     margin-left: 4rpx;
     color: var(--primary-color, #3b82f6);
-    font-size: var(--font-22);
+    font-size: var(--font-xs);
     letter-spacing: 3rpx;
 }
 
