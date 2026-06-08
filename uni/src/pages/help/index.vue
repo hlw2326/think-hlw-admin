@@ -39,7 +39,7 @@ const { contact } = useConfig();
 const share = useAppShare("/pages/help/index");
 
 const steps = ref<string[]>([]);
-const faqList = ref<IHelp.Faq[]>([]);
+const faqList = ref<IHelp.Item[]>([]);
 
 const faqs = computed(() =>
     faqList.value.map((item) => ({

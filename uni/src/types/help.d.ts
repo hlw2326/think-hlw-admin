@@ -1,5 +1,5 @@
 declare namespace IHelp {
-    interface Faq {
+    interface Item {
         id: number;
         title: string;
         content: string;
@@ -7,6 +7,6 @@ declare namespace IHelp {
 
     interface ListResult {
         steps: string[];
-        faqs: Faq[];
+        faqs: Item[];
     }
 }
