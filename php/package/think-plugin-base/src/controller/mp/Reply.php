@@ -12,7 +12,6 @@ use think\admin\service\SystemService;
 /**
  * 回复规则
  * @class Reply
- * @package plugin\base\controller\mp
  */
 class Reply extends Controller
 {
@@ -21,14 +20,14 @@ class Reply extends Controller
      * @var array<string,string>
      */
     public array $types = [
-        'text'             => '文字',
-        'image'            => '图片',
-        'link'             => '图文链接',
-        'miniprogrampage'  => '小程序卡片',
-        'transfer'         => '转人工客服',
-        'voice'            => '语音',
-        'video'            => '视频',
-        'music'            => '音乐',
+        'text' => '文字',
+        'image' => '图片',
+        'link' => '图文链接',
+        'miniprogrampage' => '小程序卡片',
+        'transfer' => '转人工客服',
+        'voice' => '语音',
+        'video' => '视频',
+        'music' => '音乐',
     ];
 
     /**
@@ -36,10 +35,10 @@ class Reply extends Controller
      * @var array<string,string>
      */
     public array $matchTypes = [
-        'default'  => '默认回复',
-        'exact'    => '完全匹配',
+        'default' => '默认回复',
+        'exact' => '完全匹配',
         'contains' => '包含匹配',
-        'enter'    => '进入会话',
+        'enter' => '进入会话',
     ];
 
     /**
@@ -49,7 +48,7 @@ class Reply extends Controller
      */
     public function index(): void
     {
-        $this->appid = (string)($this->get['appid'] ?? '');
+        $this->appid = (string) ($this->get['appid'] ?? '');
         BaseMpReply::mQuery()->layTable(function () {
             $this->title = '回复规则';
             $this->mps = $this->mps();
@@ -82,7 +81,7 @@ class Reply extends Controller
     {
         BaseMpReply::mSave($this->_vali([
             'sort.require' => '排序值不能为空！',
-            'sort.number'  => '排序值格式异常！',
+            'sort.number' => '排序值格式异常！',
         ]));
     }
 
@@ -93,7 +92,7 @@ class Reply extends Controller
     public function defaults(): void
     {
         $this->_applyFormToken();
-        $appid = (string)($this->get['appid'] ?? '');
+        $appid = (string) ($this->get['appid'] ?? '');
         $data = ['appid' => $appid, 'match_type' => 'default', 'msg_type' => 'all', 'status' => 1, 'sort' => 0];
         $vo = BaseMpReply::mk()->where(['appid' => $appid, 'match_type' => 'default'])->findOrEmpty()->toArray();
         if (!empty($vo)) {
@@ -130,8 +129,6 @@ class Reply extends Controller
         $this->customerUrl = $this->customerUrl();
     }
 
-
-
     /**
      * 添加规则
      * @auth true
@@ -161,17 +158,17 @@ class Reply extends Controller
         if ($this->request->isGet()) {
             $this->assignFormVars();
             if (empty($data['appid']) && !empty($this->get['appid'])) {
-                $data['appid'] = (string)$this->get['appid'];
+                $data['appid'] = (string) $this->get['appid'];
             }
             // 填充表单特定字段值 (带向后兼容 fallback)
             $data['text_content'] = ($data['text_content'] ?? '') ?: (($data['reply_type'] ?? '') === 'text' ? ($data['content'] ?? '') : '');
             $data['image_image_url'] = ($data['image_image_url'] ?? '') ?: (($data['reply_type'] ?? '') === 'image' ? ($data['image_url'] ?? '') : '');
-            
+
             $data['link_title'] = ($data['link_title'] ?? '') ?: (($data['reply_type'] ?? '') === 'link' ? ($data['title'] ?? '') : '');
             $data['link_content'] = ($data['link_content'] ?? '') ?: (($data['reply_type'] ?? '') === 'link' ? ($data['content'] ?? '') : '');
             $data['link_url'] = ($data['link_url'] ?? '') ?: (($data['reply_type'] ?? '') === 'link' ? ($data['url'] ?? '') : '');
             $data['link_image_url'] = ($data['link_image_url'] ?? '') ?: (($data['reply_type'] ?? '') === 'link' ? ($data['image_url'] ?? '') : '');
-            
+
             $data['page_title'] = ($data['page_title'] ?? '') ?: (($data['reply_type'] ?? '') === 'miniprogrampage' ? ($data['title'] ?? '') : '');
             $data['page_pagepath'] = ($data['page_pagepath'] ?? '') ?: (($data['reply_type'] ?? '') === 'miniprogrampage' ? ($data['pagepath'] ?? '') : '');
             $data['page_image_url'] = ($data['page_image_url'] ?? '') ?: (($data['reply_type'] ?? '') === 'miniprogrampage' ? ($data['image_url'] ?? '') : '');
@@ -190,11 +187,11 @@ class Reply extends Controller
             $data['music_image_url'] = ($data['music_image_url'] ?? '') ?: (($data['reply_type'] ?? '') === 'music' ? ($data['image_url'] ?? '') : '');
             return;
         }
-        
-        $data['appid'] = trim((string)($data['appid'] ?? ''));
+
+        $data['appid'] = trim((string) ($data['appid'] ?? ''));
         $data['msg_type'] = 'all';
-        $data['reply_type'] = trim((string)($data['reply_type'] ?? 'text'));
-        
+        $data['reply_type'] = trim((string) ($data['reply_type'] ?? 'text'));
+
         if (in_array($data['match_type'] ?? '', ['default', 'enter'])) {
             $data['keyword'] = '';
             $query = BaseMpReply::mk()->where(['appid' => $data['appid'] ?? '', 'match_type' => $data['match_type']]);
@@ -205,30 +202,30 @@ class Reply extends Controller
                 $label = $data['match_type'] === 'default' ? '默认回复' : '进入会话回复';
                 $this->error("该小程序已存在{$label}");
             }
-        } elseif (trim((string)($data['keyword'] ?? '')) === '') {
+        } elseif (trim((string) ($data['keyword'] ?? '')) === '') {
             $this->error('请输入匹配关键词');
         }
 
         // 整理所有独立的字段
-        $data['text_content'] = trim((string)($data['text_content'] ?? ''));
-        $data['image_image_url'] = trim((string)($data['image_image_url'] ?? ''));
-        $data['link_title'] = trim((string)($data['link_title'] ?? ''));
-        $data['link_content'] = trim((string)($data['link_content'] ?? ''));
-        $data['link_url'] = trim((string)($data['link_url'] ?? ''));
-        $data['link_image_url'] = trim((string)($data['link_image_url'] ?? ''));
-        $data['page_title'] = trim((string)($data['page_title'] ?? ''));
-        $data['page_pagepath'] = trim((string)($data['page_pagepath'] ?? ''));
-        $data['page_image_url'] = trim((string)($data['page_image_url'] ?? ''));
-        $data['page_appid'] = trim((string)($data['page_appid'] ?? ''));
-        $data['voice_voice_url'] = trim((string)($data['voice_voice_url'] ?? ''));
-        $data['video_title'] = trim((string)($data['video_title'] ?? ''));
-        $data['video_content'] = trim((string)($data['video_content'] ?? ''));
-        $data['video_video_url'] = trim((string)($data['video_video_url'] ?? ''));
-        $data['music_title'] = trim((string)($data['music_title'] ?? ''));
-        $data['music_content'] = trim((string)($data['music_content'] ?? ''));
-        $data['music_url'] = trim((string)($data['music_url'] ?? ''));
-        $data['music_hqurl'] = trim((string)($data['music_hqurl'] ?? ''));
-        $data['music_image_url'] = trim((string)($data['music_image_url'] ?? ''));
+        $data['text_content'] = trim((string) ($data['text_content'] ?? ''));
+        $data['image_image_url'] = trim((string) ($data['image_image_url'] ?? ''));
+        $data['link_title'] = trim((string) ($data['link_title'] ?? ''));
+        $data['link_content'] = trim((string) ($data['link_content'] ?? ''));
+        $data['link_url'] = trim((string) ($data['link_url'] ?? ''));
+        $data['link_image_url'] = trim((string) ($data['link_image_url'] ?? ''));
+        $data['page_title'] = trim((string) ($data['page_title'] ?? ''));
+        $data['page_pagepath'] = trim((string) ($data['page_pagepath'] ?? ''));
+        $data['page_image_url'] = trim((string) ($data['page_image_url'] ?? ''));
+        $data['page_appid'] = trim((string) ($data['page_appid'] ?? ''));
+        $data['voice_voice_url'] = trim((string) ($data['voice_voice_url'] ?? ''));
+        $data['video_title'] = trim((string) ($data['video_title'] ?? ''));
+        $data['video_content'] = trim((string) ($data['video_content'] ?? ''));
+        $data['video_video_url'] = trim((string) ($data['video_video_url'] ?? ''));
+        $data['music_title'] = trim((string) ($data['music_title'] ?? ''));
+        $data['music_content'] = trim((string) ($data['music_content'] ?? ''));
+        $data['music_url'] = trim((string) ($data['music_url'] ?? ''));
+        $data['music_hqurl'] = trim((string) ($data['music_hqurl'] ?? ''));
+        $data['music_image_url'] = trim((string) ($data['music_image_url'] ?? ''));
 
         // 仅对当前激活的类型进行非空验证
         if ($data['reply_type'] === 'text') {
@@ -355,21 +352,46 @@ class Reply extends Controller
      */
     public function export(): void
     {
-        $appid = (string)($this->request->get('appid', ''));
+        $appid = (string) ($this->request->get('appid', ''));
         $query = BaseMpReply::mQuery();
         $query->like('keyword|content#keys')->equal('reply_type#mtype,match_type,status')->dateBetween('create_at');
-        
+
         $fields = [
-            'appid', 'msg_type', 'match_type', 'keyword', 'reply_type', 'sort', 'status',
-            'content', 'image_url', 'title', 'pagepath', 'url',
-            'text_content', 'image_image_url', 'link_title', 'link_content', 'link_url', 'link_image_url',
-            'page_title', 'page_pagepath', 'page_image_url', 'page_appid', 'voice_voice_url',
-            'video_title', 'video_content', 'video_video_url', 'music_title', 'music_content',
-            'music_url', 'music_hqurl', 'music_image_url'
+            'appid',
+            'msg_type',
+            'match_type',
+            'keyword',
+            'reply_type',
+            'sort',
+            'status',
+            'content',
+            'image_url',
+            'title',
+            'pagepath',
+            'url',
+            'text_content',
+            'image_image_url',
+            'link_title',
+            'link_content',
+            'link_url',
+            'link_image_url',
+            'page_title',
+            'page_pagepath',
+            'page_image_url',
+            'page_appid',
+            'voice_voice_url',
+            'video_title',
+            'video_content',
+            'video_video_url',
+            'music_title',
+            'music_content',
+            'music_url',
+            'music_hqurl',
+            'music_image_url'
         ];
         $list = $query->db()->where(['appid' => $appid])->order('sort desc,id asc')->field($fields)->select()->toArray();
         $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        
+
         $filename = 'reply_' . ($appid ? $appid : 'common') . '_' . date('YmdHis') . '.json';
         header('Content-Type: application/json; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -383,7 +405,7 @@ class Reply extends Controller
      */
     public function import(): void
     {
-        $appid = (string)($this->request->get('appid', ''));
+        $appid = (string) ($this->request->get('appid', ''));
         if ($this->request->isGet()) {
             $this->appid = $appid;
             $this->fetch();
@@ -411,18 +433,43 @@ class Reply extends Controller
 
         // 允许导入的字段列表
         $allowedFields = [
-            'appid', 'msg_type', 'match_type', 'keyword', 'reply_type', 'sort', 'status',
-            'content', 'image_url', 'title', 'pagepath', 'url',
-            'text_content', 'image_image_url', 'link_title', 'link_content', 'link_url', 'link_image_url',
-            'page_title', 'page_pagepath', 'page_image_url', 'page_appid', 'voice_voice_url',
-            'video_title', 'video_content', 'video_video_url', 'music_title', 'music_content',
-            'music_url', 'music_hqurl', 'music_image_url'
+            'appid',
+            'msg_type',
+            'match_type',
+            'keyword',
+            'reply_type',
+            'sort',
+            'status',
+            'content',
+            'image_url',
+            'title',
+            'pagepath',
+            'url',
+            'text_content',
+            'image_image_url',
+            'link_title',
+            'link_content',
+            'link_url',
+            'link_image_url',
+            'page_title',
+            'page_pagepath',
+            'page_image_url',
+            'page_appid',
+            'voice_voice_url',
+            'video_title',
+            'video_content',
+            'video_video_url',
+            'music_title',
+            'music_content',
+            'music_url',
+            'music_hqurl',
+            'music_image_url'
         ];
 
         try {
             foreach ($list as $item) {
-                $matchType = trim((string)($item['match_type'] ?? 'exact'));
-                $keyword = trim((string)($item['keyword'] ?? ''));
+                $matchType = trim((string) ($item['match_type'] ?? 'exact'));
+                $keyword = trim((string) ($item['keyword'] ?? ''));
 
                 $updateData = [];
                 foreach ($allowedFields as $field) {

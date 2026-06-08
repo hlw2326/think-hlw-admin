@@ -10,7 +10,6 @@ use think\admin\helper\QueryHelper;
 /**
  * 小程序管理
  * @class Index
- * @package plugin\base\controller\mp
  */
 class Index extends Controller
 {
@@ -157,12 +156,30 @@ class Index extends Controller
 
         // 允许导入的字段列表
         $allowedFields = [
-            'name', 'appsecret', 'pages_config', 'token', 'encodingaeskey', 
-            'custom_reply_enabled', 'logo', 'remark', 'banner_unit_id', 'grid_unit_id', 
-            'custom_unit_id', 'video_unit_id', 'reward_unit_id', 'popup_unit_id', 
-            'ad_global_enabled', 'ad_enabled_banner', 'ad_enabled_grid', 
-            'ad_enabled_custom', 'ad_enabled_video', 'ad_enabled_reward', 
-            'ad_enabled_popup', 'vip_no_ad', 'sort', 'status'
+            'name',
+            'appsecret',
+            'pages_config',
+            'token',
+            'encodingaeskey',
+            'custom_reply_enabled',
+            'logo',
+            'remark',
+            'banner_unit_id',
+            'grid_unit_id',
+            'custom_unit_id',
+            'video_unit_id',
+            'reward_unit_id',
+            'popup_unit_id',
+            'ad_global_enabled',
+            'ad_enabled_banner',
+            'ad_enabled_grid',
+            'ad_enabled_custom',
+            'ad_enabled_video',
+            'ad_enabled_reward',
+            'ad_enabled_popup',
+            'vip_no_ad',
+            'sort',
+            'status'
         ];
 
         try {
@@ -172,7 +189,7 @@ class Index extends Controller
                     continue;
                 }
 
-                $appid = trim((string)$item['appid']);
+                $appid = trim((string) $item['appid']);
                 $updateData = [];
                 foreach ($allowedFields as $field) {
                     if (isset($item[$field])) {
@@ -207,14 +224,33 @@ class Index extends Controller
     {
         $query = BaseMp::mQuery();
         $query->like('name')->like('appid')->equal('status');
-        
+
         $fields = [
-            'name', 'appid', 'appsecret', 'pages_config', 'token', 'encodingaeskey', 
-            'custom_reply_enabled', 'logo', 'remark', 'banner_unit_id', 'grid_unit_id', 
-            'custom_unit_id', 'video_unit_id', 'reward_unit_id', 'popup_unit_id', 
-            'ad_global_enabled', 'ad_enabled_banner', 'ad_enabled_grid', 
-            'ad_enabled_custom', 'ad_enabled_video', 'ad_enabled_reward', 
-            'ad_enabled_popup', 'vip_no_ad', 'sort', 'status'
+            'name',
+            'appid',
+            'appsecret',
+            'pages_config',
+            'token',
+            'encodingaeskey',
+            'custom_reply_enabled',
+            'logo',
+            'remark',
+            'banner_unit_id',
+            'grid_unit_id',
+            'custom_unit_id',
+            'video_unit_id',
+            'reward_unit_id',
+            'popup_unit_id',
+            'ad_global_enabled',
+            'ad_enabled_banner',
+            'ad_enabled_grid',
+            'ad_enabled_custom',
+            'ad_enabled_video',
+            'ad_enabled_reward',
+            'ad_enabled_popup',
+            'vip_no_ad',
+            'sort',
+            'status'
         ];
         $list = $query->db()->field($fields)->order('sort desc,id asc')->select()->toArray();
         $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

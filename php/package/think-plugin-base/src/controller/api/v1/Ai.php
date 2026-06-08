@@ -9,7 +9,6 @@ use Throwable;
 /**
  * AI 服务 API
  * @class Ai
- * @package plugin\base\controller\api\v1
  */
 class Ai extends Auth
 {

@@ -31,7 +31,7 @@ class Service extends Plugin
 
     public static function menu(): array
     {
-        $code = app(static::class)->appCode;
+        $code = static::getAppCode();
         return [
             ['name' => '系统统计', 'icon' => 'layui-icon layui-icon-chart-screen', 'node' => "{$code}/main.index/index"],
             ['name' => '系统参数', 'icon' => 'layui-icon layui-icon-set', 'node' => "{$code}/config.index/index"],

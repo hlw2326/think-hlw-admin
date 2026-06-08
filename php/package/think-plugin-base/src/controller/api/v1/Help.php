@@ -8,7 +8,6 @@ use plugin\base\model\BaseHelp;
 /**
  * 帮助列表 API
  * @class Help
- * @package plugin\base\controller\api\v1
  */
 class Help extends Base
 {
@@ -47,7 +46,7 @@ class Help extends Base
      */
     public function click(): void
     {
-        $id = (int)$this->request->post('id', 0);
+        $id = (int) $this->request->post('id', 0);
         if ($id > 0) {
             BaseHelp::mk()->where(['id' => $id, 'status' => 1])->inc('click_count')->save();
         }

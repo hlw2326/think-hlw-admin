@@ -6,7 +6,7 @@ namespace plugin\base\model;
 use think\admin\Model;
 
 /**
- * 帮助-模型
+ * 帮助 - 模型
  * @class BaseHelp
  * @package plugin\base\model
  */

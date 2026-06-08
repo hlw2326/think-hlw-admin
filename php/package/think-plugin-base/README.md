@@ -1,4 +1,4 @@
-# ThinkAdmin v6 测试后台及小程序管理插件
+# ThinkAdmin v6 小程序管理插件
 
 `hlw2326/think-plugin-base` 是基于 ThinkAdmin v6 框架开发的小程序辅助插件，提供小程序跳转列表管理、FAQ 帮助中心、广告控制、工具箱管理及多小程序租户用户登录管理等功能。
 

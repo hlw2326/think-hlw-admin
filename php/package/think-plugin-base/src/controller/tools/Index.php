@@ -10,7 +10,6 @@ use think\admin\helper\QueryHelper;
 /**
  * 工具列表
  * @class Index
- * @package plugin\base\controller\tools
  */
 class Index extends Controller
 {
@@ -119,7 +118,14 @@ class Index extends Controller
 
         // 允许导入的字段列表
         $allowedFields = [
-            'title', 'desc', 'logo', 'appid', 'path', 'click_count', 'sort', 'status'
+            'title',
+            'desc',
+            'logo',
+            'appid',
+            'path',
+            'click_count',
+            'sort',
+            'status'
         ];
 
         try {
@@ -129,8 +135,8 @@ class Index extends Controller
                     continue;
                 }
 
-                $title = trim((string)$item['title']);
-                $appid = isset($item['appid']) ? trim((string)$item['appid']) : '';
+                $title = trim((string) $item['title']);
+                $appid = isset($item['appid']) ? trim((string) $item['appid']) : '';
 
                 $updateData = [];
                 foreach ($allowedFields as $field) {

@@ -10,7 +10,6 @@ use think\admin\helper\QueryHelper;
 /**
  * 用户列表
  * @class Index
- * @package plugin\base\controller\user
  */
 class Index extends Controller
 {

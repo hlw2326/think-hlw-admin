@@ -8,7 +8,6 @@ use plugin\base\service\UserService;
 /**
  * 用户相关 API
  * @class User
- * @package plugin\base\controller\api\v1
  */
 class User extends Auth
 {
@@ -50,7 +49,7 @@ class User extends Auth
             if ($url !== '') {
                 $host = parse_url($url, PHP_URL_HOST);
                 if (empty($host) || !in_array($host, Upload::allowedHosts($this->request), true)) {
-                     $this->error('非法的头像地址');
+                    $this->error('非法的头像地址');
                 }
             }
             $update['avatar_url'] = $url;

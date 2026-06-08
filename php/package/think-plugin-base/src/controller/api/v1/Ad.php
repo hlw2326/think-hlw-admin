@@ -9,7 +9,6 @@ use plugin\base\service\AdService;
 /**
  * 广告相关 API
  * @class Ad
- * @package plugin\base\controller\api\v1
  */
 class Ad extends Base
 {

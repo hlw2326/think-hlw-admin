@@ -8,7 +8,6 @@ use plugin\base\model\BaseTools;
 /**
  * 工具列表 API
  * @class Tools
- * @package plugin\base\controller\api\v1
  */
 class Tools extends Base
 {

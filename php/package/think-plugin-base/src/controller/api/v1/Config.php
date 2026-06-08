@@ -8,7 +8,6 @@ use plugin\base\service\AdService;
 /**
  * 系统配置 API
  * @class Config
- * @package plugin\base\controller\api\v1
  */
 class Config extends Base
 {

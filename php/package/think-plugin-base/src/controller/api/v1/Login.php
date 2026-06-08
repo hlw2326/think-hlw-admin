@@ -9,7 +9,6 @@ use WeMini\Crypt;
 /**
  * 登录服务 API
  * @class Login
- * @package plugin\base\controller\api\v1
  */
 class Login extends Base
 {
@@ -58,7 +57,7 @@ class Login extends Base
             $this->error($exception->getMessage());
         }
 
-        $oldToken = (string)($user->token ?? '');
+        $oldToken = (string) ($user->token ?? '');
         $token = bin2hex(random_bytes(32));
         $user->save([
             'token' => $token,

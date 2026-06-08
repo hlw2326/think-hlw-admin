@@ -11,7 +11,6 @@ use Throwable;
 /**
  * 系统参数配置
  * @class Index
- * @package plugin\base\controller\config
  */
 class Index extends Controller
 {
@@ -31,7 +30,7 @@ class Index extends Controller
         $this->title = '基础配置';
         $this->current = 'index';
         $this->base = [
-            'help_steps' => (string) (sysconf('base.help_steps') ?: "第一步：选择需要使用的功能工具\n第二步：按照提示填写或粘贴相关内容并提交\n第三步：等待处理完成，查看、复制或保存处理结果"),
+            'help_steps' => (string) (sysconf('base.help_steps') ?: ""),
         ];
         $this->fetch();
     }

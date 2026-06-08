@@ -8,7 +8,6 @@ use plugin\base\model\BaseUser;
 /**
  * 登录验证 API
  * @class Auth
- * @package plugin\base\controller\api\v1
  */
 class Auth extends Base
 {

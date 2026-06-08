@@ -13,7 +13,6 @@ use think\Request;
 /**
  * 文件上传 API
  * @class Upload
- * @package plugin\base\controller\api\v1
  */
 class Upload extends Auth
 {

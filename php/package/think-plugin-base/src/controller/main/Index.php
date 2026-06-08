@@ -12,7 +12,6 @@ use think\admin\Controller;
 /**
  * 系统统计
  * @class Index
- * @package plugin\base\controller\main
  */
 class Index extends Controller
 {
@@ -24,14 +23,14 @@ class Index extends Controller
     public function index(): void
     {
         $this->title = '系统统计';
-        
+
         // 核心统计指标
         $this->user_count = BaseUser::mk()->cache(true, 10)->count();
         $this->day_user_count = BaseUser::mk()->whereDay('create_at')->cache(true, 10)->count();
-        
+
         $this->tools_count = BaseTools::mk()->cache(true, 10)->count();
         $this->tools_click_count = BaseTools::mk()->cache(true, 10)->sum('click_count');
-        
+
         $this->help_count = BaseHelp::mk()->cache(true, 10)->count();
         $this->reply_count = BaseMpReply::mk()->cache(true, 10)->count();
 
@@ -50,7 +49,7 @@ class Index extends Controller
 
         // 工具点击排行统计数据
         $this->tools_list = BaseTools::mk()->order('click_count desc')->limit(10)->select()->toArray();
-        
+
         $this->fetch();
     }
 }

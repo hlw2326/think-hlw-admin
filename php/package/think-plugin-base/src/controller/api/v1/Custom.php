@@ -12,7 +12,6 @@ use WeChat\Receive;
 /**
  * 客服消息 API
  * @class Custom
- * @package plugin\base\controller\api\v1
  */
 class Custom extends Controller
 {
@@ -24,19 +23,19 @@ class Custom extends Controller
     {
         try {
             $mp = $this->mp();
-            if (!$this->checkSignature((string)$mp->token)) {
+            if (!$this->checkSignature((string) $mp->token)) {
                 return '';
             }
             if ($this->request->isGet()) {
-                return (string)$this->request->get('echostr', '');
+                return (string) $this->request->get('echostr', '');
             }
             if (empty($mp->custom_reply_enabled)) {
                 return 'success';
             }
             $message = $this->receive($mp);
-            $openid = (string)($message['FromUserName'] ?? $message['fromusername'] ?? '');
+            $openid = (string) ($message['FromUserName'] ?? $message['fromusername'] ?? '');
             if ($openid !== '' && ($rule = CustomService::match($mp, $message))) {
-                if (strtolower((string)$rule->reply_type) === 'transfer') {
+                if (strtolower((string) $rule->reply_type) === 'transfer') {
                     return $this->transferResponse($message);
                 }
                 CustomService::sendRule($mp, $openid, $rule);
@@ -59,7 +58,7 @@ class Custom extends Controller
         $time = time();
         $raw = trim(Tools::getRawInput());
         if (str_starts_with($raw, '{')) {
-            return (string)json_encode([
+            return (string) json_encode([
                 'ToUserName' => $toUser,
                 'FromUserName' => $fromUser,
                 'CreateTime' => $time,
@@ -82,7 +81,7 @@ XML;
      */
     private function mp(): BaseMp
     {
-        $appid = (string)$this->request->get('appid', '');
+        $appid = (string) $this->request->get('appid', '');
         if ($appid === '') {
             throw new \RuntimeException('缺少 appid 参数');
         }
@@ -128,9 +127,9 @@ XML;
      */
     private function checkSignature(string $token): bool
     {
-        $nonce = (string)$this->request->get('nonce', '');
-        $timestamp = (string)$this->request->get('timestamp', '');
-        $signature = (string)($this->request->get('msg_signature', '') ?: $this->request->get('signature', ''));
+        $nonce = (string) $this->request->get('nonce', '');
+        $timestamp = (string) $this->request->get('timestamp', '');
+        $signature = (string) ($this->request->get('msg_signature', '') ?: $this->request->get('signature', ''));
         $tmpArr = [$token, $timestamp, $nonce, $this->request->get('msg_signature') ? $this->encryptPayload() : ''];
         sort($tmpArr, SORT_STRING);
         return sha1(implode($tmpArr)) === $signature;
@@ -147,7 +146,7 @@ XML;
             return '';
         }
         $data = Tools::xml2arr($raw);
-        return (string)($data['Encrypt'] ?? $data['encrypt'] ?? '');
+        return (string) ($data['Encrypt'] ?? $data['encrypt'] ?? '');
     }
 
     /**
@@ -161,8 +160,8 @@ XML;
             if (is_array($value)) {
                 $value = $this->arrayChangeKeyCase($value);
             }
-            $data[strtolower((string)$key)] = $value;
-            if (strtolower((string)$key) !== (string)$key) {
+            $data[strtolower((string) $key)] = $value;
+            if (strtolower((string) $key) !== (string) $key) {
                 unset($data[$key]);
             }
         }

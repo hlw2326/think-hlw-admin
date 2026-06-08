@@ -9,7 +9,6 @@ use think\admin\Controller;
 /**
  * 接口基础 API
  * @class Base
- * @package plugin\base\controller\api\v1
  */
 class Base extends Controller
 {
