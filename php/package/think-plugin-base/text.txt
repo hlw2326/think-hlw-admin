@@ -1,0 +1,24 @@
+F:\mini\friend-bg\php\package\think-plugin-base 这个改成 think-plugin-fbg
+
+相关base_ 都改成 fbg_
+
+F:\mini\friend-bg\php\package\think-plugin-base\src\model 里面的Base都改成Fbg
+
+例如 F:\mini\friend-bg\php\package\think-plugin-base\src\model\BaseHelp.php 改成 F:\mini\friend-bg\php\package\think-plugin-base\src\model\FbgHelp.php
+
+F:\mini\friend-bg\php\package\think-plugin-base\stc\database 里面的数据库命名，文件命名 都要改成 fbg_
+
+看看F:\mini\friend-bg\php\package\think-plugin-base里面 有相关 plugin-base 的改成 plugin-fbg 
+
+F:\mini\friend-bg\uni\src\service 里面的 @ServicePrefix("plugin-base") 改成 @ServicePrefix("plugin-fbg")
+
+F:\mini\friend-bg\php\package\think-plugin-base\src\Service.php 里面都改下   通用插件 改成 朋友圈背景
+
+hlw2326/think-plugin-base 改成 hlw2326/think-plugin-fbg
+
+F:\mini\friend-bg\php\package\think-plugin-base\composer.json 这个里面也需要修改
+
+F:\mini\friend-bg\php\package\think-plugin-fbg\src\controller 里面需要添加新增功能的控制器
+F:\mini\friend-bg\php\package\think-plugin-fbg\src\view 里面需要添加新增功能的模板
+
+F:\mini\friend-bg\php\package\think-plugin-fbg\src\Service.php 这里的menu 菜单也需要增加添加的控制器的
