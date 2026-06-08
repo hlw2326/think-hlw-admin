@@ -12,5 +12,6 @@ use think\admin\Model;
  */
 class BaseHelp extends Model
 {
+
 }
 

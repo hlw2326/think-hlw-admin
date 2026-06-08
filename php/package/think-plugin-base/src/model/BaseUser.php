@@ -12,6 +12,7 @@ use think\admin\Model;
  */
 class BaseUser extends Model
 {
+
 }
 
 

@@ -12,6 +12,7 @@ use think\admin\Model;
  */
 class BaseMp extends Model
 {
+
 }
 
 
