@@ -36,7 +36,7 @@ class Help extends Base
 
         $this->success('获取成功', [
             'steps' => array_values(array_filter($steps)),
-            'faqs' => $faqs,
+            'list' => $faqs,
         ]);
     }
 
