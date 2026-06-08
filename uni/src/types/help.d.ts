@@ -7,6 +7,6 @@ declare namespace IHelp {
 
     interface ListResult {
         steps: string[];
-        faqs: Item[];
+        list: Item[];
     }
 }
