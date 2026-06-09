@@ -1,4 +1,4 @@
-<div class="layui-card" style="padding: 20px; background-color: #f2f2f2; margin: 0; max-height: 550px; overflow-y: auto;">
+<div class="layui-card" style="background-color: #f2f2f2; margin: 0;">
     <!-- Section 1: 基本信息 -->
     <div class="layui-card">
         <div class="layui-card-body">
@@ -51,8 +51,12 @@
                     <tr>
                         <td style="background-color: #fafafa; font-weight: 500;">可用积分</td>
                         <td style="font-weight: bold; color: #ff5722;">{$vo.score|default='0'}</td>
+                        <td style="background-color: #fafafa; font-weight: 500;">累计下载</td>
+                        <td>{$vo.down_total|default='0'}</td>
+                    </tr>
+                    <tr>
                         <td style="background-color: #fafafa; font-weight: 500;">是否免广告</td>
-                        <td>
+                        <td colspan="3">
                             {if isset($vo.vip_no_ad) && $vo.vip_no_ad == 1}
                             <span class="layui-badge layui-bg-green">是</span>
                             {else}
@@ -184,7 +188,7 @@
     </div>
 
     <!-- Section 5: 其它说明 -->
-    <div class="layui-card" style="margin-top: 15px; margin-bottom: 15px;">
+    <div class="layui-card" style="margin-top: 15px; ">
         <div class="layui-card-body">
             <table class="layui-table" lay-skin="line" style="margin: 0;">
                 <colgroup>
@@ -204,5 +208,4 @@
             </table>
         </div>
     </div>
-
 </div>
