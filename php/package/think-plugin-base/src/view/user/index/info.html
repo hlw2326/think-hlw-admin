@@ -48,6 +48,18 @@
                         <td style="background-color: #fafafa; font-weight: 500;">所属地区</td>
                         <td>{$vo.region|default='-'}</td>
                     </tr>
+                    <tr>
+                        <td style="background-color: #fafafa; font-weight: 500;">可用积分</td>
+                        <td style="font-weight: bold; color: #ff5722;">{$vo.score|default='0'}</td>
+                        <td style="background-color: #fafafa; font-weight: 500;">是否免广告</td>
+                        <td>
+                            {if isset($vo.vip_no_ad) && $vo.vip_no_ad == 1}
+                            <span class="layui-badge layui-bg-green">是</span>
+                            {else}
+                            <span class="layui-badge layui-bg-gray">否</span>
+                            {/if}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

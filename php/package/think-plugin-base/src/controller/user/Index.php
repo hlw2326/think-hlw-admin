@@ -25,7 +25,7 @@ class Index extends Controller
         }, function (QueryHelper $query) {
             $query->equal('id');
             $query->like('nickname')->like('phone')->like('openid')->like('device_model');
-            $query->equal('status,appid');
+            $query->equal('status,appid,vip_no_ad');
             $query->dateBetween('create_at');
             $query->where(['deleted' => 0]);
         });
@@ -39,7 +39,7 @@ class Index extends Controller
     {
         BaseUser::mSave($this->_vali([
             'status.in:0,1' => '状态值范围异常！',
-            'status.require' => '状态值不能为空！',
+            'vip_no_ad.in:0,1' => '免广告状态异常！',
         ]));
     }
 

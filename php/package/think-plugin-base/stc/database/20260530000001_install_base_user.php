@@ -41,6 +41,8 @@ class InstallBaseUser extends Migrator
             ['signature', 'string', ['limit' => 200, 'default' => '', 'null' => true, 'comment' => '个性签名']],
             ['phone', 'string', ['limit' => 20, 'default' => '', 'null' => true, 'comment' => '手机号']],
             ['vip_time', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '会员过期时间戳']],
+            ['score', 'integer', ['limit' => 11, 'default' => 0, 'null' => true, 'comment' => '当前可用积分']],
+            ['vip_no_ad', 'integer', ['limit' => 1, 'default' => 0, 'null' => true, 'comment' => '是否免广告']],
             ['status', 'integer', ['limit' => 1, 'default' => 1, 'null' => true, 'comment' => '状态']],
             ['deleted', 'integer', ['limit' => 1, 'default' => 0, 'null' => true, 'comment' => '删除状态']],
             ['login_ip', 'string', ['limit' => 50, 'default' => '', 'null' => true, 'comment' => '本次登录IP']],
