@@ -57,5 +57,20 @@ class Index extends Controller
         BaseUser::mk()->where(['id' => $id, 'deleted' => 0])->update(['token' => '']);
         $this->success('已退出登录！');
     }
+
+    /**
+     * 用户详细信息
+     * @auth true
+     */
+    public function info(): void
+    {
+        $id = intval($this->request->get('id', 0));
+        $this->vo = BaseUser::mk()->where(['id' => $id, 'deleted' => 0])->findOrEmpty()->toArray();
+        if (empty($this->vo)) {
+            $this->error('用户不存在！');
+        }
+        $this->fetch();
+    }
 }
+
 

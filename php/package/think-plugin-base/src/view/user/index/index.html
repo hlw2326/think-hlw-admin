@@ -83,5 +83,8 @@
     <!--{if auth("logout")}-->
     <a class="layui-btn layui-btn-sm layui-btn-danger" data-confirm="确定要让该用户退出登录吗？" data-action="{:url('logout')}" data-value="id#{{d.id}}">退出登录</a>
     <!--{/if}-->
+    <!--{if auth("info")}-->
+    <a class="layui-btn layui-btn-sm layui-btn-normal" data-modal='{:url("info")}?id={{d.id}}' data-title="用户信息">信息</a>
+    <!--{/if}-->
 </script>
 {/block}
