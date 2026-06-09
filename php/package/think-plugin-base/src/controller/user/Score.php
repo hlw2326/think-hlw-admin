@@ -45,12 +45,13 @@ class Score extends Controller
     public function rollback(): void
     {
         $id = intval($this->request->post('id', 0));
-        $log = BaseUserScore::mk()->where(['id' => $id])->findOrEmpty();
+        $log = BaseUserScore::mk()->where(['id' => $id])->field('user_id, value, create_at, NOW() as db_now')->findOrEmpty();
         if ($log->isEmpty()) {
             $this->error('记录不存在！');
         }
 
-        if (time() - strtotime($log->create_at) > 300) {
+        $diff = strtotime((string)$log->getAttr('db_now')) - strtotime((string)$log->create_at);
+        if ($diff > 300) {
             $this->error('该记录已超过 5 分钟，不允许回滚！');
         }
 
