@@ -8,6 +8,7 @@ import Login from "./v1/login";
 import Tools from "./v1/tools";
 import Upload from "./v1/upload";
 import User from "./v1/user";
+import Invite from "./v1/invite";
 
 type ServiceCtor = new () => BaseService;
 
@@ -20,6 +21,7 @@ export interface ServiceMap {
         tools: Tools;
         upload: Upload;
         user: User;
+        invite: Invite;
     };
 }
 

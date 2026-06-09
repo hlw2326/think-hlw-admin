@@ -1,21 +1,6 @@
 <template>
     <hlw-page is-back :is-bar="true" title="个性化设置">
         <view class="container">
-            <!-- 主题设置 -->
-            <view class="section-title">主题选择</view>
-            <view class="theme-list">
-                <view v-for="item in themePresets" :key="item.id" class="theme-item" @tap="selectTheme(item.id)">
-                    <view class="theme-left">
-                        <view class="theme-icon" :style="{ color: getIconColor(item.id) }">
-                            <span class="i-fa6-solid-palette theme-icon-symbol" />
-                        </view>
-                        <text class="theme-text">{{ item.name }}</text>
-                    </view>
-                    <span v-if="themeStore.theme === item.id" class="i-fa6-solid-circle-check checked-icon" />
-                    <span v-else class="i-fa6-solid-chevron-right menu-arrow" />
-                </view>
-            </view>
-
             <!-- 字体大小设置 -->
             <view class="section-title">字体大小</view>
             <view class="theme-list">
@@ -52,28 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { useTheme, themePresets, fontFamilyPresets, fontSizePresets } from "@/core";
+import { useTheme, fontFamilyPresets, fontSizePresets } from "@/core";
 
-const { theme, fontSize, setFontSize, fontFamily, setFontFamily, store: themeStore } = useTheme();
-
-function getIconColor(id: string) {
-    const colors: Record<string, string> = {
-        "white-theme": "#334155", // 白色主题用深灰色图标，显得干净高级
-        "light-theme": "#3b82f6", // 简洁主题用蓝色图标，代表简洁现代
-        "mono-theme": "#6366f1", // 单色主题用靛蓝色图标
-        "color-theme": "#10b981", // 颜色主题用绿色图标
-    };
-    return colors[id] || "#3b82f6";
-}
-
-function selectTheme(themeId: string) {
-    themeStore.theme = themeId;
-    uni.showToast({
-        title: "设置成功",
-        icon: "success",
-        duration: 1000,
-    });
-}
+const { fontSize, setFontSize, fontFamily, setFontFamily, store: themeStore } = useTheme();
 
 function selectFontSize(sizeId: string) {
     setFontSize(sizeId);

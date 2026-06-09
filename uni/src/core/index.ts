@@ -3,4 +3,4 @@ export { useAd } from "./ad";
 export { useConfig } from "./config";
 export { useAppShare } from "./share";
 export { useUser } from "./user";
-export { useTheme, themePresets, type ThemePreset, fontFamilyPresets, type FontFamilyPreset, fontSizePresets, type FontSizePreset } from "@hlw-uni/mp-vue";
+export { useTheme, fontFamilyPresets, type FontFamilyPreset, fontSizePresets, type FontSizePreset } from "@hlw-uni/mp-vue";

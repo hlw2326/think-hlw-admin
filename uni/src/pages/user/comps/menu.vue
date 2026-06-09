@@ -37,7 +37,7 @@ const menuItems = computed<HlwMenuItem[]>(() => [
     {
         icon: "i-fa6-solid-palette",
         iconTheme: "purple",
-        label: "主题设置",
+        label: "个性化设置",
         url: "/pages/user/theme/index",
     },
     {
