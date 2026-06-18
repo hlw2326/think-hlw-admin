@@ -24,6 +24,7 @@ class Score extends Controller
     public function index(): void
     {
         $this->types = UserScoreService::TYPES;
+        $this->current = 'score';
         BaseUserScoreLog::mQuery()->layTable(function () {
             $this->title = '积分记录';
         }, function (QueryHelper $query) {

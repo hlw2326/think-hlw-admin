@@ -20,6 +20,7 @@ class Index extends Controller
      */
     public function index(): void
     {
+        $this->current = 'index';
         BaseUser::mQuery()->layTable(function () {
             $this->title = '用户列表';
         }, function (QueryHelper $query) {

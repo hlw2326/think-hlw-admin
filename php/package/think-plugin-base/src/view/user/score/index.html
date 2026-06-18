@@ -4,9 +4,12 @@
 {/block}
 
 {block name="content"}
-<div class="think-box-shadow">
-    {include file='user/score/index_search'}
-    <table id="ScoreTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
+<div class="layui-tab layui-tab-card think-bg-white">
+    {include file='user/tabs'}
+    <div class="layui-tab-content">
+        {include file='user/score/index_search'}
+        <table id="ScoreTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
+    </div>
 </div>
 
 <script>

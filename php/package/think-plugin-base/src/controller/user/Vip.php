@@ -24,6 +24,7 @@ class Vip extends Controller
     public function index(): void
     {
         $this->types = UserVipService::TYPES;
+        $this->current = 'vip';
         BaseUserVipLog::mQuery()->layTable(function () {
             $this->title = '会员记录';
         }, function (QueryHelper $query) {
