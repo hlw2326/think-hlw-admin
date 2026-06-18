@@ -7,10 +7,10 @@ use think\admin\Model;
 
 /**
  * 用户积分记录 - 模型
- * @class BaseUserScore
+ * @class BaseUserScoreLog
  * @package plugin\base\model
  */
-class BaseUserScore extends Model
+class BaseUserScoreLog extends Model
 {
 
 }

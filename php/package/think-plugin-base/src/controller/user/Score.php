@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace plugin\base\controller\user;
 
 use plugin\base\model\BaseUser;
-use plugin\base\model\BaseUserScore;
+use plugin\base\model\BaseUserScoreLog;
 use plugin\base\service\UserScoreService;
 use think\admin\Controller;
 use think\admin\helper\QueryHelper;
@@ -24,7 +24,7 @@ class Score extends Controller
     public function index(): void
     {
         $this->types = UserScoreService::TYPES;
-        BaseUserScore::mQuery()->layTable(function () {
+        BaseUserScoreLog::mQuery()->layTable(function () {
             $this->title = '积分记录';
         }, function (QueryHelper $query) {
             $query->equal('s.user_id#user_id,s.status#status');
@@ -45,7 +45,7 @@ class Score extends Controller
     public function rollback(): void
     {
         $id = intval($this->request->post('id', 0));
-        $log = BaseUserScore::mk()->where(['id' => $id])->field('user_id, value, create_at, NOW() as db_now')->findOrEmpty();
+        $log = BaseUserScoreLog::mk()->where(['id' => $id])->field('user_id, value, create_at, NOW() as db_now')->findOrEmpty();
         if ($log->isEmpty()) {
             $this->error('记录不存在！');
         }

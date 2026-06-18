@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace plugin\base\service;
 
 use plugin\base\model\BaseUser;
-use plugin\base\model\BaseUserVip;
+use plugin\base\model\BaseUserVipLog;
 use think\facade\Db;
 
 /**
@@ -124,7 +124,7 @@ class UserVipService
      */
     public static function log(int $userId, int $days, int $before, int $after, string $source, string $remark = ''): bool
     {
-        $log = BaseUserVip::mk();
+        $log = BaseUserVipLog::mk();
         return $log->save([
             'user_id'         => $userId,
             'source'          => $source,
@@ -145,7 +145,7 @@ class UserVipService
      */
     public static function getLogs(int $userId, int $limit = 20): array
     {
-        return BaseUserVip::mk()
+        return BaseUserVipLog::mk()
             ->where(['user_id' => $userId, 'status' => 1])
             ->order('id desc')
             ->limit($limit)

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace plugin\base\controller\user;
 
 use plugin\base\model\BaseUser;
-use plugin\base\model\BaseUserVip;
+use plugin\base\model\BaseUserVipLog;
 use plugin\base\service\UserVipService;
 use think\admin\Controller;
 use think\admin\helper\QueryHelper;
@@ -24,7 +24,7 @@ class Vip extends Controller
     public function index(): void
     {
         $this->types = UserVipService::TYPES;
-        BaseUserVip::mQuery()->layTable(function () {
+        BaseUserVipLog::mQuery()->layTable(function () {
             $this->title = '会员记录';
         }, function (QueryHelper $query) {
             $query->equal('s.user_id#user_id,s.status#status');
@@ -45,7 +45,7 @@ class Vip extends Controller
     public function rollback(): void
     {
         $id = intval($this->request->post('id', 0));
-        $log = BaseUserVip::mk()->where(['id' => $id])->field('user_id, days, before_vip_time, after_vip_time, create_at, NOW() as db_now')->findOrEmpty();
+        $log = BaseUserVipLog::mk()->where(['id' => $id])->field('user_id, days, before_vip_time, after_vip_time, create_at, NOW() as db_now')->findOrEmpty();
         if ($log->isEmpty()) {
             $this->error('记录不存在！');
         }

@@ -9,19 +9,19 @@ use think\migration\Migrator;
 @ini_set('memory_limit', '-1');
 
 /**
- * 创建表：base_user_vip（插件-用户会员记录）
+ * 创建表：base_user_vip_log（插件-用户会员记录）
  */
-class InstallBaseUserVip extends Migrator
+class InstallBaseUserVipLog extends Migrator
 {
     public function getName(): string
     {
-        return 'InstallBaseUserVip';
+        return 'InstallBaseUserVipLog';
     }
 
     public function change(): void
     {
-        // Create base_user_vip table
-        $table = $this->table('base_user_vip', [
+        // Create base_user_vip_log table
+        $table = $this->table('base_user_vip_log', [
             'engine' => 'InnoDB',
             'collation' => 'utf8mb4_general_ci',
             'comment' => '插件-用户会员记录',

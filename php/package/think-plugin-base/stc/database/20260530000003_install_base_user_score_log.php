@@ -9,13 +9,13 @@ use think\migration\Migrator;
 @ini_set('memory_limit', '-1');
 
 /**
- * 创建表：base_user_score（插件-用户积分记录）
+ * 创建表：base_user_score_log（插件-用户积分记录）
  */
-class InstallBaseUserScore extends Migrator
+class InstallBaseUserScoreLog extends Migrator
 {
     public function getName(): string
     {
-        return 'InstallBaseUserScore';
+        return 'InstallBaseUserScoreLog';
     }
 
     public function change(): void
@@ -37,8 +37,8 @@ class InstallBaseUserScore extends Migrator
             }
         }
 
-        // 2. Create base_user_score table
-        $table = $this->table('base_user_score', [
+        // 2. Create base_user_score_log table
+        $table = $this->table('base_user_score_log', [
             'engine' => 'InnoDB',
             'collation' => 'utf8mb4_general_ci',
             'comment' => '插件-用户积分记录',
