@@ -139,7 +139,7 @@ function getTools() {
     width: 88rpx;
     height: 88rpx;
     border: 1rpx solid var(--primary-light, rgba(76, 68, 239, 0.12));
-    border-radius: 16rpx;
+    border-radius: var(--radius-md, 16rpx);
     overflow: hidden;
 }
 
@@ -147,7 +147,7 @@ function getTools() {
     width: 80rpx;
     height: 80rpx;
     flex-shrink: 0;
-    border-radius: 16rpx;
+    border-radius: var(--radius-md, 16rpx);
     background: #f3f4f6;
 }
 

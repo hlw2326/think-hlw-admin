@@ -24,8 +24,8 @@ importers:
         specifier: 3.0.0-5000720260410001
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vue@3.5.38(typescript@4.9.5))
       '@hlw-uni/mp-vue':
-        specifier: ^2.3.9
-        version: 2.3.9(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))
+        specifier: ^2.5.0
+        version: 2.5.0(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.38(typescript@4.9.5))
@@ -56,7 +56,7 @@ importers:
         version: 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5))
       '@hlw-uni/mp-vite-plugin':
         specifier: ^1.0.51
-        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5)))(@hlw-uni/mp-vue@2.3.9(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))
+        version: 1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5)))(@hlw-uni/mp-vue@2.5.0(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))
       '@iconify-json/fa6-brands':
         specifier: ^1.2.6
         version: 1.2.6
@@ -1570,8 +1570,8 @@ packages:
       '@hlw-uni/mp-vue': '>=2.0.0'
       vite: '>=5.0.0'
 
-  '@hlw-uni/mp-vue@2.3.9':
-    resolution: {integrity: sha512-8HswTLmagT/chTyX+SVbId4/MiDzQByIKuHg2xHK0Yptly4KjRrKWoQmulmdmYHet9sF3JaqCs8xPqWtZ/5QfQ==}
+  '@hlw-uni/mp-vue@2.5.0':
+    resolution: {integrity: sha512-sfKBZnccEegoqLStVYJnP3kqVtfxRn1Na5t9txJa7rK34XRjwNmKVrITtWlUfGaaVkNyBnFn+S4A8ddNmVpdxA==}
     peerDependencies:
       pinia: '>=2.0.0'
       vue: '>=3.4.0'
@@ -3048,8 +3048,8 @@ packages:
     resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
     engines: {node: '>=6.0.0'}
 
-  baseline-browser-mapping@2.10.37:
-    resolution: {integrity: sha512-girxaJ7WZssDOFhzCGZTDKoTa1gk6A1TbflaYTpykLJ4UU9Fz9kx1aREM8JCuoVHbL8X8T/mJg7w2oYSq72Oig==}
+  baseline-browser-mapping@2.10.38:
+    resolution: {integrity: sha512-31/02mVB4yuQU6adKk5SlY6m+mxDwUq5KZkyYgnLrrKl7TEm1+3PyDtDBz2kOv/wxZz41GHsvV1A/u6RmiyBvw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -4846,8 +4846,8 @@ packages:
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
 
-  node-releases@2.0.47:
-    resolution: {integrity: sha512-Uzmd6LXpouKo8EUK68IjH4+E01w/hXyV3R3g/geCJo+rXLNfh1xucB+LOzYEOQPSiUK3h/xZf0cQGcSsmyL2Og==}
+  node-releases@2.0.48:
+    resolution: {integrity: sha512-1uz8041X6LoI6ZSdZacM9lVY28vuzDlSKitnpbSNK0RfKoIJkX29NBPVEFXhnuSuEOA9Ww0xnPJ+ILWbGAv8DA==}
     engines: {node: '>=18'}
 
   normalize-package-data@2.5.0:
@@ -8442,11 +8442,11 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5)))(@hlw-uni/mp-vue@2.3.9(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))':
+  '@hlw-uni/mp-vite-plugin@1.0.51(@dcloudio/vite-plugin-uni@3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5)))(@hlw-uni/mp-vue@2.5.0(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5)))(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))':
     dependencies:
       '@antfu/utils': 0.7.10
       '@dcloudio/vite-plugin-uni': 3.0.0-5000720260410001(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(postcss@8.5.15)(rollup@4.62.0)(vite@5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0))(vue@3.5.38(typescript@4.9.5))
-      '@hlw-uni/mp-vue': 2.3.9(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))
+      '@hlw-uni/mp-vue': 2.5.0(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))
       unplugin-auto-import: 0.17.8(@vueuse/core@10.11.1(vue@3.5.38(typescript@4.9.5)))(rollup@4.62.0)
       vite: 5.2.8(@types/node@25.9.3)(less@4.5.1)(sass@1.101.0)(terser@5.48.0)
     transitivePeerDependencies:
@@ -8454,7 +8454,7 @@ snapshots:
       - '@vueuse/core'
       - rollup
 
-  '@hlw-uni/mp-vue@2.3.9(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))':
+  '@hlw-uni/mp-vue@2.5.0(pinia@2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5)))(vue@3.5.38(typescript@4.9.5))':
     dependencies:
       md5: 2.3.0
       pinia: 2.3.1(typescript@4.9.5)(vue@3.5.38(typescript@4.9.5))
@@ -10475,7 +10475,7 @@ snapshots:
 
   base64url@3.0.1: {}
 
-  baseline-browser-mapping@2.10.37: {}
+  baseline-browser-mapping@2.10.38: {}
 
   bcrypt-pbkdf@1.0.2:
     dependencies:
@@ -10553,10 +10553,10 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.37
+      baseline-browser-mapping: 2.10.38
       caniuse-lite: 1.0.30001799
       electron-to-chromium: 1.5.375
-      node-releases: 2.0.47
+      node-releases: 2.0.48
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
   buffer-alloc-unsafe@1.1.0: {}
@@ -12510,7 +12510,7 @@ snapshots:
 
   node-fetch-native@1.6.7: {}
 
-  node-releases@2.0.47: {}
+  node-releases@2.0.48: {}
 
   normalize-package-data@2.5.0:
     dependencies:
