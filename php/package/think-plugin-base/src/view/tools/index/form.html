@@ -1,6 +1,17 @@
 <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="ToolsTable">
     <div class="layui-card-body padding-left-40">
 
+        <div class="layui-form-item relative block">
+            <span class="color-green font-w7">绑定小程序</span>
+            <select class="layui-select" name="appid">
+                <option value="" {if !isset($vo.appid) or $vo.appid eq ''}selected{/if}>通用工具（所有小程序）</option>
+                {foreach name='mps' item='mp'}
+                <option value="{$mp.appid}" {if isset($vo.appid) and $vo.appid eq $mp.appid}selected{/if}>{$mp.name|default='未命名'} - {$mp.appid}</option>
+                {/foreach}
+            </select>
+            <p class="help-block"><b>可选</b>，请选择绑定的微信小程序（通用工具在所有小程序均可展示）</p>
+        </div>
+
         <label class="layui-form-item relative block">
             <span class="color-green font-w7">工具标题</span>
             <input name="title" value="{$vo.title|default=''}" required vali-name="标题" placeholder="请输入标题" class="layui-input">
@@ -24,7 +35,7 @@
 
         <label class="layui-form-item relative block">
             <span class="color-green font-w7">目标 AppID</span>
-            <input name="appid" value="{$vo.appid|default=''}" placeholder="请输入目标小程序 AppID" class="layui-input">
+            <input name="to_appid" value="{$vo.to_appid|default=''}" placeholder="请输入目标小程序 AppID" class="layui-input">
             <p class="help-block"><b>可选</b>，请输入跳转目标小程序的 AppID (如: wx1234567890abcdef)</p>
         </label>
 

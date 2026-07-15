@@ -26,10 +26,11 @@ class InstallBaseTools extends Migrator
             'comment' => '插件-工具列表',
         ]);
         PhinxExtend::upgrade($table, [
+            ['appid', 'string', ['limit' => 50, 'default' => '', 'null' => false, 'comment' => '小程序AppID']],
             ['title', 'string', ['limit' => 100, 'default' => '', 'null' => true, 'comment' => '标题']],
             ['desc', 'string', ['limit' => 255, 'default' => '', 'null' => true, 'comment' => '描述']],
             ['logo', 'string', ['limit' => 255, 'default' => '', 'null' => true, 'comment' => 'Logo']],
-            ['appid', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '跳转小程序 AppID']],
+            ['to_appid', 'string', ['limit' => 64, 'default' => '', 'null' => true, 'comment' => '跳转小程序 AppID']],
             ['path', 'string', ['limit' => 255, 'default' => '', 'null' => true, 'comment' => '跳转路径']],
             ['click_count', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '点击次数']],
             ['sort', 'biginteger', ['limit' => 20, 'default' => 0, 'null' => true, 'comment' => '排序权重']],
@@ -38,6 +39,7 @@ class InstallBaseTools extends Migrator
             ['update_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP', 'null' => false, 'comment' => '更新时间']],
         ], [
             'appid',
+            'to_appid',
             'status',
             'sort',
             'click_count',

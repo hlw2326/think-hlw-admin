@@ -14,8 +14,14 @@ class Tools extends Base
     public function list(): void
     {
         $rows = BaseTools::mk()
-            ->field('id,title,desc,logo,appid,path,click_count,sort,status')
-            ->where('status', 1)
+            ->field('id,title,desc,logo,to_appid,path,click_count,sort,status')
+            ->where(['status' => 1])
+            ->where(function ($query) {
+                $query->whereOr([
+                    ['appid', '=', $this->appid],
+                    ['appid', '=', '']
+                ]);
+            })
             ->order('sort desc, id asc')
             ->select()
             ->toArray();
@@ -25,7 +31,7 @@ class Tools extends Base
             'title' => (string) $row['title'],
             'desc' => (string) $row['desc'],
             'logo' => (string) $row['logo'],
-            'appid' => (string) $row['appid'],
+            'appid' => (string) $row['to_appid'],
             'path' => (string) $row['path'],
             'clickCount' => intval($row['click_count']),
             'sort' => intval($row['sort']),

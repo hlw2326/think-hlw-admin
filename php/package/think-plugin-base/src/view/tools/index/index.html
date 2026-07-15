@@ -2,13 +2,13 @@
 
 {block name="button"}
 <!--{if auth("add")}-->
-<button data-modal='{:url("add")}' data-title="添加工具" class="layui-btn layui-btn-sm layui-btn-primary">添加工具</button>
+<button data-modal='{:url("add")}?appid={$appid|default=""}' data-title="添加工具" class="layui-btn layui-btn-sm layui-btn-primary">添加工具</button>
 <!--{/if}-->
 <!--{if auth("import")}-->
-<button data-modal='{:url("import")}' data-title="导入工具数据" class="layui-btn layui-btn-sm layui-btn-primary">导入数据</button>
+<button data-modal='{:url("import")}?appid={$appid|default=""}' data-title="导入工具数据" class="layui-btn layui-btn-sm layui-btn-primary">导入数据</button>
 <!--{/if}-->
 <!--{if auth("export")}-->
-<a class="layui-btn layui-btn-sm layui-btn-primary" href='{:url("export")}' target="_blank">导出数据</a>
+<a class="layui-btn layui-btn-sm layui-btn-primary" href='{:url("export")}?appid={$appid|default=""}' target="_blank">导出数据</a>
 <!--{/if}-->
 <!--{if auth("remove")}-->
 <a data-confirm="确定要删除这些工具吗？" data-table-id="ToolsTable" data-action='{:url("remove")}' data-rule="id#{id}" class="layui-btn layui-btn-sm layui-btn-danger">批量删除</a>
@@ -16,9 +16,25 @@
 {/block}
 
 {block name="content"}
-<div class="think-box-shadow">
-    {include file='tools/index/index_search'}
-    <table id="ToolsTable" data-url="{:sysuri('index')}" data-target-search="form.form-search"></table>
+<div class="layui-tab layui-tab-card think-bg-white">
+    <ul class="layui-tab-title">
+        {if !isset($appid) or $appid eq ''}
+        <li class="layui-this" data-open="{:url('index')}">通用工具</li>
+        {else}
+        <li data-open="{:url('index')}">通用工具</li>
+        {/if}
+        {foreach name='mps' item='mp'}
+        {if isset($appid) and $appid eq $mp.appid}
+        <li class="layui-this" data-open="{:url('index')}?appid={$mp.appid}">{$mp.name|default='未命名'}</li>
+        {else}
+        <li data-open="{:url('index')}?appid={$mp.appid}">{$mp.name|default='未命名'}</li>
+        {/if}
+        {/foreach}
+    </ul>
+    <div class="layui-tab-content">
+        {include file='tools/index/index_search'}
+        <table id="ToolsTable" data-url="{:request()->url()}" data-target-search="form.form-search"></table>
+    </div>
 </div>
 
 <script>
@@ -26,6 +42,7 @@
         $('#ToolsTable').layTable({
             even: true, height: 'full',
             sort: {field: 'sort desc,id', type: 'asc'},
+            where: {appid: '{$appid|default=""}'},
             cols: [[
                 {checkbox: true, fixed: true},
                 {field: 'id', title: 'ID', width: 70, align: 'center', sort: true},
@@ -33,7 +50,7 @@
                 {field: 'logo', title: 'Logo', width: 70, align: 'center', templet: '<div>{{-$.layTable.showImage(d.logo)}}</div>'},
                 {field: 'title', title: '标题', width: 200},
                 {field: 'desc', title: '描述', width: 300},
-                {field: 'appid', title: '跳转 AppID', width: 180, templet: '#AppIdTpl'},
+                {field: 'to_appid', title: '跳转 AppID', width: 180, templet: '#AppIdTpl'},
                 {field: 'path', title: '路径', minWidth: 180},
                 {field: 'click_count', title: '点击次数', width: 120, align: 'center', sort: true},
                 {field: 'status', title: '状态', width: 120, align: 'center', templet: '#StatusSwitchTpl'},
@@ -55,9 +72,9 @@
 </script>
 
 <script type="text/html" id="AppIdTpl">
-    {{# if (d.appid) { }}
-    <span class="pointer" data-copy="{{d.appid}}" data-tips-text="点击复制 AppID">
-        {{d.appid}} <span class="layui-icon layui-icon-file color-desc margin-left-5" style="font-size:12px"></span>
+    {{# if (d.to_appid) { }}
+    <span class="pointer" data-copy="{{d.to_appid}}" data-tips-text="点击复制 AppID">
+        {{d.to_appid}} <span class="layui-icon layui-icon-file color-desc margin-left-5" style="font-size:12px"></span>
     </span>
     {{# } else { }}
     <span class="color-desc">-</span>
@@ -85,4 +102,3 @@
     <!--{/if}-->
 </script>
 {/block}
-

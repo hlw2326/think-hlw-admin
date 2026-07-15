@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace plugin\base\controller\tools;
 
+use plugin\base\model\BaseMp;
 use plugin\base\model\BaseTools;
 use think\admin\Controller;
 use think\admin\helper\QueryHelper;
@@ -14,18 +15,65 @@ use think\admin\helper\QueryHelper;
 class Index extends Controller
 {
     /**
+     * 当前绑定的 AppID
+     * @var string
+     */
+    public string $appid;
+
+    /**
      * 工具列表
      * @auth true
      * @menu true
      */
     public function index(): void
     {
+        $this->appid = (string) ($this->get['appid'] ?? '');
         BaseTools::mQuery()->layTable(function () {
             $this->title = '工具列表';
+            $this->mps = $this->mps();
         }, function (QueryHelper $query) {
-            $query->like('title')->like('desc')->like('appid');
+            $query->like('title')->like('desc')->like('to_appid');
             $query->equal('status');
+            $query->where(['appid' => $this->appid]);
         });
+    }
+
+    /**
+     * 列表数据处理
+     * @param array $data
+     */
+    protected function _index_page_filter(array &$data): void
+    {
+        foreach ($data as &$vo) {
+            $vo['appid_name'] = $vo['appid'] ?: '通用工具';
+        }
+        unset($vo);
+    }
+
+    /**
+     * 小程序列表
+     * @return array
+     */
+    protected function mps(): array
+    {
+        return BaseMp::mk()->where(['status' => 1])->order('sort desc,id asc')->select()->toArray();
+    }
+
+    /**
+     * 表单数据处理
+     * @param array $data
+     */
+    protected function _form_filter(array &$data): void
+    {
+        if ($this->request->isGet()) {
+            $this->mps = $this->mps();
+            if (empty($data['appid']) && !empty($this->get['appid'])) {
+                $data['appid'] = (string) $this->get['appid'];
+            }
+        } else {
+            $data['appid'] = trim((string) ($data['appid'] ?? ''));
+            $data['to_appid'] = trim((string) ($data['to_appid'] ?? ''));
+        }
     }
 
     /**
@@ -75,13 +123,16 @@ class Index extends Controller
      */
     public function export(): void
     {
+        $appid = (string) ($this->request->get('appid', ''));
         $query = BaseTools::mQuery();
-        $query->like('title')->like('desc')->like('appid')->equal('status');
-        $fields = ['title', 'desc', 'logo', 'appid', 'path', 'click_count', 'sort', 'status'];
-        $list = $query->db()->field($fields)->order('sort desc,id asc')->select()->toArray();
+        $query->like('title')->like('desc')->like('to_appid')->equal('status');
+        $fields = ['appid', 'title', 'desc', 'logo', 'to_appid', 'path', 'click_count', 'sort', 'status'];
+        $list = $query->db()->where(['appid' => $appid])->field($fields)->order('sort desc,id asc')->select()->toArray();
         $data = json_encode($list, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        
+        $filename = 'tools_' . ($appid ? $appid : 'common') . '_' . date('YmdHis') . '.json';
         header('Content-Type: application/json; charset=utf-8');
-        header('Content-Disposition: attachment; filename="tools_' . date('YmdHis') . '.json"');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
         echo $data;
         exit;
     }
@@ -92,7 +143,9 @@ class Index extends Controller
      */
     public function import(): void
     {
+        $appid = (string) ($this->request->get('appid', ''));
         if ($this->request->isGet()) {
+            $this->appid = $appid;
             $this->fetch();
             return;
         }
@@ -118,10 +171,11 @@ class Index extends Controller
 
         // 允许导入的字段列表
         $allowedFields = [
+            'appid',
             'title',
             'desc',
             'logo',
-            'appid',
+            'to_appid',
             'path',
             'click_count',
             'sort',
@@ -136,7 +190,7 @@ class Index extends Controller
                 }
 
                 $title = trim((string) $item['title']);
-                $appid = isset($item['appid']) ? trim((string) $item['appid']) : '';
+                $toAppid = isset($item['to_appid']) ? trim((string) $item['to_appid']) : (isset($item['appid']) && $item['appid'] !== $appid ? trim((string) $item['appid']) : '');
 
                 $updateData = [];
                 foreach ($allowedFields as $field) {
@@ -144,12 +198,14 @@ class Index extends Controller
                         $updateData[$field] = $item[$field];
                     }
                 }
+                $updateData['appid'] = $appid;
+                $updateData['to_appid'] = $toAppid;
 
-                // 匹配规则：如果有 appid 则通过 appid 查找，否则通过 title 查找
-                if (!empty($appid)) {
-                    $tool = BaseTools::mk()->where(['appid' => $appid])->findOrEmpty();
+                // 匹配规则：如果有 to_appid 则通过 appid 和 to_appid 查找，否则通过 appid 和 title 查找
+                if (!empty($toAppid)) {
+                    $tool = BaseTools::mk()->where(['appid' => $appid, 'to_appid' => $toAppid])->findOrEmpty();
                 } else {
-                    $tool = BaseTools::mk()->where(['title' => $title])->findOrEmpty();
+                    $tool = BaseTools::mk()->where(['appid' => $appid, 'title' => $title])->findOrEmpty();
                 }
 
                 if ($tool->isEmpty()) {
