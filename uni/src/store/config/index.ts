@@ -31,6 +31,7 @@ export const useConfigStore = defineStore("config", {
             popup_unit_id: "",
             vip_no_ad: 0,
         } as IConfig.Ad,
+        page_config: {} as IConfig.PageConfig,
     }),
     unistorage: true,
 });

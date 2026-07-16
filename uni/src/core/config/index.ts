@@ -14,6 +14,8 @@ export function useConfig() {
 
     const ad: ComputedRef<IConfig.Ad> = computed(() => store.ad);
 
+    const page_config: ComputedRef<IConfig.PageConfig> = computed(() => store.page_config);
+
     async function getConfig(): Promise<void> {
         const res = await service.v1.config.index();
         if (res.code !== 1 || !res.data) {
@@ -41,6 +43,7 @@ export function useConfig() {
             ...store.ad,
             ...(res.data.ad ?? {}),
         };
+        store.page_config = res.data.page_config ?? {};
     }
 
     return {
@@ -48,7 +51,22 @@ export function useConfig() {
         share,
         contact,
         ad,
+        page_config,
         getConfig,
         store,
+    };
+}
+
+export function usePageConfig(pageRoute?: string) {
+    const { page_config } = useConfig();
+    const route = pageRoute || getCurrentPages().pop()?.route || "";
+
+    const ad = computed(() => {
+        if (!route) return {};
+        return page_config.value?.ad_config?.[route] || {};
+    });
+
+    return {
+        ad,
     };
 }

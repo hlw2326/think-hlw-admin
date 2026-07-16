@@ -1,0 +1,77 @@
+<form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="AppTable">
+    <div class="layui-card-body padding-left-40">
+        <div class="layui-form-item relative block">
+            <span class="color-green font-w7">页面配置</span>
+            
+            <!-- JSON Editor Container -->
+            <div id="jsoneditor" style="height: 450px; margin-top: 10px; margin-bottom: 10px;"></div>
+            
+            <!-- Hidden textarea for form submission -->
+            <textarea name="page_config" class="layui-hide">{$vo.page_config|default=''}</textarea>
+            
+            <p class="help-block"><b>提示</b>，支持可视化树形 (Tree) 编辑与代码 (Code) 高亮模式，请确保保存前 JSON 格式正确。</p>
+        </div>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <input type="hidden" value="{$vo.id}" name="id">
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type="submit">保存配置</button>
+        <button class="layui-btn layui-btn-danger" type="button" data-close>取消操作</button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        require(['jsoneditor'], function (JSONEditor) {
+            initJsonEditor(JSONEditor);
+        });
+
+        function initJsonEditor(JSONEditor) {
+            if (!JSONEditor) {
+                console.error("JSONEditor is not loaded");
+                return;
+            }
+            var container = document.getElementById("jsoneditor");
+            var textarea = $('[name="page_config"]');
+            var initialJson = {};
+            
+            try {
+                var val = textarea.val().trim();
+                initialJson = val ? JSON.parse(val) : {};
+            } catch (e) {
+                console.error("JSON parse error", e);
+                initialJson = {};
+            }
+
+            var options = {
+                mode: 'tree',
+                modes: ['tree', 'code', 'text'], // Allowed modes
+                enableTransform: false,
+                enableSort: false,
+                onChange: function () {
+                    try {
+                        var json = editor.get();
+                        textarea.val(JSON.stringify(json));
+                    } catch (e) {
+                        // Catching incomplete JSON errors while editing
+                    }
+                }
+            };
+
+            var editor = new JSONEditor(container, options);
+            editor.set(initialJson);
+            editor.expandAll();
+
+            // Sync on form submit & validate JSON
+            $('[data-table-id="AppTable"]').off('submit').on('submit', function () {
+                try {
+                    var json = editor.get();
+                    textarea.val(JSON.stringify(json));
+                } catch (e) {
+                    $.msg.error('JSON 格式不正确，请检查语法！');
+                    return false;
+                }
+            });
+        }
+    });
+</script>

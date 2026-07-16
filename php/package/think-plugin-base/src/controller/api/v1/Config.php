@@ -27,6 +27,7 @@ class Config extends Base
                 'official_qrcode' => (string) sysconf('base.contact_official_qrcode'),
             ],
             'ad' => AdService::mpConfig($this->mp),
+            'page_config' => json_decode($this->mp->page_config ?? '', true) ?: null,
         ]);
     }
 }

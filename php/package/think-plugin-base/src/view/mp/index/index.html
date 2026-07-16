@@ -153,8 +153,8 @@
     <a class="layui-btn layui-btn-sm" data-modal='{:url("edit")}?id={{d.id}}' data-title="编辑 - {{d.name}} - {{d.appid}}">编辑</a>
     <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="copy-json">复制JSON</a>
     <!--{/if}-->
-    <!--{if auth("pages")}-->
-    <a class="layui-btn layui-btn-sm" data-modal='{:url("pages")}?id={{d.id}}' data-title="配置页面 - {{d.name}} - {{d.appid}}">页面配置</a>
+    <!--{if auth("page")}-->
+    <a class="layui-btn layui-btn-sm" data-modal='{:url("page")}?id={{d.id}}' data-title="配置页面 - {{d.name}} - {{d.appid}}">页面配置</a>
     <!--{/if}-->
     <!--{if auth("ad")}-->
     <a class="layui-btn layui-btn-sm layui-btn-warm" data-width="40%" data-modal='{:url("ad")}?id={{d.id}}' data-title="广告配置 - {{d.name}} - {{d.appid}}">广告配置</a>

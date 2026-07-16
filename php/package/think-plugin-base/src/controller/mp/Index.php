@@ -105,10 +105,10 @@ class Index extends Controller
     }
 
     /**
-     * 配置 pages.json
+     * 配置 page_config
      * @auth true
      */
-    public function pages(): void
+    public function page(): void
     {
         $this->_applyFormToken();
         BaseMp::mForm();
@@ -158,7 +158,7 @@ class Index extends Controller
         $allowedFields = [
             'name',
             'appsecret',
-            'pages_config',
+            'page_config',
             'token',
             'encodingaeskey',
             'custom_reply_enabled',
@@ -229,7 +229,7 @@ class Index extends Controller
             'name',
             'appid',
             'appsecret',
-            'pages_config',
+            'page_config',
             'token',
             'encodingaeskey',
             'custom_reply_enabled',

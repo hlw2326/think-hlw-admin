@@ -36,4 +36,16 @@ declare namespace IConfig {
         reward: number;
         parse_count: number;
     }
+
+    interface PageConfig {
+        ad_config?: Record<string, {
+            banner_unit_id?: string;
+            grid_unit_id?: string;
+            custom_unit_id?: string;
+            video_unit_id?: string;
+            reward_unit_id?: string;
+            popup_unit_id?: string;
+        }>;
+        [key: string]: any;
+    }
 }
