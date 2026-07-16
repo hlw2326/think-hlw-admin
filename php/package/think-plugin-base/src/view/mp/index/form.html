@@ -66,24 +66,26 @@
 
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md6">
-                <label class="layui-form-item relative block">
-                    <span class="color-green font-w7">客服消息开关</span>
-                    <select name="custom_reply_enabled" class="layui-select">
-                        <option value="1" {if !isset($vo.custom_reply_enabled) || $vo.custom_reply_enabled==1}selected{/if}>开启</option>
-                        <option value="0" {if isset($vo.custom_reply_enabled) && $vo.custom_reply_enabled==0}selected{/if}>关闭</option>
-                    </select>
+                <div class="layui-form-item relative block">
+                    <span class="color-green font-w7 block">客服消息开关</span>
+                    <div class="layui-input">
+                        {foreach ['1'=>'开启','0'=>'关闭'] as $k=>$v}
+                        <input type="radio" name="custom_reply_enabled" value="{$k}" title="{$v}" {if (!isset($vo.custom_reply_enabled) && $k == '1') || (isset($vo.custom_reply_enabled) && $vo.custom_reply_enabled==$k)}checked{/if}>
+                        {/foreach}
+                    </div>
                     <p class="help-block"><b>必选</b>，开启后系统会自动响应小程序用户的客服消息</p>
-                </label>
+                </div>
             </div>
             <div class="layui-col-md6">
-                <label class="layui-form-item relative block">
-                    <span class="color-green font-w7">VIP 去广告</span>
-                    <select name="vip_no_ad" class="layui-select">
-                        <option value="0" {if empty($vo.vip_no_ad)}selected{/if}>关闭</option>
-                        <option value="1" {if !empty($vo.vip_no_ad)}selected{/if}>开启</option>
-                    </select>
+                <div class="layui-form-item relative block">
+                    <span class="color-green font-w7 block">VIP 去广告</span>
+                    <div class="layui-input">
+                        {foreach ['1'=>'开启','0'=>'关闭'] as $k=>$v}
+                        <input type="radio" name="vip_no_ad" value="{$k}" title="{$v}" {if (!isset($vo.vip_no_ad) && $k == '0') || (isset($vo.vip_no_ad) && $vo.vip_no_ad==$k)}checked{/if}>
+                        {/foreach}
+                    </div>
                     <p class="help-block"><b>必选</b>，开启后会对带有 VIP 身份的用户屏蔽小程序内展示广告</p>
-                </label>
+                </div>
             </div>
         </div>
 

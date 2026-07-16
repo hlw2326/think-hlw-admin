@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
 
-use plugin\base\model\BaseUser;
 use plugin\base\service\AdService;
 
 /**
@@ -17,34 +16,19 @@ class Ad extends Base
         $this->success('获取成功', AdService::mpConfig($this->mp));
     }
 
+    /**
+     * @token true
+     */
     public function reward(): void
     {
         if (!$this->request->isPost()) {
             $this->error('请求方式不支持');
         }
 
-        $user = $this->currentUser();
-        $result = AdService::grant(intval($user->id));
+        $result = AdService::grant(intval($this->user->id));
         if (!$result['state']) {
             $this->error($result['msg'] ?: '发放失败');
         }
         $this->success($result['msg'] ?: '领取成功', $result['data'] ?? []);
-    }
-
-    private function currentUser(): BaseUser
-    {
-        $token = $this->request->header('X-Token', '');
-        if ($token === '') {
-            $this->error('请先登录', [], 401);
-        }
-
-        $user = BaseUser::mk()->where(['token' => $token, 'deleted' => 0])->findOrEmpty();
-        if ($user->isEmpty()) {
-            $this->error('登录已过期，请重新登录', [], 401);
-        }
-        if (intval($user->status) !== 1) {
-            $this->error('账号已被禁用', [], 403);
-        }
-        return $user;
     }
 }
