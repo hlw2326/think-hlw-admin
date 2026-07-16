@@ -1,3 +1,18 @@
+@font-face {
+    font-family: 'Digital-7';
+    src: url('~@/static/fonts/digital-7.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'ali-regular-az';
+    src: url('~@/static/fonts/ali-regular-az.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'fan';
+    src: url('~@/static/fonts/fan.woff') format('woff');
+}
+
 view,
 text,
 button,
@@ -21,15 +36,15 @@ page {
     height: 100%;
 
     /* 主题色 — 默认值，运行时通过 page-meta :page-style 覆盖 */
-    --primary-color: #4c44ef;
-    --primary-light: rgba(59, 130, 246, 0.12);
-    --primary-dark: #2563eb;
-    --primary-light-bg: rgba(76, 68, 239, 0.06);
-    --primary-light-border: rgba(76, 68, 239, 0.15);
+    --primary-color: #08c060;
+    --primary-light: #10b981;
+    --primary-dark: #059669;
+    --primary-light-bg: rgba(8, 192, 96, 0.06);
+    --primary-light-border: rgba(8, 192, 96, 0.15);
 
     --navbar-font-size: 26rpx;
     --navbar-border-bottom: 1rpx solid #e7e7e7;
-    --navbar-bg-color: #b52525;
+    --navbar-bg-color: #ffffff;
 
     /* 圆角体系 */
     --radius-sm: 8rpx; /* 小元素 */
@@ -74,12 +89,28 @@ page {
      * 6 档 xs/sm/base/md/lg/xl，会被 mp-vue 字体档位（较小/标准/较大…）运行时覆盖
      * 适合：跟主题字号偏好联动的常规文字（菜单、正文、标题等）
      */
-    --font-xs: 20rpx; /* 极小：角标、辅助标注 */
-    --font-sm: 24rpx; /* 小号：次要说明、标签 */
-    --font-base: 28rpx; /* 正文：菜单项、内容主体 */
-    --font-md: 32rpx; /* 中等：次级标题 */
-    --font-lg: 36rpx; /* 大号：页面标题 */
-    --font-xl: 40rpx; /* 特大：数字展示 */
+    /* 基础尺寸定义 */
+    --font-18: 18rpx;
+    --font-20: 20rpx;
+    --font-22: 22rpx;
+    --font-24: 24rpx;
+    --font-26: 26rpx;
+    --font-28: 28rpx;
+    --font-30: 30rpx;
+    --font-32: 32rpx;
+    --font-34: 34rpx;
+    --font-36: 36rpx;
+    --font-38: 38rpx;
+    --font-40: 40rpx;
+
+    /* 标准档位别名（跟 mp-vue 运行时兼容） */
+    --font-xxs: var(--font-22);
+    --font-xs: var(--font-24);
+    --font-sm: var(--font-26);
+    --font-base: var(--font-28);
+    --font-md: var(--font-30);
+    --font-lg: var(--font-32);
+    --font-xl: var(--font-34);
 
     /* 4. 状态反馈与功能色彩 */
     --success-color: #5ac725;
