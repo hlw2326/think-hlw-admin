@@ -31,13 +31,13 @@ class UserService
         array $profile,
         array $device,
         string $ip,
-        string $inviteUid = '',
+        string $invite_uid = '',
         string $appid = ''
     ): BaseUser {
         $user = BaseUser::mk()->where('openid', $openid)->findOrEmpty();
 
         if ($user->isEmpty()) {
-            return static::register($openid, $unionid, $profile, $device, $ip, $inviteUid, $appid);
+            return static::register($openid, $unionid, $profile, $device, $ip, $invite_uid, $appid);
         }
 
         return static::refresh($user, $unionid, $device, $ip);
@@ -49,13 +49,13 @@ class UserService
         array $profile,
         array $device,
         string $ip,
-        string $inviteUid,
+        string $invite_uid,
         string $appid
     ): BaseUser {
         $pid = 0;
-        $inviteUserId = intval($inviteUid);
-        if ($inviteUserId > 0) {
-            $inviter = BaseUser::mk()->where(['id' => $inviteUserId, 'deleted' => 0, 'status' => 1])->findOrEmpty();
+        $invite_user_id = intval($invite_uid);
+        if ($invite_user_id > 0) {
+            $inviter = BaseUser::mk()->where(['id' => $invite_user_id, 'deleted' => 0, 'status' => 1])->findOrEmpty();
             if ($inviter->isExists()) {
                 $pid = intval($inviter->id);
             }

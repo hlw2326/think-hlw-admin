@@ -30,14 +30,14 @@ class InviteService
 
         // 自动转换数组为 JSON 字符串
         if (is_array($scene)) {
-            $sceneStr = json_encode($scene, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $scene_str = json_encode($scene, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         } else {
-            $sceneStr = (string) $scene;
+            $scene_str = (string) $scene;
         }
 
         // 校验微信接口规定的 32 字符限制
-        if (strlen($sceneStr) > 32) {
-            throw new \RuntimeException("微信小程序二维码 scene 参数长度不能超过 32 字符，当前内容为: {$sceneStr}，长度为: " . strlen($sceneStr));
+        if (strlen($scene_str) > 32) {
+            throw new \RuntimeException("微信小程序二维码 scene 参数长度不能超过 32 字符，当前内容为: {$scene_str}，长度为: " . strlen($scene_str));
         }
 
         // 调用微信接口生成二维码（PNG 二进制流）
@@ -46,7 +46,7 @@ class InviteService
             'appsecret' => $appsecret,
         ]);
 
-        $binary = $qr->createMiniScene($sceneStr, $page, 430, false, null, true);
+        $binary = $qr->createMiniScene($scene_str, $page, 430, false, null, true);
 
         // 异常处理：微信接口可能返回 JSON 数组格式的错误信息而非二进制流
         if (is_array($binary)) {

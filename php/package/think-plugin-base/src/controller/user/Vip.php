@@ -23,7 +23,7 @@ class Vip extends Controller
      */
     public function index(): void
     {
-        $this->types = UserVipService::TYPES;
+        $this->types = [];
         $this->current = 'vip';
         BaseUserVipLog::mQuery()->layTable(function () {
             $this->title = '会员记录';
@@ -56,43 +56,43 @@ class Vip extends Controller
             $this->error('该记录已超过 5 分钟，不允许回滚！');
         }
 
-        $userId = intval($log->user_id);
-        $rollbackDays = -intval($log->days);
+        $user_id = intval($log->user_id);
+        $rollback_days = -intval($log->days);
 
-        if ($rollbackDays === 0) {
+        if ($rollback_days === 0) {
             $this->error('该记录变化天数为 0，无需回滚！');
         }
 
-        $user = BaseUser::mk()->where(['id' => $userId, 'deleted' => 0])->findOrEmpty();
+        $user = BaseUser::mk()->where(['id' => $user_id, 'deleted' => 0])->findOrEmpty();
         if ($user->isEmpty()) {
             $this->error('用户不存在！');
         }
 
-        $currentVipTime = intval($user->vip_time);
+        $current_vip_time = intval($user->vip_time);
         $now = time();
 
-        if ($rollbackDays > 0) {
+        if ($rollback_days > 0) {
             // 原记录是扣除，回滚是增加
-            $baseTime = $currentVipTime > $now ? $currentVipTime : $now;
-            $newVipTime = $baseTime + ($rollbackDays * 86400);
+            $base_time = $current_vip_time > $now ? $current_vip_time : $now;
+            $new_vip_time = $base_time + ($rollback_days * 86400);
         } else {
             // 原记录是增加，回滚是扣除
-            $subDays = abs($rollbackDays);
-            if ($currentVipTime <= $now) {
-                $newVipTime = 0;
+            $sub_days = abs($rollback_days);
+            if ($current_vip_time <= $now) {
+                $new_vip_time = 0;
             } else {
-                $newVipTime = $currentVipTime - ($subDays * 86400);
-                if ($newVipTime < $now) {
-                    $newVipTime = 0;
+                $new_vip_time = $current_vip_time - ($sub_days * 86400);
+                if ($new_vip_time < $now) {
+                    $new_vip_time = 0;
                 }
             }
         }
 
         $user->vip_source = 'rollback';
         $user->vip_remark = "回滚记录 #{$id}";
-        $user->vip_change_days = $rollbackDays;
+        $user->vip_change_days = $rollback_days;
 
-        if ($user->save(['vip_time' => $newVipTime])) {
+        if ($user->save(['vip_time' => $new_vip_time])) {
             $this->success('回滚成功！');
         } else {
             $this->error('回滚失败！');

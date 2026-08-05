@@ -11,12 +11,12 @@ use plugin\base\model\BaseUser;
  */
 class AdService
 {
-    public static function mpConfig(BaseMp $mp): array
+    public static function config(BaseMp $mp): array
     {
-        $globalOn = self::enabled($mp, 'ad_global_enabled');
+        $global_on = self::enabled($mp, 'ad_global_enabled');
 
-        $unit = static function (string $type) use ($mp, $globalOn): string {
-            if (!$globalOn) {
+        $unit = static function (string $type) use ($mp, $global_on): string {
+            if (!$global_on) {
                 return '';
             }
             if (!self::enabled($mp, "ad_enabled_{$type}")) {
@@ -26,7 +26,7 @@ class AdService
         };
 
         return [
-            'ad_global_enabled' => $globalOn ? 1 : 0,
+            'ad_global_enabled' => $global_on ? 1 : 0,
             'ad_enabled_banner' => self::enabled($mp, 'ad_enabled_banner') ? 1 : 0,
             'ad_enabled_grid' => self::enabled($mp, 'ad_enabled_grid') ? 1 : 0,
             'ad_enabled_custom' => self::enabled($mp, 'ad_enabled_custom') ? 1 : 0,
@@ -43,13 +43,16 @@ class AdService
         ];
     }
 
-    public static function grant(int $userId): array
+    public static function grant(int $user_id): array
     {
-        $user = BaseUser::mk()->where('id', $userId)->find();
+        $user = BaseUser::mk()->where('id', $user_id)->find();
 
         if (empty($user)) {
             return ['state' => false, 'msg' => '发放失败'];
         }
+
+        $reward_score = intval(sysconf('base.ad_reward_score') !== '' ? sysconf('base.ad_reward_score') : 10);
+        $res = UserScoreService::change($user_id, $reward_score, 'video', '观看广告获得奖励积分');
 
         return [
             'state' => true,

@@ -38,7 +38,7 @@ class Custom extends Controller
                 if (strtolower((string) $rule->reply_type) === 'transfer') {
                     return $this->transferResponse($message);
                 }
-                CustomService::sendRule($mp, $openid, $rule);
+                CustomService::send($mp, $openid, $rule);
             }
         } catch (\Throwable $exception) {
             $this->app->log->error("BASE mini custom reply failed: {$exception->getMessage()}");
@@ -53,22 +53,22 @@ class Custom extends Controller
      */
     private function transferResponse(array $message): string
     {
-        $toUser = $message['FromUserName'] ?? $message['fromusername'] ?? '';
-        $fromUser = $message['ToUserName'] ?? $message['touser'] ?? '';
+        $to_user = $message['FromUserName'] ?? $message['fromusername'] ?? '';
+        $from_user = $message['ToUserName'] ?? $message['touser'] ?? '';
         $time = time();
         $raw = trim(Tools::getRawInput());
         if (str_starts_with($raw, '{')) {
             return (string) json_encode([
-                'ToUserName' => $toUser,
-                'FromUserName' => $fromUser,
+                'ToUserName' => $to_user,
+                'FromUserName' => $from_user,
                 'CreateTime' => $time,
                 'MsgType' => 'transfer_customer_service'
             ]);
         }
         return <<<XML
 <xml>
-  <ToUserName><![CDATA[{$toUser}]]></ToUserName>
-  <FromUserName><![CDATA[{$fromUser}]]></FromUserName>
+  <ToUserName><![CDATA[{$to_user}]]></ToUserName>
+  <FromUserName><![CDATA[{$from_user}]]></FromUserName>
   <CreateTime>{$time}</CreateTime>
   <MsgType><![CDATA[transfer_customer_service]]></MsgType>
 </xml>
@@ -130,9 +130,9 @@ XML;
         $nonce = (string) $this->request->get('nonce', '');
         $timestamp = (string) $this->request->get('timestamp', '');
         $signature = (string) ($this->request->get('msg_signature', '') ?: $this->request->get('signature', ''));
-        $tmpArr = [$token, $timestamp, $nonce, $this->request->get('msg_signature') ? $this->encryptPayload() : ''];
-        sort($tmpArr, SORT_STRING);
-        return sha1(implode($tmpArr)) === $signature;
+        $tmp_arr = [$token, $timestamp, $nonce, $this->request->get('msg_signature') ? $this->encryptPayload() : ''];
+        sort($tmp_arr, SORT_STRING);
+        return sha1(implode($tmp_arr)) === $signature;
     }
 
     /**

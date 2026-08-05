@@ -99,18 +99,18 @@ class Index extends Controller
             $this->error('积分数值必须大于 0！');
         }
 
-        $changeValue = ($action === 'sub') ? -$value : $value;
-        $newScore = intval($user->score) + $changeValue;
+        $change_value = ($action === 'sub') ? -$value : $value;
+        $new_score = intval($user->score) + $change_value;
 
-        if ($newScore < 0) {
+        if ($new_score < 0) {
             $this->error('用户积分不足！');
         }
 
         $user->score_source = 'admin';
         $user->score_remark = $remark ?: '管理员后台手动调整';
-        $user->score_change_value = $changeValue;
+        $user->score_change_value = $change_value;
 
-        if ($user->save(['score' => $newScore])) {
+        if ($user->save(['score' => $new_score])) {
             $this->success('积分调整成功！');
         } else {
             $this->error('积分调整失败！');
@@ -143,35 +143,35 @@ class Index extends Controller
             $this->error('调整天数必须大于 0！');
         }
 
-        $currentVipTime = intval($user->vip_time);
+        $current_vip_time = intval($user->vip_time);
         $now = time();
 
-        if ($currentVipTime > $now) {
-            $baseTime = $currentVipTime;
+        if ($current_vip_time > $now) {
+            $base_time = $current_vip_time;
         } else {
-            $baseTime = $now;
+            $base_time = $now;
         }
 
         if ($action === 'add') {
-            $newVipTime = $baseTime + ($days * 86400);
-            $changeDays = $days;
+            $new_vip_time = $base_time + ($days * 86400);
+            $change_days = $days;
         } else {
-            $changeDays = -$days;
-            if ($currentVipTime <= $now) {
-                $newVipTime = 0;
+            $change_days = -$days;
+            if ($current_vip_time <= $now) {
+                $new_vip_time = 0;
             } else {
-                $newVipTime = $currentVipTime - ($days * 86400);
-                if ($newVipTime < $now) {
-                    $newVipTime = 0;
+                $new_vip_time = $current_vip_time - ($days * 86400);
+                if ($new_vip_time < $now) {
+                    $new_vip_time = 0;
                 }
             }
         }
 
         $user->vip_source = 'admin';
         $user->vip_remark = $remark ?: '管理员后台手动调整';
-        $user->vip_change_days = $changeDays;
+        $user->vip_change_days = $change_days;
 
-        if ($user->save(['vip_time' => $newVipTime])) {
+        if ($user->save(['vip_time' => $new_vip_time])) {
             $this->success('会员时间调整成功！');
         } else {
             $this->error('会员时间调整失败！');

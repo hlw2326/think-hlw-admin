@@ -26,7 +26,7 @@ class Config extends Base
                 'show_message_card' => (int) (sysconf('base.contact_show_message_card') ?: 0) === 1,
                 'official_qrcode' => (string) sysconf('base.contact_official_qrcode'),
             ],
-            'ad' => AdService::mpConfig($this->mp),
+            'ad' => AdService::config($this->mp),
             'page_config' => json_decode($this->mp->page_config ?? '', true) ?: null,
         ]);
     }

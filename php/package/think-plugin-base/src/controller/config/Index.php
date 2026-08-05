@@ -109,9 +109,9 @@ class Index extends Controller
             sysconf('base.ai_max_tokens', (string) ($data['max_tokens'] ?? '1200'));
             sysconf('base.ai_system_prompt', trim((string) ($data['system_prompt'] ?? '')));
 
-            $apiKey = trim((string) ($data['api_key'] ?? ''));
-            if ($apiKey !== '') {
-                sysconf('base.ai_api_key', $apiKey);
+            $api_key = trim((string) ($data['api_key'] ?? ''));
+            if ($api_key !== '') {
+                sysconf('base.ai_api_key', $api_key);
             }
 
             $this->success('AI模型配置已保存');
@@ -131,7 +131,7 @@ class Index extends Controller
      */
     public function models(): void
     {
-        $result = AiService::listModels($this->currentAiConfigInput());
+        $result = AiService::models($this->currentAiConfigInput());
         $this->success((string) $result['message'], $result);
     }
 
@@ -143,7 +143,7 @@ class Index extends Controller
     public function test(): void
     {
         try {
-            $result = AiService::testConnection($this->currentAiConfigInput());
+            $result = AiService::test($this->currentAiConfigInput());
             $reply = trim((string) ($result['reply'] ?? ''));
             $this->success($reply !== '' ? "连接成功：{$reply}" : '连接成功', $result);
         } catch (HttpResponseException $exception) {

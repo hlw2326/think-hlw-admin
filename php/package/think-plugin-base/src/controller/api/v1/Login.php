@@ -57,11 +57,11 @@ class Login extends Base
             $this->error($exception->getMessage());
         }
 
-        $oldToken = (string) ($user->token ?? '');
+        $old_token = (string) ($user->token ?? '');
         $token = bin2hex(random_bytes(32));
         $user->save([
             'token' => $token,
-            'old_token' => $oldToken,
+            'old_token' => $old_token,
             'old_token_time' => time(),
         ]);
         $user->refresh();

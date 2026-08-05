@@ -13,7 +13,7 @@ class Ad extends Base
 {
     public function config(): void
     {
-        $this->success('获取成功', AdService::mpConfig($this->mp));
+        $this->success('获取成功', AdService::config($this->mp));
     }
 
     /**

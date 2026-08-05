@@ -43,11 +43,11 @@ class Upload extends Auth
             $this->error('不支持的文件类型');
         }
         if (intval($data['size']) > $cfg['maxSize']) {
-            $maxMb = intval($cfg['maxSize'] / 1024 / 1024);
-            $this->error("文件不能超过 {$maxMb}MB");
+            $max_mb = intval($cfg['maxSize'] / 1024 / 1024);
+            $this->error("文件不能超过 {$max_mb}MB");
         }
 
-        $seed = $this->userId . '-' . microtime(true) . '-' . mt_rand();
+        $seed = $this->user_id . '-' . microtime(true) . '-' . mt_rand();
         $key = Storage::name($seed, $ext, $cfg['prefix'], 'md5');
         $type = strtolower(sysconf('storage.type|raw')) ?: 'local';
 
@@ -117,8 +117,8 @@ class Upload extends Auth
                 $this->error('读取临时文件失败');
             }
             if ($file->getSize() > $matched['maxSize']) {
-                $maxMb = intval($matched['maxSize'] / 1024 / 1024);
-                $this->error("文件不能超过 {$maxMb}MB");
+                $max_mb = intval($matched['maxSize'] / 1024 / 1024);
+                $this->error("文件不能超过 {$max_mb}MB");
             }
 
             $extension = strtolower($file->getOriginalExtension());
@@ -130,19 +130,19 @@ class Upload extends Auth
             }
 
             $local = LocalStorage::instance();
-            $distName = $local->path($key, false);
+            $dist_name = $local->path($key, false);
             if (PHP_SAPI === 'cli') {
-                is_dir(dirname($distName)) || mkdir(dirname($distName), 0777, true);
-                rename($file->getPathname(), $distName);
+                is_dir(dirname($dist_name)) || mkdir(dirname($dist_name), 0777, true);
+                rename($file->getPathname(), $dist_name);
             } else {
-                $file->move(dirname($distName), basename($distName));
+                $file->move(dirname($dist_name), basename($dist_name));
             }
 
             if (in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
-                if ($this->imgNotSafe($distName) && $local->del($key)) {
+                if ($this->imgNotSafe($dist_name) && $local->del($key)) {
                     $this->error('图片未通过安全检查');
                 }
-                [$width, $height] = getimagesize($distName);
+                [$width, $height] = getimagesize($dist_name);
                 if (($width < 1 || $height < 1) && $local->del($key)) {
                     $this->error('读取图片尺寸失败');
                 }

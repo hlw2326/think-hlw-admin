@@ -19,7 +19,7 @@ class Base extends Controller
 
     protected BaseUser $user;
 
-    protected string $userId = '';
+    protected string $user_id = '';
 
     protected array $device = [];
 
@@ -73,9 +73,9 @@ class Base extends Controller
         // 检测并应用 @token true 注解方法验证登录状态
         $action = $this->request->action();
         if (method_exists($this, $action)) {
-            $refMethod = new \ReflectionMethod($this, $action);
-            $docComment = $refMethod->getDocComment() ?: '';
-            if (preg_match('/@token\s+true/i', $docComment)) {
+            $ref_method = new \ReflectionMethod($this, $action);
+            $doc_comment = $ref_method->getDocComment() ?: '';
+            if (preg_match('/@token\s+true/i', $doc_comment)) {
                 $this->checkToken();
             }
         }
@@ -103,7 +103,7 @@ class Base extends Controller
             $this->error('账号已被禁用', [], 403);
         }
 
-        $this->userId = (string) $user->id;
+        $this->user_id = (string) $user->id;
         $this->user = $user;
     }
 }

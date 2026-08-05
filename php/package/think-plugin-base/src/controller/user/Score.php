@@ -56,28 +56,28 @@ class Score extends Controller
             $this->error('该记录已超过 5 分钟，不允许回滚！');
         }
 
-        $userId = intval($log->user_id);
-        $rollbackValue = -intval($log->value);
+        $user_id = intval($log->user_id);
+        $rollback_value = -intval($log->value);
 
-        if ($rollbackValue === 0) {
+        if ($rollback_value === 0) {
             $this->error('该记录变化值为 0，无需回滚！');
         }
 
-        $user = BaseUser::mk()->where(['id' => $userId, 'deleted' => 0])->findOrEmpty();
+        $user = BaseUser::mk()->where(['id' => $user_id, 'deleted' => 0])->findOrEmpty();
         if ($user->isEmpty()) {
             $this->error('用户不存在！');
         }
 
-        $newScore = intval($user->score) + $rollbackValue;
-        if ($newScore < 0) {
+        $new_score = intval($user->score) + $rollback_value;
+        if ($new_score < 0) {
             $this->error('回滚后积分不足，无法回滚！');
         }
 
         $user->score_source = 'rollback';
         $user->score_remark = "回滚记录 #{$id}";
-        $user->score_change_value = $rollbackValue;
+        $user->score_change_value = $rollback_value;
 
-        if ($user->save(['score' => $newScore])) {
+        if ($user->save(['score' => $new_score])) {
             $this->success('回滚成功！');
         } else {
             $this->error('回滚失败！');

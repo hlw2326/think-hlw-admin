@@ -5,27 +5,16 @@ declare(strict_types=1);
 namespace plugin\base\service;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use InvalidArgumentException;
 use Throwable;
 
 /**
- * AI 大模型配置与调用服务
- *
- * 作用：
- * - 维护国产大模型供应商预设
- * - 读取并归一化后台保存的模型配置
- * - 使用 OpenAI 兼容 HTTP 接口调用模型
+ * AI 大模型服务
  */
 class AiService
 {
     /**
-     * 国产模型供应商预设
-     *
-     * base_url 为空的供应商说明官方入口可能按租户或控制台动态生成，
-     * 后台仍可选择该供应商并手动填写实际 OpenAI 兼容地址
-     *
-     * @return array<string,array{label:string,base_url:string,model:string,note:string,models:array<int,string>}>
+     * 供应商预设
      */
     public static function providers(): array
     {
@@ -195,420 +184,164 @@ class AiService
     }
 
     /**
-     * @return array<string,string>
+     * 获取 AI 配置
      */
-    public static function providerOptions(): array
+    public static function config(?array $data = null): array
     {
-        $options = [];
-        foreach (self::providers() as $code => $provider) {
-            $options[$code] = $provider['label'];
+        if ($data === null) {
+            $data = [
+                'enabled'       => sysconf('base.ai_enabled', '0'),
+                'provider'      => sysconf('base.ai_provider', 'qwen'),
+                'api_key'       => sysconf('base.ai_api_key', ''),
+                'base_url'      => sysconf('base.ai_base_url', ''),
+                'model'         => sysconf('base.ai_model', ''),
+                'temperature'   => sysconf('base.ai_temperature', '0.3'),
+                'max_tokens'    => sysconf('base.ai_max_tokens', '1200'),
+                'system_prompt' => sysconf('base.ai_system_prompt', '你是一个AI分析助手，请基于输入的数据输出中文分析建议，内容要具体、克制、可执行。'),
+            ];
         }
-        return $options;
-    }
 
-    /**
-     * @return array{label:string,base_url:string,model:string,note:string,models:array<int,string>}
-     */
-    public static function provider(string $code): array
-    {
         $providers = self::providers();
-        return $providers[$code] ?? $providers['qwen'];
-    }
+        $code = strtolower(trim((string) ($data['provider'] ?? 'qwen')));
+        $provider = $providers[$code] ?? $providers['qwen'];
 
-    /**
-     * 返回供应商内置推荐模型
-     *
-     * @return array<int,string>
-     */
-    public static function modelOptions(string $provider): array
-    {
-        $providerConfig = self::provider($provider);
-        return self::uniqueStrings([
-            (string) ($providerConfig['model'] ?? ''),
-            ...($providerConfig['models'] ?? []),
-        ]);
-    }
-
-    public static function modelsEndpoint(string $baseUrl): string
-    {
-        return self::normalizeBaseUrl($baseUrl) . '/models';
-    }
-
-    /**
-     * 从 OpenAI 兼容模型列表响应中提取模型名称
-     *
-     * @param array<string,mixed> $payload
-     * @return array<int,string>
-     */
-    public static function extractModelIds(array $payload): array
-    {
-        $models = [];
-        foreach (['data', 'models'] as $key) {
-            $items = is_array($payload[$key] ?? null) ? $payload[$key] : [];
-            foreach ($items as $item) {
-                if (is_string($item)) {
-                    $models[] = $item;
-                    continue;
-                }
-                if (!is_array($item)) {
-                    continue;
-                }
-                $models[] = (string) ($item['id'] ?? $item['name'] ?? '');
-            }
-        }
-
-        return self::uniqueStrings($models);
-    }
-
-    /**
-     * 获取可选模型列表
-     *
-     * 有 Base URL 时优先请求 OpenAI 兼容 /models；
-     * API Key 为空时按公开模型列表接口尝试无鉴权请求，失败后返回内置推荐模型
-     *
-     * @param array<string,mixed> $data
-     * @return array{online:bool,models:array<int,string>,message:string,endpoint:string}
-     */
-    public static function listModels(array $data, ?Client $client = null): array
-    {
-        $config = self::configFromArray($data);
-        $fallback = self::fallbackModels($config);
-        $endpoint = (string) $config['base_url'] !== '' ? self::modelsEndpoint((string) $config['base_url']) : '';
-
-        if ($endpoint === '') {
-            return [
-                'online' => false,
-                'models' => $fallback,
-                'message' => '未配置 Base URL，已显示内置推荐模型',
-                'endpoint' => $endpoint,
-            ];
-        }
-
-        try {
-            $headers = ['Accept' => 'application/json'];
-            if ((string) $config['api_key'] !== '') {
-                $headers['Authorization'] = 'Bearer ' . (string) $config['api_key'];
-            }
-
-            $client ??= new Client(['timeout' => 12, 'http_errors' => true, 'verify' => false]);
-            $response = $client->get($endpoint, ['headers' => $headers]);
-            $payload = json_decode((string) $response->getBody(), true);
-            if (!is_array($payload)) {
-                throw new InvalidArgumentException('模型列表接口返回不是 JSON 对象');
-            }
-
-            $models = self::uniqueStrings([
-                ...self::extractModelIds($payload),
-                ...$fallback,
-            ]);
-            if ($models === []) {
-                throw new InvalidArgumentException('模型列表为空');
-            }
-
-            return [
-                'online' => true,
-                'models' => $models,
-                'message' => '已获取模型列表',
-                'endpoint' => $endpoint,
-            ];
-        } catch (Throwable $exception) {
-            $prefix = (string) $config['api_key'] === '' ? '公开模型列表公开失败' : '获取模型列表失败';
-            return [
-                'online' => false,
-                'models' => $fallback,
-                'message' => $prefix . '，已显示内置推荐模型：' . $exception->getMessage(),
-                'endpoint' => $endpoint,
-            ];
-        }
-    }
-
-    /**
-     * 读取后台保存的模型配置
-     *
-     * @return array<string,mixed>
-     */
-    public static function config(): array
-    {
-        return self::configFromArray([
-            'enabled' => self::conf('base.ai_enabled', '0'),
-            'provider' => self::conf('base.ai_provider', 'qwen'),
-            'api_key' => self::conf('base.ai_api_key', ''),
-            'base_url' => self::conf('base.ai_base_url', ''),
-            'model' => self::conf('base.ai_model', ''),
-            'temperature' => self::conf('base.ai_temperature', '0.3'),
-            'max_tokens' => self::conf('base.ai_max_tokens', '1200'),
-            'system_prompt' => self::conf('base.ai_system_prompt', self::defaultSystemPrompt()),
-        ]);
-    }
-
-    /**
-     * 归一化配置数组，方便控制器、测试 and 后续业务复用
-     *
-     * @param array<string,mixed> $data
-     * @return array<string,mixed>
-     */
-    public static function configFromArray(array $data): array
-    {
-        $providers = self::providers();
-        $providerCode = strtolower(trim((string) ($data['provider'] ?? 'qwen')));
-        if (!isset($providers[$providerCode])) {
-            $providerCode = 'qwen';
-        }
-
-        $provider = $providers[$providerCode];
-        $baseUrl = trim((string) ($data['base_url'] ?? ''));
+        $base_url = trim((string) ($data['base_url'] ?? ''));
         $model = trim((string) ($data['model'] ?? ''));
+        $api_key = trim((string) ($data['api_key'] ?? ''));
+
+        $mask = '';
+        if ($api_key !== '') {
+            $mask = mb_strlen($api_key) <= 8 ? str_repeat('*', mb_strlen($api_key)) : mb_substr($api_key, 0, 4) . '****' . mb_substr($api_key, -4);
+        }
 
         return [
-            'enabled' => self::boolValue($data['enabled'] ?? false),
-            'provider' => $providerCode,
-            'label' => $provider['label'],
-            'api_key' => trim((string) ($data['api_key'] ?? '')),
-            'api_key_mask' => self::maskApiKey((string) ($data['api_key'] ?? '')),
-            'base_url' => self::normalizeBaseUrl($baseUrl !== '' ? $baseUrl : $provider['base_url']),
-            'model' => $model !== '' ? $model : $provider['model'],
-            'temperature' => self::temperature($data['temperature'] ?? 0.3),
-            'max_tokens' => self::maxTokens($data['max_tokens'] ?? 1200),
-            'system_prompt' => trim((string) ($data['system_prompt'] ?? self::defaultSystemPrompt())),
-            'note' => $provider['note'],
+            'enabled'       => in_array(strtolower((string) ($data['enabled'] ?? '')), ['1', 'true', 'on', 'yes'], true),
+            'provider'      => $code,
+            'label'         => $provider['label'],
+            'api_key'       => $api_key,
+            'api_key_mask'  => $mask,
+            'base_url'      => rtrim(trim($base_url !== '' ? $base_url : $provider['base_url']), '/'),
+            'model'         => $model !== '' ? $model : $provider['model'],
+            'temperature'   => max(0.0, min(2.0, round((float) ($data['temperature'] ?? 0.3), 2))),
+            'max_tokens'    => max(1, min(128000, (int) ($data['max_tokens'] ?? 1200))),
+            'system_prompt' => trim((string) ($data['system_prompt'] ?? '你是一个AI分析助手，请基于输入的数据输出中文分析建议，内容要具体、克制、可执行。')),
+            'note'          => $provider['note'],
         ];
     }
 
     /**
-     * 调用当前配置的大模型
-     *
-     * @param array<int,array{role:string,content:string}> $messages
+     * 获取模型列表
      */
-    public static function chat(string $content, array $messages = [], ?array $config = null, ?Client $client = null): string
+    public static function models(array $data): array
     {
-        $config = $config === null ? self::config() : self::configFromArray($config);
-        self::assertUsableConfig($config);
+        $config = self::config($data);
+        $provider = self::providers()[$config['provider']] ?? [];
+        $fallback = array_values(array_unique(array_filter([
+            $config['model'],
+            $provider['model'] ?? '',
+            ...($provider['models'] ?? []),
+        ])));
+
+        $base_url = (string) $config['base_url'];
+        if ($base_url === '') {
+            return ['online' => false, 'models' => $fallback, 'message' => '未配置 Base URL，已显示内置推荐模型', 'endpoint' => ''];
+        }
+
+        $endpoint = $base_url . '/models';
+        try {
+            $headers = ['Accept' => 'application/json'];
+            if ($config['api_key'] !== '') {
+                $headers['Authorization'] = 'Bearer ' . $config['api_key'];
+            }
+            $client = new Client(['timeout' => 12, 'http_errors' => true, 'verify' => false]);
+            $response = $client->get($endpoint, ['headers' => $headers]);
+            $payload = json_decode((string) $response->getBody(), true);
+            if (!is_array($payload)) {
+                throw new InvalidArgumentException('返回不是 JSON 对象');
+            }
+
+            $extracted = [];
+            foreach (['data', 'models'] as $key) {
+                foreach ($payload[$key] ?? [] as $item) {
+                    $id = is_string($item) ? $item : ($item['id'] ?? $item['name'] ?? '');
+                    if ($id !== '') $extracted[] = $id;
+                }
+            }
+
+            $list = array_values(array_unique(array_filter([...$extracted, ...$fallback])));
+            return ['online' => true, 'models' => $list, 'message' => '已获取模型列表', 'endpoint' => $endpoint];
+        } catch (Throwable $e) {
+            return ['online' => false, 'models' => $fallback, 'message' => '获取模型列表失败，已显示推荐模型：' . $e->getMessage(), 'endpoint' => $endpoint];
+        }
+    }
+
+    /**
+     * 测试连接
+     */
+    public static function test(array $data): array
+    {
+        $config = self::config($data);
+        if ($config['api_key'] === '' || $config['base_url'] === '' || $config['model'] === '') {
+            throw new InvalidArgumentException('请先配置 API Key、接口地址和模型名称');
+        }
+
+        $client = new Client(['timeout' => 60, 'http_errors' => true, 'verify' => false]);
+        $response = $client->post($config['base_url'] . '/chat/completions', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $config['api_key'],
+            ],
+            'json' => [
+                'model' => $config['model'],
+                'messages' => [['role' => 'user', 'content' => '请只回复：连接正常']],
+                'temperature' => 0,
+                'max_tokens' => 16,
+            ],
+        ]);
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $reply = $payload['choices'][0]['message']['content'] ?? '';
+        return ['reply' => is_string($reply) ? trim($reply) : ''];
+    }
+
+    /**
+     * 发起对话
+     */
+    public static function chat(string $content, array $messages = [], ?array $config = null): string
+    {
+        $config = self::config($config);
+        if (empty($config['enabled'])) {
+            throw new InvalidArgumentException('AI 模型分析未启用');
+        }
+        if ($config['api_key'] === '' || $config['base_url'] === '' || $config['model'] === '') {
+            throw new InvalidArgumentException('请先配置 API Key、接口地址和模型名称');
+        }
 
         if ($messages === []) {
             $messages = [
-                ['role' => 'system', 'content' => (string) $config['system_prompt']],
+                ['role' => 'system', 'content' => $config['system_prompt']],
                 ['role' => 'user', 'content' => $content],
             ];
         }
 
-        return self::extractChatReply(self::requestChatCompletion($config, $messages, $client));
-    }
-
-    /**
-     * 使用当前配置发起一次轻量请求，验证模型、密钥和地址是否可用
-     *
-     * @param array<string,mixed> $data
-     * @return array{reply:string}
-     */
-    public static function testConnection(array $data, ?Client $client = null): array
-    {
-        $config = self::configFromArray($data);
-        self::assertConnectableConfig($config);
-
-        $payload = self::requestChatCompletion($config, [
-            ['role' => 'user', 'content' => '请只回复：连接正常'],
-        ], $client, [
-            'temperature' => 0,
-            'max_tokens' => 16,
+        $client = new Client(['timeout' => 60, 'http_errors' => true, 'verify' => false]);
+        $response = $client->post($config['base_url'] . '/chat/completions', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $config['api_key'],
+            ],
+            'json' => [
+                'model' => $config['model'],
+                'messages' => $messages,
+                'temperature' => $config['temperature'],
+                'max_tokens' => $config['max_tokens'],
+            ],
         ]);
-
-        return ['reply' => self::extractChatReply($payload)];
-    }
-
-    public static function maskApiKey(string $apiKey): string
-    {
-        $apiKey = trim($apiKey);
-        if ($apiKey === '') {
-            return '';
-        }
-        if (mb_strlen($apiKey) <= 8) {
-            return str_repeat('*', mb_strlen($apiKey));
-        }
-        return mb_substr($apiKey, 0, 4) . '****' . mb_substr($apiKey, -4);
-    }
-
-    public static function defaultSystemPrompt(): string
-    {
-        return '你是一个AI分析助手，请基于输入的数据输出中文分析建议，内容要具体、克制、可执行。';
-    }
-
-    /**
-     * @param array<string,mixed> $config
-     */
-    private static function assertUsableConfig(array $config): void
-    {
-        if (empty($config['enabled'])) {
-            throw new InvalidArgumentException('AI 模型分析未启用');
-        }
-        self::assertConnectableConfig($config);
-    }
-
-    /**
-     * @param array<string,mixed> $config
-     */
-    private static function assertConnectableConfig(array $config): void
-    {
-        if ((string) $config['api_key'] === '') {
-            throw new InvalidArgumentException('请先配置 AI 模型 API Key');
-        }
-        if ((string) $config['base_url'] === '') {
-            throw new InvalidArgumentException('请先配置 AI 模型接口地址');
-        }
-        if ((string) $config['model'] === '') {
-            throw new InvalidArgumentException('请先配置 AI 模型名称');
-        }
-    }
-
-    /**
-     * @param array<string,mixed> $config
-     * @param array<int,array{role:string,content:string}> $messages
-     * @param array<string,mixed> $overrides
-     * @return array<string,mixed>
-     */
-    private static function requestChatCompletion(array $config, array $messages, ?Client $client = null, array $overrides = []): array
-    {
-        $client ??= new Client(['timeout' => 60, 'http_errors' => true, 'verify' => false]);
-        try {
-            $response = $client->post(self::chatCompletionEndpoint((string) $config['base_url']), [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . (string) $config['api_key'],
-                ],
-                'json' => [
-                    'model' => (string) $config['model'],
-                    'messages' => $messages,
-                    'temperature' => (float) $config['temperature'],
-                    'max_tokens' => (int) $config['max_tokens'],
-                ] + $overrides,
-            ]);
-        } catch (RequestException $exception) {
-            throw new InvalidArgumentException(self::requestExceptionMessage($exception), 0, $exception);
-        }
 
         $payload = json_decode((string) $response->getBody(), true);
-        if (!is_array($payload)) {
-            throw new InvalidArgumentException('模型接口返回不是 JSON 对象');
-        }
-        if (is_array($payload['error'] ?? null)) {
-            $message = trim((string) ($payload['error']['message'] ?? '模型接口返回错误'));
-            throw new InvalidArgumentException($message !== '' ? $message : '模型接口返回错误');
-        }
-
-        return $payload;
-    }
-
-    private static function requestExceptionMessage(RequestException $exception): string
-    {
-        $response = $exception->getResponse();
-        if ($response !== null) {
-            $body = trim((string) $response->getBody());
-            if ($body !== '') {
-                $payload = json_decode($body, true);
-                if (is_array($payload)) {
-                    $message = $payload['error']['message'] ?? $payload['message'] ?? $payload['msg'] ?? '';
-                    if (trim((string) $message) !== '') {
-                        return trim((string) $message);
-                    }
-                }
-                return mb_substr($body, 0, 500);
-            }
-            return '模型接口请求失败，HTTP 状态码：' . $response->getStatusCode();
-        }
-
-        $message = trim($exception->getMessage());
-        return $message !== '' ? $message : '模型接口请求失败：' . $exception::class;
-    }
-
-    public static function chatCompletionEndpoint(string $baseUrl): string
-    {
-        return self::normalizeBaseUrl($baseUrl) . '/chat/completions';
-    }
-
-    /**
-     * @param array<string,mixed> $payload
-     */
-    private static function extractChatReply(array $payload): string
-    {
-        $message = $payload['choices'][0]['message'] ?? [];
-        if (!is_array($message)) {
-            return '';
-        }
-
-        $content = $message['content'] ?? '';
-        if (is_string($content)) {
-            return trim($content);
-        }
-        if (is_array($content)) {
-            return trim(implode('', array_map(static function (mixed $item): string {
-                if (is_array($item)) {
-                    return (string) ($item['text'] ?? '');
-                }
-                return is_scalar($item) ? (string) $item : '';
-            }, $content)));
-        }
-
-        return '';
-    }
-
-    /**
-     * @param array<string,mixed> $config
-     * @return array<int,string>
-     */
-    private static function fallbackModels(array $config): array
-    {
-        return self::uniqueStrings([
-            (string) ($config['model'] ?? ''),
-            ...self::modelOptions((string) ($config['provider'] ?? 'qwen')),
-        ]);
-    }
-
-    /**
-     * @param array<int,string> $values
-     * @return array<int,string>
-     */
-    private static function uniqueStrings(array $values): array
-    {
-        $result = [];
-        foreach ($values as $value) {
-            $value = trim((string) $value);
-            if ($value !== '' && !in_array($value, $result, true)) {
-                $result[] = $value;
-            }
-        }
-
-        return $result;
-    }
-
-    private static function conf(string $key, string $default = ''): string
-    {
-        if (!function_exists('sysconf')) {
-            return $default;
-        }
-        $value = sysconf($key);
-        return $value === '' || $value === null ? $default : (string) $value;
-    }
-
-    private static function boolValue(mixed $value): bool
-    {
-        if (is_bool($value)) {
-            return $value;
-        }
-        return in_array(strtolower((string) $value), ['1', 'true', 'on', 'yes'], true);
-    }
-
-    private static function normalizeBaseUrl(string $baseUrl): string
-    {
-        return rtrim(trim($baseUrl), '/');
-    }
-
-    private static function temperature(mixed $value): float
-    {
-        return max(0.0, min(2.0, round((float) $value, 2)));
-    }
-
-    private static function maxTokens(mixed $value): int
-    {
-        return max(1, min(128000, (int) $value));
+        $reply = $payload['choices'][0]['message']['content'] ?? '';
+        return is_string($reply) ? trim($reply) : '';
     }
 }
