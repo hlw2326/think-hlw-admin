@@ -1,7 +1,17 @@
 <form action="{:sysuri()}" method="post" data-auto="true" class="layui-form layui-card" data-table-id="AppTable">
     <div class="layui-card-body padding-left-40">
         <div class="layui-form-item relative block">
-            <span class="color-green font-w7">页面配置</span>
+            <div class="layui-clear" style="margin-bottom: 10px;">
+                <span class="color-green font-w7 pull-left" style="line-height: 30px;">页面配置</span>
+                <div class="pull-right">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="btnLoadDemo">
+                        <i class="layui-icon layui-icon-template-1"></i> 载入广告配置模版
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="btnClearJson">
+                        <i class="layui-icon layui-icon-delete"></i> 清空
+                    </button>
+                </div>
+            </div>
             
             <!-- JSON Editor Container -->
             <div id="jsoneditor" style="height: 450px; margin-top: 10px; margin-bottom: 10px;"></div>
@@ -9,14 +19,26 @@
             <!-- Hidden textarea for form submission -->
             <textarea name="page_config" class="layui-hide">{$vo.page_config|default=''}</textarea>
             
-            <p class="help-block"><b>提示</b>，支持可视化树形 (Tree) 编辑与代码 (Code) 高亮模式，请确保保存前 JSON 格式正确。</p>
+            <div class="help-block margin-top-10" style="line-height: 1.8;">
+                <p><b>提示</b>：支持可视化树形 (Tree) 编辑与代码 (Code) 高亮模式，请确保保存前 JSON 格式正确。</p>
+                <p><b>页面广告配置参考格式：</b></p>
+                <pre style="background:#f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #333; margin-top: 5px;">{
+  "ad_config": {
+    "pages/index/index": {
+      "grid_unit_id": "adunit-你的首页格子/原生广告ID",
+      "banner_unit_id": "adunit-你的首页Banner广告ID",
+      "custom_unit_id": "adunit-你的首页原生模板广告ID"
+    }
+  }
+}</pre>
+            </div>
         </div>
     </div>
     <div class="hr-line-dashed"></div>
     <input type="hidden" value="{$vo.id}" name="id">
     <div class="layui-form-item text-center">
-        <button class="layui-btn" type="submit">保存配置</button>
-        <button class="layui-btn layui-btn-danger" type="button" data-close>取消操作</button>
+        <button class="layui-btn" type="submit">保存</button>
+        <button class="layui-btn layui-btn-danger" type="button" data-close>取消</button>
     </div>
 </form>
 
@@ -45,7 +67,7 @@
 
             var options = {
                 mode: 'tree',
-                modes: ['tree', 'code', 'text'], // Allowed modes
+                modes: ['tree', 'code', 'text'],
                 enableTransform: false,
                 enableSort: false,
                 onChange: function () {
@@ -53,7 +75,7 @@
                         var json = editor.get();
                         textarea.val(JSON.stringify(json));
                     } catch (e) {
-                        // Catching incomplete JSON errors while editing
+                        // 忽略编辑过程中未完结的 JSON 异常
                     }
                 }
             };
@@ -62,13 +84,75 @@
             editor.set(initialJson);
             editor.expandAll();
 
-            // Sync on form submit & validate JSON
-            $('[data-table-id="AppTable"]').off('submit').on('submit', function () {
+            // 载入广告配置模版按钮
+            $('#btnLoadDemo').on('click', function () {
+                var demoJson = {
+                    "ad_config": {
+                        "pages/index/index": {
+                            "grid_unit_id": "adunit-xxxxxx"
+                        }
+                    }
+                };
+
+                var applyDemo = function() {
+                    editor.set(demoJson);
+                    textarea.val(JSON.stringify(demoJson));
+                    editor.expandAll();
+                    if (typeof $.msg !== 'undefined' && $.msg.success) {
+                        $.msg.success('已成功载入模版！请修改广告位ID后保存。');
+                    }
+                };
+
+                var hasData = false;
+                try {
+                    var cur = editor.get();
+                    hasData = cur && Object.keys(cur).length > 0;
+                } catch(e) {}
+
+                if (hasData) {
+                    if (typeof layer !== 'undefined' && layer.confirm) {
+                        layer.confirm('确定要载入模版并覆盖当前配置吗？', { icon: 3, title: '提示' }, function (idx) {
+                            applyDemo();
+                            layer.close(idx);
+                        });
+                    } else if (confirm('确定要载入模版并覆盖当前配置吗？')) {
+                        applyDemo();
+                    }
+                } else {
+                    applyDemo();
+                }
+            });
+
+            // 清空配置按钮
+            $('#btnClearJson').on('click', function () {
+                var doClear = function() {
+                    editor.set({});
+                    textarea.val('{}');
+                };
+
+                if (typeof layer !== 'undefined' && layer.confirm) {
+                    layer.confirm('确定要清空配置吗？', { icon: 2, title: '警告' }, function (idx) {
+                        doClear();
+                        layer.close(idx);
+                    });
+                } else if (confirm('确定要清空配置吗？')) {
+                    doClear();
+                }
+            });
+
+            // 提前在点击提交按钮和表单提交前同步并校验 JSONEditor 内容（切勿使用 .off('submit') 避免解绑 ThinkAdmin 的 AJAX 提交监听）
+            var $form = $('form[data-table-id="AppTable"]');
+            $form.find('button[type="submit"]').on('click', function (e) {
                 try {
                     var json = editor.get();
                     textarea.val(JSON.stringify(json));
-                } catch (e) {
-                    $.msg.error('JSON 格式不正确，请检查语法！');
+                } catch (err) {
+                    if (typeof $.msg !== 'undefined' && $.msg.error) {
+                        $.msg.error('JSON 格式不正确，请检查语法！');
+                    } else {
+                        alert('JSON 格式不正确，请检查语法！');
+                    }
+                    e.preventDefault();
                     return false;
                 }
             });
