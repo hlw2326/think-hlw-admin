@@ -37,7 +37,7 @@ class Custom extends Controller
             $openid = (string) ($message['FromUserName'] ?? $message['fromusername'] ?? '');
             if ($openid !== '' && ($rule = CustomService::match($mp, $message))) {
                 if (strtolower((string) $rule->reply_type) === 'transfer') {
-                    return $this->transferResponse($message);
+                    return $this->transfer($message);
                 }
                 CustomService::send($mp, $openid, $rule);
             }
@@ -53,7 +53,7 @@ class Custom extends Controller
      * @param array $message
      * @return string
      */
-    private function transferResponse(array $message): string
+    private function transfer(array $message): string
     {
         $to_user = $message['FromUserName'] ?? $message['fromusername'] ?? '';
         $from_user = $message['ToUserName'] ?? $message['touser'] ?? '';

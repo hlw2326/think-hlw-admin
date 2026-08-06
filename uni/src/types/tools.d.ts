@@ -8,7 +8,7 @@ declare namespace ITools {
         logo: string;
         sort: number;
         status: number;
-        clickCount: number;
+        click_count: number;
     }
 
     interface ListResult {
