@@ -14,7 +14,9 @@ use Throwable;
 class AiService
 {
     /**
-     * 供应商预设
+     * 供应商预设配置列表
+     *
+     * @return array
      */
     public static function providers(): array
     {
@@ -184,7 +186,10 @@ class AiService
     }
 
     /**
-     * 获取 AI 配置
+     * 获取 AI 配置并规范化
+     *
+     * @param array|null $data
+     * @return array
      */
     public static function config(?array $data = null): array
     {
@@ -230,7 +235,10 @@ class AiService
     }
 
     /**
-     * 获取模型列表
+     * 在线或回退获取可用的 AI 模型列表
+     *
+     * @param array $data
+     * @return array
      */
     public static function models(array $data): array
     {
@@ -276,7 +284,10 @@ class AiService
     }
 
     /**
-     * 测试连接
+     * 测试 AI 模型连通性
+     *
+     * @param array $data
+     * @return array
      */
     public static function test(array $data): array
     {
@@ -306,7 +317,12 @@ class AiService
     }
 
     /**
-     * 发起对话
+     * 发起大模型对话或分析请求
+     *
+     * @param string $content
+     * @param array $messages
+     * @param array|null $config
+     * @return string
      */
     public static function chat(string $content, array $messages = [], ?array $config = null): string
     {

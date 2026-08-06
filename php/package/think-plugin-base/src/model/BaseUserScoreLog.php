@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\model;
@@ -6,11 +7,8 @@ namespace plugin\base\model;
 use think\admin\Model;
 
 /**
- * 用户积分记录 - 模型
- * @class BaseUserScoreLog
- * @package plugin\base\model
+ * 用户积分变动日志模型
  */
 class BaseUserScoreLog extends Model
 {
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -6,11 +7,15 @@ namespace plugin\base\controller\api\v1;
 use plugin\base\service\AdService;
 
 /**
- * 系统配置 API
- * @class Config
+ * 系统配置 API 控制器
  */
 class Config extends Base
 {
+    /**
+     * 获取系统综合配置信息
+     *
+     * @return void
+     */
     public function index(): void
     {
         $this->success('获取成功', [

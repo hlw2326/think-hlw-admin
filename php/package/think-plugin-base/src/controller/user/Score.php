@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\user;
@@ -10,16 +11,16 @@ use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 
 /**
- * 积分记录管理
- * @class Score
- * @package plugin\base\controller\user
+ * 积分记录管理控制器
  */
 class Score extends Controller
 {
     /**
-     * 积分记录
+     * 积分记录列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -40,8 +41,10 @@ class Score extends Controller
     }
 
     /**
-     * 回滚积分记录
+     * 回滚积分记录（5分钟之内）
+     *
      * @auth true
+     * @return void
      */
     public function rollback(): void
     {

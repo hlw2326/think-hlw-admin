@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\model;
@@ -6,12 +7,8 @@ namespace plugin\base\model;
 use think\admin\Model;
 
 /**
- * 帮助 - 模型
- * @class BaseHelp
- * @package plugin\base\model
+ * 帮助中心模型
  */
 class BaseHelp extends Model
 {
-
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\mp;
@@ -8,13 +9,13 @@ use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 
 /**
- * 小程序管理
- * @class Index
+ * 小程序管理控制器
  */
 class Index extends Controller
 {
     /**
-     * 客服回调地址
+     * 生成客服回调地址
+     *
      * @return string
      */
     protected function customerUrl(): string
@@ -24,8 +25,10 @@ class Index extends Controller
 
     /**
      * 小程序列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -39,7 +42,9 @@ class Index extends Controller
 
     /**
      * 添加小程序
+     *
      * @auth true
+     * @return void
      */
     public function add(): void
     {
@@ -49,7 +54,9 @@ class Index extends Controller
 
     /**
      * 编辑小程序
+     *
      * @auth true
+     * @return void
      */
     public function edit(): void
     {
@@ -58,8 +65,10 @@ class Index extends Controller
     }
 
     /**
-     * 表单数据处理
+     * 表单数据处理过滤
+     *
      * @param array $data
+     * @return void
      */
     protected function _form_filter(array &$data): void
     {
@@ -73,7 +82,9 @@ class Index extends Controller
 
     /**
      * 修改状态
+     *
      * @auth true
+     * @return void
      */
     public function state(): void
     {
@@ -85,7 +96,9 @@ class Index extends Controller
 
     /**
      * 修改客服消息状态
+     *
      * @auth true
+     * @return void
      */
     public function custom(): void
     {
@@ -97,7 +110,9 @@ class Index extends Controller
 
     /**
      * 删除小程序
+     *
      * @auth true
+     * @return void
      */
     public function remove(): void
     {
@@ -105,8 +120,10 @@ class Index extends Controller
     }
 
     /**
-     * 配置 page_config
+     * 配置页面 JSON
+     *
      * @auth true
+     * @return void
      */
     public function page(): void
     {
@@ -116,7 +133,9 @@ class Index extends Controller
 
     /**
      * 广告配置
+     *
      * @auth true
+     * @return void
      */
     public function ad(): void
     {
@@ -125,8 +144,10 @@ class Index extends Controller
     }
 
     /**
-     * 导入小程序
+     * 导入小程序配置数据
+     *
      * @auth true
+     * @return void
      */
     public function import(): void
     {
@@ -217,8 +238,10 @@ class Index extends Controller
     }
 
     /**
-     * 导出数据
+     * 导出小程序配置数据
+     *
      * @auth true
+     * @return void
      */
     public function export(): void
     {
@@ -260,4 +283,3 @@ class Index extends Controller
         exit;
     }
 }
-

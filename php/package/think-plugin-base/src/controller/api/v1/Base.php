@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -8,21 +9,50 @@ use plugin\base\model\BaseUser;
 use think\admin\Controller;
 
 /**
- * 接口基础 API
- * @class Base
+ * 接口基础 API 控制器
  */
 class Base extends Controller
 {
+    /**
+     * 当前小程序 AppId
+     *
+     * @var string
+     */
     protected string $appid = '';
 
+    /**
+     * 当前小程序模型对象
+     *
+     * @var BaseMp
+     */
     protected BaseMp $mp;
 
+    /**
+     * 当前登录用户模型对象
+     *
+     * @var BaseUser
+     */
     protected BaseUser $user;
 
+    /**
+     * 当前登录用户 ID
+     *
+     * @var string
+     */
     protected string $user_id = '';
 
+    /**
+     * 客户端设备信息参数
+     *
+     * @var array
+     */
     protected array $device = [];
 
+    /**
+     * 控制器初始化
+     *
+     * @return void
+     */
     protected function initialize(): void
     {
         parent::initialize();
@@ -82,7 +112,9 @@ class Base extends Controller
     }
 
     /**
-     * 验证用户登录状态
+     * 验证用户 Token 登录状态
+     *
+     * @return void
      */
     protected function checkToken(): void
     {

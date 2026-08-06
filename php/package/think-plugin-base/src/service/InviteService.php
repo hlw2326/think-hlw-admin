@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\service;
@@ -7,8 +8,6 @@ use WeMini\Qrcode;
 
 /**
  * 邀请/分享服务
- * @class InviteService
- * @package plugin\base\service
  */
 class InviteService
 {

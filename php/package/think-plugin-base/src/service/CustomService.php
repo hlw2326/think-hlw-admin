@@ -18,6 +18,9 @@ class CustomService
 {
     /**
      * 小程序微信 SDK 配置
+     *
+     * @param BaseMp $mp
+     * @return array
      */
     public static function config(BaseMp $mp): array
     {
@@ -32,6 +35,10 @@ class CustomService
 
     /**
      * 匹配客服回复规则
+     *
+     * @param BaseMp $mp
+     * @param array $message
+     * @return BaseMpReply|null
      */
     public static function match(BaseMp $mp, array $message): ?BaseMpReply
     {
@@ -69,6 +76,11 @@ class CustomService
 
     /**
      * 发送客服消息
+     *
+     * @param BaseMp $mp
+     * @param string $openid
+     * @param BaseMpReply $rule
+     * @return array
      */
     public static function send(BaseMp $mp, string $openid, BaseMpReply $rule): array
     {
@@ -127,6 +139,11 @@ class CustomService
 
     /**
      * 上传素材并返回 media_id
+     *
+     * @param BaseMp $mp
+     * @param string $url
+     * @param string $type
+     * @return string
      */
     private static function uploadMedia(BaseMp $mp, string $url, string $type = 'image'): string
     {

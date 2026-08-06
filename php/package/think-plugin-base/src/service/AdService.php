@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\service;
@@ -11,6 +12,12 @@ use plugin\base\model\BaseUser;
  */
 class AdService
 {
+    /**
+     * 获取小程序广告配置
+     *
+     * @param BaseMp $mp
+     * @return array
+     */
     public static function config(BaseMp $mp): array
     {
         $global_on = self::enabled($mp, 'ad_global_enabled');
@@ -43,6 +50,12 @@ class AdService
         ];
     }
 
+    /**
+     * 奖励发放（如观看激励视频广告）
+     *
+     * @param int $user_id
+     * @return array
+     */
     public static function grant(int $user_id): array
     {
         $user = BaseUser::mk()->where('id', $user_id)->find();
@@ -64,6 +77,13 @@ class AdService
         ];
     }
 
+    /**
+     * 判断指定广告配置项是否开启
+     *
+     * @param BaseMp $mp
+     * @param string $field
+     * @return bool
+     */
     private static function enabled(BaseMp $mp, string $field): bool
     {
         $value = $mp->{$field} ?? 1;

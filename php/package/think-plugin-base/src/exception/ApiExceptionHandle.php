@@ -11,10 +11,17 @@ use think\Response;
 use Throwable;
 
 /**
- * API 全局异常处理器。
+ * API 全局异常处理器
  */
 class ApiExceptionHandle extends Handle
 {
+    /**
+     * 渲染异常HTTP响应
+     *
+     * @param Request $request
+     * @param Throwable $e
+     * @return Response
+     */
     public function render(Request $request, Throwable $e): Response
     {
         if ($e instanceof HttpResponseException) {
@@ -33,4 +40,3 @@ class ApiExceptionHandle extends Handle
         return parent::render($request, $e);
     }
 }
-

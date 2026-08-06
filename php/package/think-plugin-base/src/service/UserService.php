@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\service;
@@ -10,6 +11,12 @@ use plugin\base\model\BaseUser;
  */
 class UserService
 {
+    /**
+     * 获取规范化用户 Profile 数组
+     *
+     * @param BaseUser $user
+     * @return array
+     */
     public static function profile(BaseUser $user): array
     {
         return [
@@ -25,6 +32,18 @@ class UserService
         ];
     }
 
+    /**
+     * 同步登录用户信息（注册或更新）
+     *
+     * @param string $openid
+     * @param string $unionid
+     * @param array $profile
+     * @param array $device
+     * @param string $ip
+     * @param string $invite_uid
+     * @param string $appid
+     * @return BaseUser
+     */
     public static function sync(
         string $openid,
         string $unionid,
@@ -43,6 +62,18 @@ class UserService
         return static::refresh($user, $unionid, $device, $ip);
     }
 
+    /**
+     * 新用户注册入库
+     *
+     * @param string $openid
+     * @param string $unionid
+     * @param array $profile
+     * @param array $device
+     * @param string $ip
+     * @param string $invite_uid
+     * @param string $appid
+     * @return BaseUser
+     */
     private static function register(
         string $openid,
         string $unionid,
@@ -84,6 +115,15 @@ class UserService
         return $user;
     }
 
+    /**
+     * 刷新已有用户登录及设备信息
+     *
+     * @param BaseUser $user
+     * @param string $unionid
+     * @param array $device
+     * @param string $ip
+     * @return BaseUser
+     */
     private static function refresh(BaseUser $user, string $unionid, array $device, string $ip): BaseUser
     {
         if (intval($user->status) !== 1) {

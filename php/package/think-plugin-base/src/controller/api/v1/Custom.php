@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -10,13 +11,13 @@ use WeChat\Contracts\Tools;
 use WeChat\Receive;
 
 /**
- * 客服消息 API
- * @class Custom
+ * 客服消息 API 控制器
  */
 class Custom extends Controller
 {
     /**
-     * 微信小程序客服消息回调
+     * 微信小程序客服消息回调接口
+     *
      * @return string
      */
     public function index(): string
@@ -48,6 +49,7 @@ class Custom extends Controller
 
     /**
      * 构建转接人工客服报文
+     *
      * @param array $message
      * @return string
      */
@@ -76,7 +78,8 @@ XML;
     }
 
     /**
-     * 获取小程序配置
+     * 获取当前小程序配置对象
+     *
      * @return BaseMp
      */
     private function mp(): BaseMp
@@ -96,7 +99,8 @@ XML;
     }
 
     /**
-     * 读取微信推送消息
+     * 读取并解密微信推送消息
+     *
      * @param BaseMp $mp
      * @return array
      */
@@ -121,7 +125,8 @@ XML;
     }
 
     /**
-     * 验证微信签名
+     * 验证微信推送签名
+     *
      * @param string $token
      * @return bool
      */
@@ -136,7 +141,8 @@ XML;
     }
 
     /**
-     * 获取加密消息体
+     * 获取加密消息体原始内容
+     *
      * @return string
      */
     private function encryptPayload(): string
@@ -150,7 +156,8 @@ XML;
     }
 
     /**
-     * 数组键名兼容大小写
+     * 数组键名统一转换为小写
+     *
      * @param array $data
      * @return array
      */

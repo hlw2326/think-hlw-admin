@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -6,16 +7,25 @@ namespace plugin\base\controller\api\v1;
 use plugin\base\service\UserService;
 
 /**
- * 用户相关 API
- * @class User
+ * 用户相关 API 控制器
  */
 class User extends Auth
 {
+    /**
+     * 获取个人信息
+     *
+     * @return void
+     */
     public function info(): void
     {
         $this->success('获取成功', UserService::profile($this->user));
     }
 
+    /**
+     * 更新个人信息
+     *
+     * @return void
+     */
     public function update(): void
     {
         if (!$this->request->isPost()) {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\service;
@@ -9,11 +10,12 @@ use think\facade\Db;
 
 /**
  * 积分服务
- * @class UserScoreService
- * @package plugin\base\service
  */
 class UserScoreService
 {
+    /**
+     * 积分类型字典
+     */
     public const TYPES = [
         'register' => '新用户注册',
         'signin'   => '每日签到',
@@ -24,6 +26,13 @@ class UserScoreService
     ];
 
     /**
+     * 是否正在由服务处理积分变更（用于防止模型事件重复记录日志）
+     *
+     * @var bool
+     */
+    public static bool $changing = false;
+
+    /**
      * 获取所有可用的积分类型
      *
      * @return array
@@ -32,12 +41,6 @@ class UserScoreService
     {
         return self::TYPES;
     }
-
-    /**
-     * 是否正在由服务处理积分变更（用于防止模型事件重复记录日志）
-     * @var bool
-     */
-    public static $changing = false;
 
     /**
      * 变更用户积分

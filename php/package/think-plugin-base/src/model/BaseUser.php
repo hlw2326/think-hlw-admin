@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\model;
@@ -8,14 +9,12 @@ use plugin\base\service\UserVipService;
 use think\admin\Model;
 
 /**
- * 用户 - 模型
- * @class BaseUser
- * @package plugin\base\model
+ * 基础用户模型
  */
 class BaseUser extends Model
 {
     /**
-     * 模型更新前事件钩子：自动记录积分变更日志
+     * 模型更新前事件钩子：自动记录积分及会员变更日志
      *
      * @param BaseUser $user
      * @return void
@@ -66,5 +65,3 @@ class BaseUser extends Model
         }
     }
 }
-
-

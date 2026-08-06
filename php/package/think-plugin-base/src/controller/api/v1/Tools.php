@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -6,11 +7,15 @@ namespace plugin\base\controller\api\v1;
 use plugin\base\model\BaseTools;
 
 /**
- * 工具列表 API
- * @class Tools
+ * 工具列表 API 控制器
  */
 class Tools extends Base
 {
+    /**
+     * 获取推荐工具列表
+     *
+     * @return void
+     */
     public function list(): void
     {
         $rows = BaseTools::mk()
@@ -41,6 +46,11 @@ class Tools extends Base
         $this->success('获取成功', ['list' => $list]);
     }
 
+    /**
+     * 增加工具点击计数
+     *
+     * @return void
+     */
     public function click(): void
     {
         $id = intval($this->request->get('id', $this->request->post('id', 0)));

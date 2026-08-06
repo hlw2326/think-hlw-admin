@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -7,11 +8,15 @@ use plugin\base\model\BaseUser;
 use plugin\base\service\UserScoreService;
 
 /**
- * 登录验证 API
- * @class Auth
+ * 需授权登录的 API 基类控制器
  */
 class Auth extends Base
 {
+    /**
+     * 控制器初始化并校验登录状态
+     *
+     * @return void
+     */
     protected function initialize(): void
     {
         parent::initialize();
@@ -19,7 +24,7 @@ class Auth extends Base
     }
 
     /**
-     * 检查当前用户是否 VIP，非 VIP 则扣除响应积分
+     * 检查当前用户是否 VIP，非 VIP 则扣除对应积分
      *
      * @param string $config_key 配置项名称（如 'search_score', 'weight_score'）
      * @param string $remark     扣除积分说明

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -7,11 +8,15 @@ use plugin\base\service\UserService;
 use WeMini\Crypt;
 
 /**
- * 登录服务 API
- * @class Login
+ * 登录服务 API 控制器
  */
 class Login extends Base
 {
+    /**
+     * 小程序 code 换取 session 登录授权
+     *
+     * @return void
+     */
     public function in(): void
     {
         if (!$this->request->isPost()) {

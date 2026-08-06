@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\mp;
@@ -10,13 +11,13 @@ use think\admin\helper\QueryHelper;
 use think\admin\service\SystemService;
 
 /**
- * 回复规则
- * @class Reply
+ * 客服回复规则控制器
  */
 class Reply extends Controller
 {
     /**
-     * 回复类型
+     * 回复类型映射表
+     *
      * @var array<string,string>
      */
     public array $types = [
@@ -31,7 +32,8 @@ class Reply extends Controller
     ];
 
     /**
-     * 匹配方式
+     * 匹配方式映射表
+     *
      * @var array<string,string>
      */
     public array $matchTypes = [
@@ -42,9 +44,11 @@ class Reply extends Controller
     ];
 
     /**
-     * 回复规则
+     * 回复规则列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -59,8 +63,10 @@ class Reply extends Controller
     }
 
     /**
-     * 列表数据处理
+     * 列表数据处理过滤
+     *
      * @param array $data
+     * @return void
      */
     protected function _index_page_filter(array &$data): void
     {
@@ -75,7 +81,9 @@ class Reply extends Controller
 
     /**
      * 保存排序
+     *
      * @auth true
+     * @return void
      */
     public function sort(): void
     {
@@ -86,8 +94,10 @@ class Reply extends Controller
     }
 
     /**
-     * 默认回复
+     * 设置默认回复
+     *
      * @auth true
+     * @return void
      */
     public function defaults(): void
     {
@@ -102,7 +112,8 @@ class Reply extends Controller
     }
 
     /**
-     * 客服回调地址
+     * 生成客服回调地址
+     *
      * @return string
      */
     protected function customerUrl(): string
@@ -111,7 +122,8 @@ class Reply extends Controller
     }
 
     /**
-     * 小程序列表
+     * 获取已有小程序列表
+     *
      * @return array
      */
     protected function mps(): array
@@ -120,7 +132,9 @@ class Reply extends Controller
     }
 
     /**
-     * 表单视图变量
+     * 绑定表单视图变量
+     *
+     * @return void
      */
     protected function assignFormVars(): void
     {
@@ -130,8 +144,10 @@ class Reply extends Controller
     }
 
     /**
-     * 添加规则
+     * 添加回复规则
+     *
      * @auth true
+     * @return void
      */
     public function add(): void
     {
@@ -140,8 +156,10 @@ class Reply extends Controller
     }
 
     /**
-     * 编辑规则
+     * 编辑回复规则
+     *
      * @auth true
+     * @return void
      */
     public function edit(): void
     {
@@ -150,8 +168,10 @@ class Reply extends Controller
     }
 
     /**
-     * 表单数据处理
+     * 表单数据过滤与合法性校验
+     *
      * @param array $data
+     * @return void
      */
     protected function _form_filter(array &$data): void
     {
@@ -327,7 +347,9 @@ class Reply extends Controller
 
     /**
      * 修改状态
+     *
      * @auth true
+     * @return void
      */
     public function state(): void
     {
@@ -339,7 +361,9 @@ class Reply extends Controller
 
     /**
      * 删除规则
+     *
      * @auth true
+     * @return void
      */
     public function remove(): void
     {
@@ -347,8 +371,10 @@ class Reply extends Controller
     }
 
     /**
-     * 导出数据
+     * 导出客服回复规则
+     *
      * @auth true
+     * @return void
      */
     public function export(): void
     {
@@ -400,8 +426,10 @@ class Reply extends Controller
     }
 
     /**
-     * 导入数据
+     * 导入客服回复规则
+     *
      * @auth true
+     * @return void
      */
     public function import(): void
     {
@@ -509,5 +537,3 @@ class Reply extends Controller
         $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
     }
 }
-
-

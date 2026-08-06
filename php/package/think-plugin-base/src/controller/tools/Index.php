@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\tools;
@@ -9,21 +10,23 @@ use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 
 /**
- * 工具列表
- * @class Index
+ * 工具列表控制器
  */
 class Index extends Controller
 {
     /**
      * 当前绑定的 AppID
+     *
      * @var string
      */
     public string $appid;
 
     /**
      * 工具列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -39,8 +42,10 @@ class Index extends Controller
     }
 
     /**
-     * 列表数据处理
+     * 列表数据处理过滤
+     *
      * @param array $data
+     * @return void
      */
     protected function _index_page_filter(array &$data): void
     {
@@ -51,7 +56,8 @@ class Index extends Controller
     }
 
     /**
-     * 小程序列表
+     * 获取已有小程序列表
+     *
      * @return array
      */
     protected function mps(): array
@@ -60,8 +66,10 @@ class Index extends Controller
     }
 
     /**
-     * 表单数据处理
+     * 表单数据处理过滤
+     *
      * @param array $data
+     * @return void
      */
     protected function _form_filter(array &$data): void
     {
@@ -78,7 +86,9 @@ class Index extends Controller
 
     /**
      * 添加工具
+     *
      * @auth true
+     * @return void
      */
     public function add(): void
     {
@@ -88,7 +98,9 @@ class Index extends Controller
 
     /**
      * 编辑工具
+     *
      * @auth true
+     * @return void
      */
     public function edit(): void
     {
@@ -98,7 +110,9 @@ class Index extends Controller
 
     /**
      * 修改状态或排序
+     *
      * @auth true
+     * @return void
      */
     public function state(): void
     {
@@ -109,8 +123,10 @@ class Index extends Controller
     }
 
     /**
-     * 删除小程序
+     * 删除工具记录
+     *
      * @auth true
+     * @return void
      */
     public function remove(): void
     {
@@ -118,8 +134,10 @@ class Index extends Controller
     }
 
     /**
-     * 导出数据
+     * 导出工具列表数据
+     *
      * @auth true
+     * @return void
      */
     public function export(): void
     {
@@ -138,8 +156,10 @@ class Index extends Controller
     }
 
     /**
-     * 导入数据
+     * 导入工具列表数据
+     *
      * @auth true
+     * @return void
      */
     public function import(): void
     {
@@ -225,5 +245,3 @@ class Index extends Controller
         $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
     }
 }
-
-

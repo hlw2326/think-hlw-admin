@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -6,11 +7,15 @@ namespace plugin\base\controller\api\v1;
 use plugin\base\model\BaseHelp;
 
 /**
- * 帮助列表 API
- * @class Help
+ * 帮助列表 API 控制器
  */
 class Help extends Base
 {
+    /**
+     * 获取帮助指引及 FAQ 常见问题列表
+     *
+     * @return void
+     */
     public function list(): void
     {
         $steps = preg_split('/\r\n|\r|\n/', (string) (sysconf('base.help_steps') ?: ""));
@@ -42,6 +47,7 @@ class Help extends Base
 
     /**
      * 记录帮助点击次数
+     *
      * @return void
      */
     public function click(): void

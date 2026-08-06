@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -6,9 +7,7 @@ namespace plugin\base\controller\api\v1;
 use plugin\base\service\InviteService;
 
 /**
- * 邀请/分享相关 API（登录态）
- * @class Invite
- * @package plugin\base\controller\api\v1
+ * 邀请/分享相关 API 控制器（登录态）
  */
 class Invite extends Auth
 {

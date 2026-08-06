@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -11,11 +12,13 @@ use think\exception\HttpResponseException;
 use think\Request;
 
 /**
- * 文件上传 API
- * @class Upload
+ * 文件上传 API 控制器
  */
 class Upload extends Auth
 {
+    /**
+     * 业务上传限制配置表
+     */
     private const BIZ_CONFIG = [
         'avatar' => [
             'prefix' => 'avatar',
@@ -24,6 +27,11 @@ class Upload extends Auth
         ],
     ];
 
+    /**
+     * 获取文件上传直传签名/凭证
+     *
+     * @return void
+     */
     public function sign(): void
     {
         $data = $this->_vali([
@@ -86,6 +94,11 @@ class Upload extends Auth
         }
     }
 
+    /**
+     * 服务端中转/本地接收存储上传文件
+     *
+     * @return void
+     */
     public function put(): void
     {
         if (!$this->request->isPost()) {
@@ -161,6 +174,12 @@ class Upload extends Auth
         }
     }
 
+    /**
+     * 获取允许的域名列表
+     *
+     * @param Request $request
+     * @return array
+     */
     public static function allowedHosts(Request $request): array
     {
         $type = strtolower(sysconf('storage.type|raw')) ?: 'local';
@@ -182,6 +201,12 @@ class Upload extends Auth
         return array_values(array_filter(array_unique($hosts)));
     }
 
+    /**
+     * 检查图片文件安全性（过滤注入与恶意脚本代码）
+     *
+     * @param string $filename
+     * @return bool
+     */
     private function imgNotSafe(string $filename): bool
     {
         $source = fopen($filename, 'rb');

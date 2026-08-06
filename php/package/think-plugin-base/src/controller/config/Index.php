@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\config;
@@ -9,15 +10,16 @@ use think\exception\HttpResponseException;
 use Throwable;
 
 /**
- * 出配置
- * @class Index
+ * 系统配置控制器
  */
 class Index extends Controller
 {
     /**
      * 基础配置
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -37,7 +39,9 @@ class Index extends Controller
 
     /**
      * 分享配置
+     *
      * @auth true
+     * @return void
      */
     public function share(): void
     {
@@ -61,7 +65,9 @@ class Index extends Controller
 
     /**
      * 客服配置
+     *
      * @auth true
+     * @return void
      */
     public function contact(): void
     {
@@ -91,6 +97,7 @@ class Index extends Controller
      * AI模型配置
      *
      * @auth true
+     * @return void
      */
     public function ai(): void
     {
@@ -128,6 +135,7 @@ class Index extends Controller
      * 获取当前供应商可用模型列表
      *
      * @auth true
+     * @return void
      */
     public function models(): void
     {
@@ -139,6 +147,7 @@ class Index extends Controller
      * 测试当前模型配置是否可连接
      *
      * @auth true
+     * @return void
      */
     public function test(): void
     {
@@ -153,6 +162,12 @@ class Index extends Controller
         }
     }
 
+    /**
+     * 格式化异常消息字符串
+     *
+     * @param Throwable $exception
+     * @return string
+     */
     private static function formatExceptionMessage(Throwable $exception): string
     {
         $message = trim($exception->getMessage());

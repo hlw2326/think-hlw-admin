@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\service;
@@ -9,17 +10,15 @@ use think\facade\Db;
 
 /**
  * 会员服务
- * @class UserVipService
- * @package plugin\base\service
  */
 class UserVipService
 {
-
     /**
      * 是否正在由服务处理会员变更（用于防止模型事件重复记录日志）
+     *
      * @var bool
      */
-    public static $changing = false;
+    public static bool $changing = false;
 
     /**
      * 变更用户会员天数

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\main;
@@ -10,15 +11,16 @@ use plugin\base\model\BaseMpReply;
 use think\admin\Controller;
 
 /**
- * 系统统计
- * @class Index
+ * 系统统计控制器
  */
 class Index extends Controller
 {
     /**
-     * 系统统计
+     * 系统统计仪表盘
+     *
      * @menu true
      * @auth true
+     * @return void
      */
     public function index(): void
     {

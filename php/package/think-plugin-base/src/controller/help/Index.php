@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\help;
@@ -8,15 +9,16 @@ use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 
 /**
- * 帮助列表
- * @class Index
+ * 帮助列表控制器
  */
 class Index extends Controller
 {
     /**
      * 帮助列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -30,7 +32,9 @@ class Index extends Controller
 
     /**
      * 添加帮助
+     *
      * @auth true
+     * @return void
      */
     public function add(): void
     {
@@ -40,7 +44,9 @@ class Index extends Controller
 
     /**
      * 编辑帮助
+     *
      * @auth true
+     * @return void
      */
     public function edit(): void
     {
@@ -50,7 +56,9 @@ class Index extends Controller
 
     /**
      * 修改状态
+     *
      * @auth true
+     * @return void
      */
     public function state(): void
     {
@@ -62,7 +70,9 @@ class Index extends Controller
 
     /**
      * 删除帮助
+     *
      * @auth true
+     * @return void
      */
     public function remove(): void
     {
@@ -71,7 +81,9 @@ class Index extends Controller
 
     /**
      * 导出数据
+     *
      * @auth true
+     * @return void
      */
     public function export(): void
     {
@@ -88,7 +100,9 @@ class Index extends Controller
 
     /**
      * 导入数据
+     *
      * @auth true
+     * @return void
      */
     public function import(): void
     {
@@ -161,5 +175,3 @@ class Index extends Controller
         $this->success("导入成功！已成功添加/更新了 {$successCount} 条，失败 {$failCount} 条。");
     }
 }
-
-

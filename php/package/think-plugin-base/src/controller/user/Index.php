@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\user;
@@ -8,15 +9,16 @@ use think\admin\Controller;
 use think\admin\helper\QueryHelper;
 
 /**
- * 用户列表
- * @class Index
+ * 用户列表控制器
  */
 class Index extends Controller
 {
     /**
      * 用户列表
+     *
      * @auth true
      * @menu true
+     * @return void
      */
     public function index(): void
     {
@@ -34,7 +36,9 @@ class Index extends Controller
 
     /**
      * 修改状态
+     *
      * @auth true
+     * @return void
      */
     public function state(): void
     {
@@ -45,8 +49,10 @@ class Index extends Controller
     }
 
     /**
-     * 退出登录
+     * 强退退出登录
+     *
      * @auth true
+     * @return void
      */
     public function logout(): void
     {
@@ -60,8 +66,10 @@ class Index extends Controller
     }
 
     /**
-     * 用户详细信息
+     * 获取用户详细信息
+     *
      * @auth true
+     * @return void
      */
     public function info(): void
     {
@@ -74,8 +82,10 @@ class Index extends Controller
     }
 
     /**
-     * 调整积分
+     * 调整用户积分
+     *
      * @auth true
+     * @return void
      */
     public function score(): void
     {
@@ -118,8 +128,10 @@ class Index extends Controller
     }
 
     /**
-     * 调整会员时间
+     * 调整用户会员时间
+     *
      * @auth true
+     * @return void
      */
     public function vip(): void
     {
@@ -178,5 +190,3 @@ class Index extends Controller
         }
     }
 }
-
-

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace plugin\base\controller\api\v1;
@@ -7,13 +8,14 @@ use plugin\base\service\AiService;
 use Throwable;
 
 /**
- * AI 服务 API
- * @class Ai
+ * AI 服务 API 控制器
  */
 class Ai extends Auth
 {
     /**
-     * AI 对话调用接口
+     * AI 对话/分析接口
+     *
+     * @return void
      */
     public function chat(): void
     {
