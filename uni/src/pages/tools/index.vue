@@ -49,7 +49,12 @@ function openTool(item: ITools.Item) {
         return;
     }
 
-    service.v1.tools.click({ id: item.id }).catch((error) => {
+    // prettier-ignore
+    service.v1.tools.click({ id: item.id }).then((res) => {
+        if (res.code !== 1) {
+            hlw.$msg.toast(res.info);
+        }
+    }).catch((error) => {
         console.warn("[tools] click failed", error);
     });
 
@@ -61,19 +66,16 @@ function openTool(item: ITools.Item) {
 }
 
 function getTools() {
-    service.v1.tools
-        .list()
-        .then((res) => {
-            if (res.code === 1 && res.data?.list) {
-                list.value = res.data.list;
-                return;
-            }
-            hlw.$msg.toast(res.info || "工具列表加载失败");
-        })
-        .catch((error) => {
-            console.warn("[tools] list failed", error);
-            hlw.$msg.toast("工具列表加载失败");
-        });
+    // prettier-ignore
+    service.v1.tools.list().then((res) => {
+        if (res.code === 1) {
+            list.value = res.data.list;
+        } else {
+            hlw.$msg.toast(res.info);
+        }
+    }).catch((error) => {
+        hlw.$msg.toast("工具列表加载失败");
+    });
 }
 </script>
 

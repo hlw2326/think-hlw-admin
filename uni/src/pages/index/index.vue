@@ -69,19 +69,19 @@ async function showShareQrCode() {
     }
 
     hlw.$msg.showLoading("正在生成...");
-    try {
-        const res = await service.v1.invite.qrcode();
+    // prettier-ignore
+    service.v1.invite.qrcode().then((res) => {
         if (res.code === 1 && res.data?.qrcode_url) {
             qrCodeUrl.value = res.data.qrcode_url;
             qrVisible.value = true;
         } else {
             hlw.$msg.toast(res.info || "生成分享二维码失败");
         }
-    } catch (error: any) {
+    }).catch((error: any) => {
         hlw.$msg.toast(error?.message || "请求失败");
-    } finally {
+    }).finally(() => {
         hlw.$msg.hideLoading();
-    }
+    });
 }
 
 async function handleRewardAd(res: { success: boolean; isEnded: boolean; err?: any }) {

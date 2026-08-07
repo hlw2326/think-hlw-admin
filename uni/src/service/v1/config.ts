@@ -9,6 +9,7 @@ class Config extends BaseService {
             share?: IConfig.Share;
             contact?: IConfig.Contact;
             ad?: IConfig.Ad;
+            page_config?: IConfig.PageConfig;
         }>({
             url: "/index",
             method: "GET",

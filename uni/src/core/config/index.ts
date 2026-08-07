@@ -16,34 +16,37 @@ export function useConfig() {
 
     const page_config: ComputedRef<IConfig.PageConfig> = computed(() => store.page_config);
 
-    async function getConfig(): Promise<void> {
-        const res = await service.v1.config.index();
-        if (res.code !== 1 || !res.data) {
-            hlw.$msg.toast(res.info || "配置加载失败");
-            return;
-        }
+    function getConfig(): Promise<void> {
+        // prettier-ignore
+        return service.v1.config.index().then((res) => {
+            if (res.code === 1 && res.data) {
+                const share = res.data.share;
+                const contact = res.data.contact;
 
-        const share = res.data.share;
-        const contact = res.data.contact;
-
-        store.base = res.data.base ?? {};
-        store.share = {
-            title: share?.title || store.share.title,
-            path: share?.path || store.share.path,
-            image_url: share?.image_url || store.share.image_url,
-        };
-        store.contact = {
-            send_message_title: contact?.send_message_title || store.contact.send_message_title,
-            send_message_path: contact?.send_message_path || store.contact.send_message_path,
-            send_message_img: contact?.send_message_img || store.contact.send_message_img,
-            show_message_card: toBoolean(contact?.show_message_card, store.contact.show_message_card),
-            official_qrcode: contact?.official_qrcode || "",
-        };
-        store.ad = {
-            ...store.ad,
-            ...(res.data.ad ?? {}),
-        };
-        store.page_config = res.data.page_config ?? {};
+                store.base = res.data.base ?? {};
+                store.share = {
+                    title: share?.title || store.share.title,
+                    path: share?.path || store.share.path,
+                    image_url: share?.image_url || store.share.image_url,
+                };
+                store.contact = {
+                    send_message_title: contact?.send_message_title || store.contact.send_message_title,
+                    send_message_path: contact?.send_message_path || store.contact.send_message_path,
+                    send_message_img: contact?.send_message_img || store.contact.send_message_img,
+                    show_message_card: toBoolean(contact?.show_message_card, store.contact.show_message_card),
+                    official_qrcode: contact?.official_qrcode || "",
+                };
+                store.ad = {
+                    ...store.ad,
+                    ...(res.data.ad ?? {}),
+                };
+                store.page_config = res.data.page_config ?? {};
+            } else {
+                hlw.$msg.toast(res.info || "配置加载失败");
+            }
+        }).catch((error) => {
+            hlw.$msg.toast("配置加载失败");
+        });
     }
 
     return {

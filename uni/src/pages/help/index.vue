@@ -55,19 +55,19 @@ onShow(() => {
     getHelpList();
 });
 
-async function getHelpList() {
-    try {
-        const res = await service.v1.help.list();
-        if (res.code !== 1 || !res.data) {
+function getHelpList() {
+    // prettier-ignore
+    service.v1.help.list().then((res) => {
+        if (res.code === 1 && res.data) {
+            if (res.data.steps?.length) steps.value = res.data.steps;
+            if (res.data.list?.length) faqList.value = res.data.list;
+        } else {
             hlw.$msg.toast(res.info || "帮助内容加载失败");
-            return;
         }
-        if (res.data.steps?.length) steps.value = res.data.steps;
-        if (res.data.list?.length) faqList.value = res.data.list;
-    } catch (error) {
+    }).catch((error) => {
         console.warn("[help] list failed", error);
         hlw.$msg.toast("帮助内容加载失败");
-    }
+    });
 }
 </script>
 
