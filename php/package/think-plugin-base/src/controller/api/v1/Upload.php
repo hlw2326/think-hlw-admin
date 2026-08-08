@@ -55,7 +55,7 @@ class Upload extends Auth
             $this->error("文件不能超过 {$max_mb}MB");
         }
 
-        $seed = $this->user_id . '-' . microtime(true) . '-' . mt_rand();
+        $seed = $this->uid . '-' . microtime(true) . '-' . mt_rand();
         $key = Storage::name($seed, $ext, $cfg['prefix'], 'md5');
         $type = strtolower(sysconf('storage.type|raw')) ?: 'local';
 

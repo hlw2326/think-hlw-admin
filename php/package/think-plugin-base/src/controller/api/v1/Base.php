@@ -39,7 +39,7 @@ class Base extends Controller
      *
      * @var string
      */
-    protected string $user_id = '';
+    protected string $uid = '';
 
     /**
      * 客户端设备信息参数
@@ -135,7 +135,7 @@ class Base extends Controller
             $this->error('账号已被禁用', [], 403);
         }
 
-        $this->user_id = (string) $user->id;
+        $this->uid = (string) $user->id;
         $this->user = $user;
     }
 }
